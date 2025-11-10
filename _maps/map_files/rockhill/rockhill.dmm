@@ -57711,20 +57711,9 @@
 /area/rogue/indoors/town/shop)
 "sEo" = (
 /obj/structure/rack/rogue,
-/obj/item/rogueweapon/stoneaxe/woodcut{
-	pixel_x = 5;
-	pixel_y = -5
-	},
-/obj/item/rogueweapon/stoneaxe/woodcut{
-	pixel_x = 5;
-	pixel_y = -5
-	},
 /obj/item/rogueweapon/stoneaxe/woodcut/wardenpick,
 /obj/item/rogueweapon/stoneaxe/woodcut/wardenpick,
 /obj/item/rogueweapon/stoneaxe/woodcut/wardenpick,
-/obj/merge_conflict_marker{
-	desc = "A best-effort merge was performed. You must resolve this conflict yourself (manually) and remove this object once complete."
-	},
 /obj/structure/rack/rogue,
 /obj/item/rogueweapon/huntingknife/idagger{
 	pixel_x = 10
