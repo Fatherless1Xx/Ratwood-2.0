@@ -829,6 +829,10 @@ Inquisitorial armory down here
 	embedding = null
 	sellprice = 0
 
+/obj/item/inqarticles/garrote/nonpsy // Duly noted, and ignored. 
+	name = "\proper seizing garrote"
+	desc = "A thick and leathery length of cordage, boiled and treated, with iron handles upon either end. Perfect for quieting them..."
+
 /obj/item/inqarticles/garrote/obj_break(damage_flag)
 	obj_broken = TRUE
 	if(!ismob(loc))
@@ -1036,6 +1040,10 @@ Inquisitorial armory down here
 	var/worn = FALSE
 	var/bagging = FALSE
 	var/headgear
+
+/obj/item/clothing/head/inqarticles/blackbag/nonpsy
+	name = "black bag"
+	desc = "A heavy padded sack intended to muffle the cries made within it. Due to the heaviness of the materials involved, application and removal of these is usually difficult for the untrained."
 
 /obj/item/clothing/head/inqarticles/blackbag/proc/bagsound(mob/living/M)
 	if(bagging)

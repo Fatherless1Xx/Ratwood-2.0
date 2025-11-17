@@ -28,6 +28,7 @@
 		/datum/skill/craft/sewing = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/craft/alchemy = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/misc/swimming = SKILL_LEVEL_APPRENTICE,
+		/datum/skill/misc/tracking = SKILL_LEVEL_NOVICE,
 	)
 
 /datum/outfit/job/roguetown/bandit/sawbones/pre_equip(mob/living/carbon/human/H)
@@ -55,7 +56,7 @@
 					)
 	var/masks = list(
 		"Humen" 	= /obj/item/clothing/mask/rogue/facemask/steel,
-		"Beast"		= /obj/item/clothing/mask/rogue/facemask/steel/hound,
+		"Beast"		= /obj/item/clothing/mask/rogue/wildguard,
 		"None"
 		)
 	if(H.mind)

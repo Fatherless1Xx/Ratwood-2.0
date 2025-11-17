@@ -50,7 +50,7 @@
 	)
 	var/masks = list(
 		"Humen" 	= /obj/item/clothing/mask/rogue/facemask/steel,
-		"Beast"		= /obj/item/clothing/mask/rogue/facemask/steel/hound,
+		"Beast"		= /obj/item/clothing/mask/rogue/wildguard,
 		"None"
 		)
 	if(H.mind)
@@ -78,6 +78,7 @@
 	H.adjust_skillrank(/datum/skill/craft/weaponsmithing, 2, TRUE)
 	H.adjust_skillrank(/datum/skill/craft/smelting, 2, TRUE)
 	H.adjust_skillrank(/datum/skill/labor/mining, 3, TRUE)
+	H.adjust_skillrank(/datum/skill/misc/tracking, 2, TRUE)
 
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/targeted/pioneer/plant_bogtrap_delayed)
 

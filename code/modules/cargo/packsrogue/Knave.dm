@@ -240,3 +240,23 @@
 	name = "Lockpick ring"
 	cost = 10
 	contains = list(/obj/item/lockpickring/mundane)
+
+/datum/supply_pack/rogue/Knave/stampoison
+	name = "Fatigue Poison"
+	cost = 60
+	contains = list(/obj/item/reagent_containers/glass/bottle/rogue/stampoison)
+
+/datum/supply_pack/rogue/Knave/strongstampoison
+	name = "Strong Fatigue Poison"
+	cost = 150
+	contains = list(/obj/item/reagent_containers/glass/bottle/rogue/strongstampoison)
+
+/datum/supply_pack/rogue/Knave/jackberrypoison
+	name = "Jackberry Poison"
+	cost = 40 // You can make it yourself.
+	contains = list(/obj/item/reagent_containers/glass/bottle/rogue/berrypoison)
+
+/datum/supply_pack/rogue/Knave/antidote
+	name = "Antidote"
+	cost = 40 // Friendly fire or misshaps.
+	contains = list(/obj/item/reagent_containers/glass/bottle/rogue/antidote)

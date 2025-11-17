@@ -7,7 +7,7 @@
 	category_tags = list(CTAG_BANDIT)
 	cmode_music = 'sound/music/cmode/antag/combat_thewall.ogg'
 	subclass_social_rank = SOCIAL_RANK_PEASANT
-	traits_applied = list(TRAIT_MEDIUMARMOR, TRAIT_STEELHEARTED, TRAIT_DEATHBYSNUSNU)
+	traits_applied = list(TRAIT_MEDIUMARMOR, TRAIT_BLACKBAGGER, TRAIT_STEELHEARTED, TRAIT_DEATHBYSNUSNU)
 	subclass_stats = list(
 		STATKEY_STR = 4,
 		STATKEY_WIL = 2,
@@ -36,6 +36,7 @@
 		/datum/skill/misc/athletics = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/misc/swimming = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/combat/shields = SKILL_LEVEL_JOURNEYMAN,
+		/datum/skill/misc/tracking = SKILL_LEVEL_APPRENTICE,
 	)
 
 /datum/outfit/job/roguetown/bandit/brigand/pre_equip(mob/living/carbon/human/H)
@@ -61,7 +62,7 @@
 	H.adjust_blindness(-3)
 	var/masks = list(
 		"Humen" 	= /obj/item/clothing/mask/rogue/facemask/steel,
-		"Beast"		= /obj/item/clothing/mask/rogue/facemask/steel/hound,
+		"Beast"		= /obj/item/clothing/mask/rogue/wildguard,
 		"None"
 		)
 	if(H.mind)

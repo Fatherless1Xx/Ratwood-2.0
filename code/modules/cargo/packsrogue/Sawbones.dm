@@ -113,6 +113,16 @@
 // WEAPONS //
 /////////////
 
+/datum/supply_pack/rogue/Sawbones/dagger
+	name = "Iron Dagger"
+	cost = 10
+	contains = list(/obj/item/rogueweapon/huntingknife/idagger)
+
+/datum/supply_pack/rogue/Sawbones/daggerss
+	name = "Steel Dagger"
+	cost = 20
+	contains = list(/obj/item/rogueweapon/huntingknife/idagger/steel)
+
 /datum/supply_pack/rogue/Sawbones/rapier
 	name = "Rapier"
 	cost = 20
@@ -131,7 +141,6 @@
 	name = "Bottle bomb"
 	cost = 20
 	contains = list(/obj/item/bomb)
-
 
 /datum/supply_pack/rogue/Sawbones/surgery_bag
 	name = "Surgery Bag"
@@ -242,4 +251,24 @@
 /datum/supply_pack/rogue/Sawbones/bronzerightleg
 	name = "Prosthetic Right Leg"
 	cost = 10
+	contains = list(/obj/item/bodypart/r_leg/prosthetic/bronzeright)
+
+/datum/supply_pack/rogue/Sawbones/prarmlbrz
+	name = "Prostethic Bronze Arm (L)"
+	cost = 80
+	contains = list(/obj/item/bodypart/l_arm/prosthetic/bronzeleft)
+
+/datum/supply_pack/rogue/Sawbones/prarmrbrz
+	name = "Prostethic Bronze Arm (R)"
+	cost = 80
+	contains = list(/obj/item/bodypart/r_arm/prosthetic/bronzeright)
+
+/datum/supply_pack/rogue/Sawbones/prleglbrz
+	name = "Prostethic Bronze Leg (L)"
+	cost = 50
+	contains = list(/obj/item/bodypart/l_leg/prosthetic/bronzeleft)
+
+/datum/supply_pack/rogue/Sawbones/prlegrbrz
+	name = "Prostethic Bronze Leg (R)"
+	cost = 50
 	contains = list(/obj/item/bodypart/r_leg/prosthetic/bronzeright)

@@ -7,7 +7,7 @@
 	category_tags = list(CTAG_BANDIT)
 	cmode_music = 'sound/music/cmode/antag/combat_cutpurse.ogg' // cutpurse or deadly shadows...?
 	subclass_social_rank = SOCIAL_RANK_PEASANT
-	traits_applied = list(TRAIT_MEDIUMARMOR, TRAIT_STEELHEARTED, TRAIT_DEATHBYSNUSNU)
+	traits_applied = list(TRAIT_MEDIUMARMOR, TRAIT_BLACKBAGGER, TRAIT_STEELHEARTED, TRAIT_DEATHBYSNUSNU)
 	subclass_stats = list(
 		STATKEY_STR = 2,
 		STATKEY_WIL = 2,
@@ -36,6 +36,7 @@
 		/datum/skill/misc/athletics = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/combat/shields = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/misc/swimming = SKILL_LEVEL_APPRENTICE,
+		/datum/skill/misc/tracking = SKILL_LEVEL_APPRENTICE,
 	)
 
 /datum/outfit/job/roguetown/bandit/sellsword/pre_equip(mob/living/carbon/human/H)
@@ -60,11 +61,11 @@
 	H.adjust_blindness(-3)
 	var/masks = list(
 		"Humen" 	= /obj/item/clothing/mask/rogue/facemask/steel,
-		"Beast"		= /obj/item/clothing/mask/rogue/facemask/steel/hound,
+		"Beast"		= /obj/item/clothing/mask/rogue/wildguard,
 		"None"
 		)
 	if(H.mind)
-		var/mask_choice = input("What fits your face?", "MASK SELECTION") as anything in masks
+		var/mask_choice = input("Which suits you?", "MASK SELECTION") as anything in masks
 		if(mask_choice != "None")
 			mask = masks[mask_choice]
 	var/weapons = list("Spear & Crossbow","Sword & Buckler")

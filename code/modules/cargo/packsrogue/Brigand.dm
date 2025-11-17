@@ -43,6 +43,21 @@
 	cost = 30
 	contains = list(/obj/item/clothing/head/roguetown/helmet/heavy/volfplate)
 
+/datum/supply_pack/rogue/Brigand/wildmask
+	name = "Wildguard Mask"
+	cost = 10
+	contains = list(/obj/item/clothing/mask/rogue/wildguard)
+
+/datum/supply_pack/rogue/Brigand/steelmask
+	name = "Steel Mask"
+	cost = 10
+	contains = list(/obj/item/clothing/mask/rogue/facemask/steel)
+
+/datum/supply_pack/rogue/Brigand/steelmask/anthro
+	name = "Steel Hound Mask"
+	cost = 10
+	contains = list(/obj/item/clothing/mask/rogue/facemask/steel/hound)
+
 //////////
 // NECK //
 //////////
@@ -70,6 +85,21 @@
 ///////////
 // CHEST //
 ///////////
+
+/datum/supply_pack/rogue/Brigand/leather
+	name = "Leather Armor"
+	cost = 10
+	contains = list(/obj/item/clothing/suit/roguetown/armor/leather)
+
+/datum/supply_pack/rogue/Brigand/leather/studded
+	name = "Studded Leather Armor"
+	cost = 20
+	contains = list(/obj/item/clothing/suit/roguetown/armor/leather/studded)
+
+/datum/supply_pack/rogue/Brigand/leather/heavy
+	name = "Hardened Leather Armor"
+	cost = 20
+	contains = list(/obj/item/clothing/suit/roguetown/armor/leather/heavy)
 
 /datum/supply_pack/rogue/Brigand/hgambeson
 	name = "Heavy Gambeson"
@@ -115,6 +145,31 @@
 // WRISTS/GLOVES //
 ///////////////////
 
+/datum/supply_pack/rogue/Brigand/leather/lbracers
+	name = "Leather Bracers"
+	cost = 5
+	contains = list(/obj/item/clothing/wrists/roguetown/bracers/leather)
+
+/datum/supply_pack/rogue/Brigand/leather/hbracers
+	name = "Hardened Leather Bracers"
+	cost = 10
+	contains = list(/obj/item/clothing/wrists/roguetown/bracers/leather/heavy)
+
+/datum/supply_pack/rogue/Brigand/leather/lgloves
+	name = "Leather Gloves"
+	cost = 5
+	contains = list(/obj/item/clothing/gloves/roguetown/leather)
+
+/datum/supply_pack/rogue/Brigand/leather/hlgloves
+	name = "Heavy Leather Gloves"
+	cost = 10
+	contains = list(/obj/item/clothing/gloves/roguetown/angle)
+
+/datum/supply_pack/rogue/Brigand/leather/flgloves
+	name = "Fingerless Leather Gloves"
+	cost = 10
+	contains = list(/obj/item/clothing/gloves/roguetown/fingerless_leather)
+
 /datum/supply_pack/rogue/Brigand/bracers
 	name = "Steel Bracers"
 	cost = 10
@@ -130,9 +185,24 @@
 	cost = 10
 	contains = list(/obj/item/clothing/gloves/roguetown/chain)
 
+/datum/supply_pack/rogue/Brigand/plategaunt
+	name = "Plate Gauntlets"
+	cost = 25
+	contains = list(/obj/item/clothing/gloves/roguetown/plate)
+
 ///////////////
 // LEGS/FEET //
 ///////////////
+
+/datum/supply_pack/rogue/Brigand/leather/pants
+	name = "Leather Trousers"
+	cost = 10
+	contains = list(/obj/item/clothing/under/roguetown/trou/leather)
+
+/datum/supply_pack/rogue/Brigand/leather/hpants
+	name = "Hardened Leather Trousers"
+	cost = 20
+	contains = list(/obj/item/clothing/under/roguetown/heavy_leather_pants)
 
 /datum/supply_pack/rogue/Brigand/chainlegs
 	name = "Steel Chain Chausses"
@@ -144,14 +214,29 @@
 	cost = 20
 	contains = list(/obj/item/clothing/under/roguetown/splintlegs)
 
+/datum/supply_pack/rogue/Brigand/splintlegs/iron
+	name = "Splinted Leggings"
+	cost = 15
+	contains = list(/obj/item/clothing/under/roguetown/splintlegs/iron)
+
 /datum/supply_pack/rogue/Brigand/boots
 	name = "Steel Boots"
-	cost = 10
+	cost = 15
 	contains = list(/obj/item/clothing/shoes/roguetown/boots/armor)
 
 /////////////
 // WEAPONS //
 /////////////
+
+/datum/supply_pack/rogue/Brigand/dagger
+	name = "Iron Dagger"
+	cost = 10
+	contains = list(/obj/item/rogueweapon/huntingknife/idagger)
+
+/datum/supply_pack/rogue/Brigand/daggerss
+	name = "Steel Dagger"
+	cost = 20
+	contains = list(/obj/item/rogueweapon/huntingknife/idagger/steel)
 
 /datum/supply_pack/rogue/Brigand/mace
 	name = "Iron Mace"
@@ -165,7 +250,7 @@
 
 /datum/supply_pack/rogue/Brigand/cudgel
 	name = "Cudgel"
-	cost = 20
+	cost = 10
 	contains = list(/obj/item/rogueweapon/mace/cudgel)
 
 /datum/supply_pack/rogue/Brigand/gmace

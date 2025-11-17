@@ -178,6 +178,16 @@
 // WEAPONS //
 /////////////
 
+/datum/supply_pack/rogue/Knight/dagger
+	name = "Iron Dagger"
+	cost = 10
+	contains = list(/obj/item/rogueweapon/huntingknife/idagger)
+
+/datum/supply_pack/rogue/Knight/daggerss
+	name = "Steel Dagger"
+	cost = 20
+	contains = list(/obj/item/rogueweapon/huntingknife/idagger/steel)
+
 /datum/supply_pack/rogue/Knight/lsword
 	name = "Longsword"
 	cost = 20

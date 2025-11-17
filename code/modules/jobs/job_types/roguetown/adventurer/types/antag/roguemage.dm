@@ -40,6 +40,7 @@
 		/datum/skill/misc/reading = SKILL_LEVEL_EXPERT,
 		/datum/skill/craft/alchemy = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/magic/arcane = SKILL_LEVEL_EXPERT,
+		/datum/skill/misc/tracking = SKILL_LEVEL_NOVICE,
 	)
 
 /datum/outfit/job/roguetown/bandit/roguemage/pre_equip(mob/living/carbon/human/H)
@@ -67,7 +68,7 @@
 	r_hand = /obj/item/rogueweapon/woodstaff/diamond
 	var/masks = list(
 		"Humen" 	= /obj/item/clothing/mask/rogue/facemask/steel,
-		"Beast"		= /obj/item/clothing/mask/rogue/facemask/steel/hound,
+		"Beast"		= /obj/item/clothing/mask/rogue/wildguard,
 		"None"
 		)
 	if(H.mind)
