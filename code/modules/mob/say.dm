@@ -116,7 +116,7 @@
 
 ///The subtle emote verb
 /mob/verb/subtle_verb()
-	set name = "Subtle(big)"
+	set name = "Subtle"
 	set category = "IC"
 	set hidden = 1
 #ifndef MATURESERVER
@@ -137,7 +137,7 @@
 
 ///The subtle emote verb
 /mob/verb/subtle_big_verb()
-	set name = "Subtle"
+	set name = "Subtle(big)"
 	set category = "IC"
 	set hidden = 1
 #ifndef MATURESERVER
