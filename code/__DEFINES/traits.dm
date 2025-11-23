@@ -233,6 +233,7 @@
 #define TRAIT_VENOMOUS "Venomous"
 #define TRAIT_OVERTHERETIC "Overt Heretic"//Applied on someone who has rites buffs. Armour, rituos, etc.
 #define TRAIT_SPELL_DISPERSION "Barrier Dispersion"
+#define TRAIT_BAOTHA_FERTILITY_BOON "Marked and shaped by Baotha"
 
 // Economic Roles Traits
 // Most of these should NOT be given to any true combat roles (I.E. anything with Dexpert or Miracle / Good Magic) with very few exceptions

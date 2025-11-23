@@ -2619,6 +2619,7 @@
 #include "code\modules\spells\spell_types\wizard\utility\mindlink.dm"
 #include "code\modules\spells\spell_types\wizard\utility\mirror_transform.dm"
 #include "code\modules\spells\spell_types\wizard\utility\prestidigitation.dm"
+#include "code\modules\spells\spell_types\wizard\utility\recall.dm"
 #include "code\modules\spells\spell_types\wizard\utility\summon_weapon.dm"
 #include "code\modules\spells\spell_types\wizard\utility\woundclosure.dm"
 #include "code\modules\surgery\_surgery.dm"
