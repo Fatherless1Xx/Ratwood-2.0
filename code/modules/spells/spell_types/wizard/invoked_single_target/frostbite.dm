@@ -10,7 +10,7 @@
 	range = 7
 	warnie = "spellwarning"
 	movement_interrupt = FALSE
-	no_early_release = FALSE
+	no_early_release = TRUE
 	chargedloop = null
 	sound = 'sound/magic/whiteflame.ogg'
 	chargedloop = /datum/looping_sound/invokegen
