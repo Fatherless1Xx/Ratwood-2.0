@@ -16,7 +16,7 @@
 	var/reason
 	var/mob/owner
 	var/list/signals = list()
-	var/obj/effect/proc_holder/spell/targeted/shapeshift/shapeshift
+	var/obj/effect/proc_holder/spell/targeted/shapeshift/shapeshift = new
 
 /datum/modular_curse/proc/attach_to_mob(mob/M)
 	owner = M
@@ -56,6 +56,12 @@
 		if("on orgasm")
 			RegisterSignal(M, COMSIG_MOB_EJACULATED, PROC_REF(on_signal_trigger))
 			signals += COMSIG_MOB_EJACULATED
+		if("on kiss")
+			RegisterSignal(M, COMSIG_MOB_KISS, PROC_REF(on_signal_trigger))
+			signals += COMSIG_MOB_KISS
+		if("on kissed")
+			RegisterSignal(M, COMSIG_MOB_KISSED, PROC_REF(on_signal_trigger))
+			signals += COMSIG_MOB_KISSED
 		if("on move")
 			RegisterSignal(M, COMSIG_MOVABLE_MOVED, PROC_REF(on_signal_trigger))
 			signals += COMSIG_MOVABLE_MOVED
@@ -238,32 +244,15 @@
 		if("nugget")
 			if(istype(L, /mob/living/carbon/human))	
 				var/mob/living/carbon/human/H = L
-				H.spawn_gold_nugget()
+				H.spawn_gold_nugget()*/
 		if("shapeshift")
 			spawn(0)
-				var/shapeshift_type = effect_args ? effect_args["mob_type"] : null
-				if(!shapeshift_type)
-					world.log << "[world.time] SHAPE STEP 3: no mob_type, aborting"
-					return
-				if(istext(shapeshift_type))
-					var/tmp = text2path(shapeshift_type)
-					world.log << "[world.time] SHAPE STEP 4: text2path result = [tmp]"
-					if(ispath(tmp))
-						shapeshift_type = tmp
-						world.log << "[world.time] SHAPE STEP 4: converted to typepath = [shapeshift_type]"
-					else
-						world.log << "[world.time] SHAPE STEP 4: FAILED conversion, aborting"
-						return
-				world.log << "[world.time] SHAPE STEP 4: mob_type ready"
-				shapeshift.shapeshift_type = /mob/living/simple_animal/hostile/retaliate/rogue/cat
-				shapeshift.Shapeshift(L)
-				
-		if("un-shapeshift")
-			spawn(0)
-				var/obj/shapeshift_holder/H = locate() in L
-				if(!H)
-					arg = FALSE
-				H.restore()*/
+				shapeshift.shapeshift_type = text2path(effect_args["mob_type"])
+				var/obj/shapeshift_holder/S = locate() in L
+				if(S)
+					shapeshift.Restore(L)
+				else if(shapeshift.shapeshift_type)
+					shapeshift.Shapeshift(L)
 		if("gib")
 			if(!L)
 				return
@@ -399,6 +388,12 @@
 		if("on cut tree")
 			trigger_text_self = "felling a tree"
 			trigger_text_other = "they fell a tree"
+		if("on kiss")
+			trigger_text_self = "kissing"
+			trigger_text_other = "they kiss"
+		if("on kissed")
+			trigger_text_self = "being kissed"
+			trigger_text_other = "they are kissed"
 		if("on orgasm")
 			trigger_text_self = "orgasming"
 			trigger_text_other = "they have an orgasm"
@@ -458,13 +453,10 @@
 		if("explode")
 			effect_text_self = "you to explode"
 			effect_text_other = "they are caught in a sudden explosion"
-			/*
+			
 		if("shapeshift")
 			effect_text_self = "you to change forms"
 			effect_text_other = "they change forms"
-		if("un-shapeshift")
-			effect_text_self = "you to return to normal"
-			effect_text_other = "they change forms"*/
 		if("gib")
 			effect_text_self = "you to violently break apart"
 			effect_text_other = "they violently break apart"
@@ -772,6 +764,8 @@
 		//"on break wall/door/window",
 		"on cut tree",
 		//"on craft",
+		"on kiss",
+		"on kissed",
 		"on orgasm",
 		//"on bite",
 		//"on jump",
@@ -828,8 +822,7 @@
 		//"difficult ambush",
 		"explode",
 		//"nugget",
-		/*"shapeshift",
-		"un-shapeshift",*/
+		"shapeshift",
 		"gib"
 	)
 
@@ -891,19 +884,92 @@
 			"reagent_type" = reagent_type
 		)
 
+	var/list/possible_shapes = list( //add more as needed
+		//animals
+		/mob/living/simple_animal/hostile/retaliate/rogue/cat,
+		/mob/living/simple_animal/hostile/retaliate/rogue/mudcrab,
+		/mob/living/simple_animal/hostile/retaliate/rogue/spider,
+		/mob/living/simple_animal/hostile/retaliate/rogue/mossback,
+		/mob/living/simple_animal/hostile/retaliate/rogue/wolf,
+		/mob/living/simple_animal/hostile/retaliate/rogue/mole,
+		/mob/living/simple_animal/hostile/retaliate/rogue/saiga,
+		/mob/living/simple_animal/hostile/retaliate/frog,
+		/mob/living/simple_animal/hostile/retaliate/bat,
+		/mob/living/simple_animal/hostile/retaliate/goose,
+		/mob/living/simple_animal/hostile/retaliate/rogue/wolf/badger,
+		/mob/living/simple_animal/hostile/retaliate/rogue/bigrat,
+		/mob/living/simple_animal/hostile/retaliate/rogue/wolf/bobcat,
+		/mob/living/simple_animal/hostile/retaliate/rogue/mudcrab/cabbit,
+		/mob/living/simple_animal/hostile/retaliate/rogue/direbear,
+		/mob/living/simple_animal/hostile/rogue/dragger,
+		/mob/living/simple_animal/hostile/retaliate/rogue/fox,
+		/mob/living/simple_animal/hostile/retaliate/rogue/headless,
+		/mob/living/simple_animal/hostile/retaliate/rogue/lamia,
+		/mob/living/simple_animal/hostile/retaliate/rogue/mimic,
+		/mob/living/simple_animal/hostile/retaliate/rogue/wolf/raccoon,
+		/mob/living/simple_animal/hostile/retaliate/smallrat,
+		//farm
+		/mob/living/simple_animal/hostile/retaliate/rogue/chicken,
+		/mob/living/simple_animal/hostile/retaliate/rogue/cow,
+		/mob/living/simple_animal/hostile/retaliate/rogue/goat,
+		/mob/living/simple_animal/hostile/retaliate/rogue/swine,
+		//spirits
+		/mob/living/simple_animal/hostile/rogue/haunt,
+		//trolls
+		/mob/living/simple_animal/hostile/retaliate/rogue/troll,
+		/mob/living/simple_animal/hostile/retaliate/rogue/troll/axe,
+		/mob/living/simple_animal/hostile/retaliate/rogue/troll/bog,
+		/mob/living/simple_animal/hostile/retaliate/rogue/troll/cave,
+		//elementals
+		/mob/living/simple_animal/hostile/retaliate/rogue/elemental/behemoth,
+		/mob/living/simple_animal/hostile/retaliate/rogue/elemental/colossus,
+		/mob/living/simple_animal/hostile/retaliate/rogue/elemental/crawler,
+		/mob/living/simple_animal/hostile/retaliate/rogue/elemental/warden,
+		//fae
+		/mob/living/simple_animal/hostile/retaliate/rogue/fae/dryad,
+		/mob/living/simple_animal/hostile/retaliate/rogue/fae/glimmerwing,
+		/mob/living/simple_animal/hostile/retaliate/rogue/fae/sprite,
+		/mob/living/simple_animal/hostile/retaliate/rogue/fae/sylph,
+		//infernal
+		/mob/living/simple_animal/hostile/retaliate/rogue/infernal/fiend,
+		/mob/living/simple_animal/hostile/retaliate/rogue/infernal/hellhound,
+		/mob/living/simple_animal/hostile/retaliate/rogue/infernal/imp,
+		/mob/living/simple_animal/hostile/retaliate/rogue/infernal/watcher,
+		//void
+		/mob/living/simple_animal/hostile/retaliate/rogue/leylinelycan,
+		/mob/living/simple_animal/hostile/retaliate/rogue/voidstoneobelisk,
+		/mob/living/simple_animal/hostile/retaliate/rogue/voiddragon,
+		//primordial
+		/mob/living/simple_animal/hostile/retaliate/rogue/primordial/fire,
+		/mob/living/simple_animal/hostile/retaliate/rogue/primordial/water,
+		/mob/living/simple_animal/hostile/retaliate/rogue/primordial/air,
+		//other
+		/mob/living/simple_animal/hostile/rogue/deepone,
+		/mob/living/simple_animal/hostile/rogue/sissean_jailer_mage,
+		/mob/living/simple_animal/hostile/rogue/spirit_vengeance,
+		/mob/living/simple_animal/hostile/rogue/skeleton,
+		/mob/living/simple_animal/hostile/retaliate/rogue/drider,
+		/mob/living/simple_animal/hostile/rogue/haunt
+	)
+
+	var/list/mob_list = list()
+	for(var/path in possible_shapes)
+		var/mob/living/simple_animal/A = path
+		mob_list[initial(A.name)] = path
+	
 	// ---- Mob-spawning effects ----
 	if(effect_proc in list("shapeshift", "easy ambush", "difficult ambush"))
 		var/mob_type = input(
 			src,
 			"Select the mob to spawn/give:",
 			"Mob Selection"
-		) as null|anything in subtypesof(/mob/living/simple_animal)
+		) as null|anything in sortList(mob_list)
 
 		if(!mob_type)
 			return
 
 		effect_args = list(
-			"mob_type" = mob_type
+			"mob_type" = mob_list[mob_type]
 		)
 
 	// ---- Duration ----

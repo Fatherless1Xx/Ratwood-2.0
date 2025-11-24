@@ -497,6 +497,9 @@
 	playsound(target.loc, pick('sound/vo/kiss (1).ogg','sound/vo/kiss (2).ogg'), 100, FALSE, -1)
 	if(user.mind)
 		record_round_statistic(STATS_KISSES_MADE)
+		if(target.mind)
+			SEND_SIGNAL(target, COMSIG_MOB_KISSED)
+		SEND_SIGNAL(user, COMSIG_MOB_KISS)
 
 /datum/emote/living/lick
 	key = "lick"
