@@ -30,6 +30,9 @@
 	allowed_taur_types = list(
 		/obj/item/bodypart/taur/spider,
 		/obj/item/bodypart/taur/horse,
+		/obj/item/bodypart/taur/canine,
+		/obj/item/bodypart/taur/drake,
+		/obj/item/bodypart/taur/feline,
 	)
 	default_features = MANDATORY_FEATURE_LIST
 	use_skintones = TRUE

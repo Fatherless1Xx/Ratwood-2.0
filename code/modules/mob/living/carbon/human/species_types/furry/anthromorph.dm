@@ -34,6 +34,9 @@
 	allowed_taur_types = list(
 		/obj/item/bodypart/taur/spider,
 		/obj/item/bodypart/taur/horse,
+		/obj/item/bodypart/taur/canine,
+		/obj/item/bodypart/taur/drake,
+		/obj/item/bodypart/taur/feline,
 	)
 
 	inherent_biotypes = MOB_ORGANIC|MOB_HUMANOID

@@ -271,7 +271,7 @@
 	regenerate_icons()
 	set_resting(FALSE)
 
-/mob/living/carbon/proc/Taurize(taur_type = /obj/item/bodypart/taur/horse, color = "#ffffff")
+/mob/living/carbon/proc/Taurize(taur_type = /obj/item/bodypart/taur, color = "#ffffff")
 	for(var/X in bodyparts)
 		var/obj/item/bodypart/O = X
 		// drop taur tails too

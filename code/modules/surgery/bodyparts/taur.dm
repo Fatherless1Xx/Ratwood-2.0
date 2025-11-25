@@ -91,3 +91,30 @@ GLOBAL_LIST_INIT(taur_types, subtypesof(/obj/item/bodypart/taur))
 	clip_mask_state = "clip_mask_saiga"
 
 	has_taur_color = TRUE
+
+/obj/item/bodypart/taur/canine
+	name = "Canine Body"
+
+	offset_x = -16
+	taur_icon_state = "canine_s"
+	clip_mask_state = "clip_mask_saiga"
+
+	has_taur_color = TRUE
+
+/obj/item/bodypart/taur/drake
+	name = "Drake Body"
+
+	offset_x = -16
+	taur_icon_state = "drake_s"
+	clip_mask_state = "clip_mask_saiga"
+
+	has_taur_color = TRUE
+
+/obj/item/bodypart/taur/feline
+	name = "Feline Body"
+
+	offset_x = -16
+	taur_icon_state = "feline_s"
+	clip_mask_state = "clip_mask_saiga"
+
+	has_taur_color = TRUE
