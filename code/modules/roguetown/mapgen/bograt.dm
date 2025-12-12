@@ -14,13 +14,13 @@
 	clusterCheckFlags = CLUSTER_CHECK_NONE
 	allowed_turfs = list(/turf/open/floor/rogue/dirt)
 	excluded_turfs = list(/turf/open/floor/rogue/dirt/road)
-	spawnableTurfs = list(/turf/open/floor/rogue/dirt/nospawn = 30)
+	spawnableTurfs = list(/turf/open/floor/rogue/dirt/nospawn = 40)
 	allowed_areas = list(/area/rogue/outdoors/bograt)
 
 /datum/mapGeneratorModule/bogratnospawnsgrass
 	clusterCheckFlags = CLUSTER_CHECK_NONE
 	allowed_turfs = list(/turf/open/floor/rogue/grass)
-	spawnableTurfs = list(/turf/open/floor/rogue/grass/nospawn = 30)
+	spawnableTurfs = list(/turf/open/floor/rogue/grass/nospawn = 40)
 	allowed_areas = list(/area/rogue/outdoors/bograt)
 
 /datum/mapGeneratorModule/bograt
