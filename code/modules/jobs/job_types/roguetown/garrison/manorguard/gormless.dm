@@ -5,7 +5,7 @@
 /datum/advclass/manorguard/gormless
 	name = "Watchman"//This and the path name need proper names. Unless we keep this, I guess. It's basically old watch.
 	tutorial = "Not quite the professional. Not quite the soldier. More akin to a brute they've given a hammer, some leftover equipment and told to face the enemy. \
-	Yet, you've proven yourself more valuable than a Warden. More reliable than something disposable, as you once were."
+	Yet, you've proven yourself more reliable than disposable. More than most can say."
 	outfit = /datum/outfit/job/roguetown/manorguard/gormless
 
 	category_tags = list(CTAG_MENATARMS)
