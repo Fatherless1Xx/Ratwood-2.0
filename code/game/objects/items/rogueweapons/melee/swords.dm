@@ -1150,8 +1150,8 @@
 	name = "stalker sabre"
 	desc = "A once elegant blade of mythril, diminishing under the suns gaze"
 	icon_state = "spidersaber"
-	force = 17
-	force_wielded = 20
+	force = 25 // same as elf sabre
+	force_wielded = 25
 	minstr = 7
 	wdefense = 9
 
