@@ -73,7 +73,7 @@
 			if("I'm a spider rider (your pet with you)")
 				l_hand = /obj/item/bait/spider
 			if("I prefer to be on foot (+1 for athletics)")
-				H.adjust_skillrank_up_to(/datum/skill/misc/athletics, SKILL_LEVEL_EXPERT, TRUE)
+				H.adjust_skillrank(/datum/skill/misc/athletics, 4, TRUE)
 
 	if(H.gender == FEMALE)
 		ADD_TRAIT(H, TRAIT_DEATHBYSNUSNU, TRAIT_GENERIC)
