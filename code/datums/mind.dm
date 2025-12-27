@@ -964,9 +964,9 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 							
 							// Add subtle examination text to indicate this is a loadout reproduction
 							if(I.desc)
-								I.desc += " The item suggests this may be a mere reproduction."
+								I.desc += " The overall look and feel of the item suggests this may be a mere reproduction."
 							else
-								I.desc = "The item suggests this may be a mere reproduction."
+								I.desc = "The overall look and feel of the item suggests this may be a mere reproduction."
 							
 							// Set sellprice to 0
 							I.sellprice = 0
