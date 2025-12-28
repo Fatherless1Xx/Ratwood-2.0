@@ -568,6 +568,26 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	else
 		loadout10 = null
 
+/datum/preferences/proc/_load_loadout_presets(S)
+	var/preset1_json
+	var/preset2_json
+	var/preset3_json
+	S["loadout_preset_1"] >> preset1_json
+	S["loadout_preset_2"] >> preset2_json
+	S["loadout_preset_3"] >> preset3_json
+	if(preset1_json)
+		loadout_preset_1 = json_decode(preset1_json)
+	else
+		loadout_preset_1 = null
+	if(preset2_json)
+		loadout_preset_2 = json_decode(preset2_json)
+	else
+		loadout_preset_2 = null
+	if(preset3_json)
+		loadout_preset_3 = json_decode(preset3_json)
+	else
+		loadout_preset_3 = null
+
 /datum/preferences/proc/_load_loadout_colours(S)
 	S["loadout_1_hex"] >> loadout_1_hex
 	S["loadout_2_hex"] >> loadout_2_hex
@@ -722,6 +742,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	_load_loadout9(S)
 	_load_loadout10(S)
 	_load_loadout_colours(S)
+	_load_loadout_presets(S)
 
 	_load_combat_music(S)
 	_load_barks(S)
@@ -1025,6 +1046,20 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		WRITE_FILE(S["loadout10"] , loadout10.type)
 	else
 		WRITE_FILE(S["loadout10"] , null)
+
+	// Save loadout presets as JSON
+	if(loadout_preset_1)
+		WRITE_FILE(S["loadout_preset_1"] , json_encode(loadout_preset_1))
+	else
+		WRITE_FILE(S["loadout_preset_1"] , null)
+	if(loadout_preset_2)
+		WRITE_FILE(S["loadout_preset_2"] , json_encode(loadout_preset_2))
+	else
+		WRITE_FILE(S["loadout_preset_2"] , null)
+	if(loadout_preset_3)
+		WRITE_FILE(S["loadout_preset_3"] , json_encode(loadout_preset_3))
+	else
+		WRITE_FILE(S["loadout_preset_3"] , null)
 
 	WRITE_FILE(S["loadout_1_hex"], loadout_1_hex)
 	WRITE_FILE(S["loadout_2_hex"], loadout_2_hex)
