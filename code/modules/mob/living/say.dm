@@ -211,10 +211,11 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	else
 		src.log_talk(message, LOG_SAY, forced_by=forced)
 
-	if(src.client)
+	if(client)
+		last_words = message
 		record_featured_stat(FEATURED_STATS_SPEAKERS, src)	//Yappin'
 	if(findtext(message, "Abyssor"))	//funni
-		GLOB.azure_round_stats[STATS_ABYSSOR_REMEMBERED]++
+		record_round_statistic(STATS_ABYSSOR_REMEMBERED)
 
 	spans |= speech_span
 
@@ -253,7 +254,6 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 		message = uppertext(message)
 	if(!message)
 		return
-
 	if(D.flags & SIGNLANG)
 		send_speech_sign(message, message_range, src, bubble_type, spans, language, message_mode, original_message)
 	else
@@ -382,6 +382,9 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	// Create map text prior to modifying message for goonchat
 	if(can_see_runechat(speaker) && can_hear())
 		create_chat_message(speaker, message_language, raw_message, spans, message_mode)
+	if(raw_message == last_heard_raw_message)
+		return
+	last_heard_raw_message = raw_message
 	// Recompose message for AI hrefs, language incomprehension.
 	message = compose_message(speaker, message_language, raw_message, radio_freq, spans, message_mode)
 	show_message(message, MSG_AUDIBLE, deaf_message, deaf_type)
@@ -397,11 +400,14 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	var/speaker_has_ceiling		= TRUE
 	var/turf/speaker_turf = get_turf(src)
 	var/turf/speaker_ceiling = get_step_multiz(speaker_turf, UP)
+	var/line_of_sight_only = FALSE
+
 	if(speaker_ceiling)
 		if(istransparentturf(speaker_ceiling))
 			speaker_has_ceiling = FALSE
 	if(eavesdropping_modes[message_mode])
 		eavesdrop_range = EAVESDROP_EXTRA_RANGE
+
 	if(message_mode != MODE_WHISPER)
 		Zs_too = TRUE
 		if(say_test(message) == "2")	//CIT CHANGE - ditto
@@ -409,6 +415,14 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 			Zs_yell = TRUE
 		if(say_test(message) == "3")	//Big "!!" shout
 			Zs_all = TRUE
+
+	var/area/speaker_area = get_area(src)
+	if(speaker_area && speaker_area.soundproof == TRUE)
+		line_of_sight_only = TRUE
+		Zs_too = FALSE
+		Zs_yell = FALSE
+		Zs_all = FALSE
+	
 	// AZURE EDIT: thaumaturgical loudness (from orisons)
 	if (has_status_effect(/datum/status_effect/thaumaturgy))
 		spans |= SPAN_REALLYBIG
@@ -430,6 +444,10 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 //	var/list/yellareas	//CIT CHANGE - adds the ability for yelling to penetrate walls and echo throughout areas
 	for(var/_M in GLOB.player_list)
 		var/mob/M = _M
+
+		if(line_of_sight_only && !isobserver(M)) // If soundproof area, we only care about hearers_in_view, except observers
+			continue
+
 		var/atom/movable/tocheck = M
 		if(isdullahan(M))
 			var/mob/living/carbon/human/target = M
@@ -473,6 +491,7 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 		var/turf/listener_ceiling = get_step_multiz(listener_turf, UP)
 		if(istype(_AM, /obj/item/listeningdevice)) // Very evil snowflake code.
 			hearall = TRUE
+
 		if(listener_ceiling)
 			listener_has_ceiling = TRUE
 			if(istransparentturf(listener_ceiling))
@@ -481,7 +500,7 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 			if((!Zs_too && !isobserver(AM)) || message_mode == MODE_WHISPER)
 				if(AM.z != src.z)
 					continue
-		if(Zs_too && AM.z != src.z && !Zs_all)
+		if(Zs_too && listener_turf.z != speaker_turf.z && !Zs_all)
 			if(!Zs_yell && !HAS_TRAIT(AM, TRAIT_KEENEARS) && !hearall)
 				if(listener_turf.z < speaker_turf.z && listener_has_ceiling)	//Listener is below the speaker and has a ceiling above them
 					continue
@@ -620,7 +639,7 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	if(cultslurring)
 		message = cultslur(message)
 
-	if (HAS_TRAIT(src, TRAIT_SIMPLESPEECH))
+	if(HAS_TRAIT(src, TRAIT_SIMPLESPEECH))
 		message = simplespeech(message)
 
 	message = capitalize(message)

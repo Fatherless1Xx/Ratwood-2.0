@@ -77,8 +77,6 @@
 	/// What is the mobs real name (name is overridden for disguises etc)
 	var/real_name = null
 
-	/// can this mob move freely in space (should be a trait)
-	var/spacewalk = FALSE
 
 	/**
 	  * back up of the real name during admin possession
@@ -168,6 +166,9 @@
 	var/job = null//Living
 	var/migrant_type = null
 	var/advjob = null
+
+	/// What social rank does this mob have
+	var/social_rank
 
 	/// A list of factions that this mob is currently in, for hostile mob targetting, amongst other things
 	var/list/faction = list("neutral")
@@ -276,6 +277,7 @@
 	var/setparrytime = 12
 	var/dodgetime = 12
 	var/magearmor = 0
+	var/scalearmor = 0
 
 	var/last_dodge = 0
 	var/last_parry = 0
@@ -314,3 +316,8 @@
 	// The last tick where we manually moved, or clicked on something in-world. Useful for preventing abuse of mobs with AFK players.
 	var/last_client_interact = 0
 	var/hanged = FALSE
+
+	var/datum/weakref/offered_item_ref
+
+	/// cooldown for the next time this person can offer
+	COOLDOWN_DECLARE(offer_cooldown)

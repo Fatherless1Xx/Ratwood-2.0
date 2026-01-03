@@ -71,6 +71,9 @@
 	var/boobed_detail = TRUE
 	var/sleeved_detail = TRUE
 	var/list/original_armor //For restoring broken armor
+	var/ducal_primary = FALSE // Uses duchy primary color for base color
+	var/ducal_detail = FALSE // Uses duchy secondary color for detail_color
+	var/ducal_altdetail = FALSE // Uses duchy secondary color for altdetail_color
 
 /obj/item/clothing/New()
 	..()
@@ -261,10 +264,10 @@
 			return
 		user.changeNext_move(CLICK_CD_MELEE)
 		M.visible_message(span_warning("[user] pats out the flames on [M] with [src]!"))
-		if(M.divine_fire_stacks > 0)
-			M.adjust_divine_fire_stacks(-2)
-		if(M.fire_stacks > 0)
-			M.adjust_fire_stacks(-2)
+		M.adjust_fire_stacks(-2, /datum/status_effect/fire_handler/fire_stacks/divine)
+		M.adjust_fire_stacks(-2)
+		M.adjust_fire_stacks(-2, /datum/status_effect/fire_handler/fire_stacks/sunder)
+		M.adjust_fire_stacks(-2, /datum/status_effect/fire_handler/fire_stacks/sunder/blessed)
 		take_damage(10, BURN, "fire")
 	else
 		return ..()
@@ -343,7 +346,7 @@
 			armorlist[x] = 0
 	..()
 
-/obj/item/clothing/obj_fix()
+/obj/item/clothing/obj_fix(mob/user, full_repair = TRUE)
 	..()
 	armor = original_armor
 

@@ -50,6 +50,8 @@
 /obj/item/bodypart/proc/heal_wounds(heal_amount)
 	if(!length(wounds))
 		return FALSE
+	if(HAS_TRAIT(owner, TRAIT_SILVER_WEAK) && owner.has_status_effect(/datum/status_effect/fire_handler/fire_stacks/sunder) || owner.has_status_effect(/datum/status_effect/fire_handler/fire_stacks/sunder/blessed))
+		return
 	var/healed_any = FALSE
 	for(var/datum/wound/wound as anything in wounds)
 		if(heal_amount <= 0)
@@ -100,12 +102,18 @@
 
 /// Returns the total bleed rate on this bodypart
 /obj/item/bodypart/proc/get_bleed_rate()
-	var/bleed_rate = 0
+	var/bleed_rate = bleeding
 	if(bandage && !HAS_BLOOD_DNA(bandage))
-		return 0
+		process_bandage(bleed_rate)
+		var/obj/item/natural/cloth/cloth = bandage
+		bleed_rate *= cloth.bandage_effectiveness
+		if(bleed_rate <= 1) //if the bleeding is below this after being bandaged, bleeding stops completely, but the bandage still takes damage
+			return 0
+		return bleed_rate
+	/*
 	for(var/datum/wound/wound in wounds)
 		if(istype(wound, /datum/wound))
-			bleed_rate += wound.bleed_rate
+			bleed_rate += wound.bleed_rate*/
 	for(var/obj/item/embedded as anything in embedded_objects)
 		if(!embedded.embedding.embedded_bloodloss)
 			continue
@@ -115,13 +123,15 @@
 	for(var/obj/item/grabbing/grab in grabbedby)
 		bleed_rate *= grab.bleed_suppressing
 	bleed_rate = max(round(bleed_rate, 0.1), 0)
-	var/surgery_flags = get_surgery_flags()
+
+	// temporarily disabling below because it is niche use and a LOT of performance drain
+	/*var/surgery_flags = get_surgery_flags()
 	if(surgery_flags & SURGERY_CLAMPED)
-		return min(bleed_rate, 0.5)
+		return min(bleed_rate, 0.5)*/
 	return bleed_rate
 
 /// Called after a bodypart is attacked so that wounds and critical effects can be applied
-/obj/item/bodypart/proc/bodypart_attacked_by(bclass = BCLASS_BLUNT, dam, mob/living/user, zone_precise = src.body_zone, silent = FALSE, crit_message = FALSE, armor)
+/obj/item/bodypart/proc/bodypart_attacked_by(bclass = BCLASS_BLUNT, dam, mob/living/user, zone_precise = src.body_zone, silent = FALSE, crit_message = FALSE, armor, obj/item/weapon)
 	RETURN_TYPE(/datum/wound)
 	if(!bclass || !dam || !owner || (owner.status_flags & GODMODE))
 		return null
@@ -151,11 +161,12 @@
 	var/datum/wound/dynwound = manage_dynamic_wound(bclass, dam, armor)
 
 	if(do_crit)
-		var/crit_attempt = try_crit(bclass, dam, user, zone_precise, silent, crit_message)
+		var/datum/component/silverbless/psyblessed = weapon?.GetComponent(/datum/component/silverbless)
+		var/sundering = HAS_TRAIT(owner, TRAIT_SILVER_WEAK) && istype(weapon) && weapon?.is_silver && psyblessed?.is_blessed
+		var/crit_attempt = try_crit(sundering ? BCLASS_SUNDER : bclass, dam, user, zone_precise, silent, crit_message)
 		if(crit_attempt)
 			return crit_attempt
 	return dynwound
-
 
 /obj/item/bodypart/proc/manage_dynamic_wound(bclass, dam, armor)
 	var/woundtype
@@ -241,6 +252,20 @@
 			attempted_wounds += /datum/wound/artery		//basically does sword-tier wounds.
 		if(prob(used))
 			attempted_wounds += /datum/wound/scarring
+	if((bclass in GLOB.sunder_bclasses))
+		if(HAS_TRAIT(owner, TRAIT_SILVER_WEAK) && !owner.has_status_effect(STATUS_EFFECT_ANTIMAGIC))
+			used = round(damage_dividend * 20 + (dam / 2))
+			if(prob(used))
+				attempted_wounds += /datum/wound/sunder
+	if((bclass in GLOB.charring_bclasses))
+		used = round(damage_dividend * 20 + (dam / 3))
+		if(user && istype(user.rmb_intent, /datum/rmb_intent/strong))
+			dam += 10
+		if(HAS_TRAIT(src, TRAIT_CRITICAL_WEAKNESS))
+			attempted_wounds += /datum/wound/burn/strong
+		if(prob(used))
+			attempted_wounds += /datum/wound/burn
+
 
 	// Check if critical resistance applies
 	var/has_crit_attempt = length(attempted_wounds)
@@ -257,7 +282,7 @@
 		var/datum/wound/applied = add_wound(wound_type, silent, crit_message)
 		if(applied)
 			if(user?.client)
-				GLOB.azure_round_stats[STATS_CRITS_MADE]++
+				record_round_statistic(STATS_CRITS_MADE)
 			return applied
 	return FALSE
 
@@ -300,7 +325,7 @@
 			else if(istype(user.rmb_intent, /datum/rmb_intent/aimed))
 				used += 10
 		if(prob(used))
-			if((zone_precise == BODY_ZONE_PRECISE_STOMACH))
+			if(zone_precise == BODY_ZONE_PRECISE_STOMACH)
 				attempted_wounds += /datum/wound/slash/disembowel
 			if(owner.has_wound(/datum/wound/fracture/chest) || (bclass in GLOB.artery_heart_bclasses) || HAS_TRAIT(owner, TRAIT_CRITICAL_WEAKNESS))
 				attempted_wounds += /datum/wound/artery/chest
@@ -316,6 +341,11 @@
 				attempted_wounds += /datum/wound/artery/chest
 			else
 				attempted_wounds += /datum/wound/scarring
+	if(bclass in GLOB.sunder_bclasses)
+		if(HAS_TRAIT(owner, TRAIT_SILVER_WEAK) && !owner.has_status_effect(STATUS_EFFECT_ANTIMAGIC))
+			used = round(damage_dividend * 20 + (dam / 2))
+			if(prob(used))
+				attempted_wounds += list(/datum/wound/sunder/chest)
 
 	// Check if critical resistance applies
 	var/has_crit_attempt = length(attempted_wounds)
@@ -332,7 +362,7 @@
 		var/datum/wound/applied = add_wound(wound_type, silent, crit_message)
 		if(applied)
 			if(user?.client)
-				GLOB.azure_round_stats[STATS_CRITS_MADE]++
+				record_round_statistic(STATS_CRITS_MADE)
 			return applied
 	return FALSE
 
@@ -433,6 +463,11 @@
 						attempted_wounds += /datum/wound/facial/disfigurement/nose
 				else if(zone_precise in knockout_zones)
 					attempted_wounds += /datum/wound/fracture/head/brain
+	if(bclass in GLOB.sunder_bclasses)
+		if(HAS_TRAIT(owner, TRAIT_SILVER_WEAK) && !owner.has_status_effect(STATUS_EFFECT_ANTIMAGIC))
+			used = round(damage_dividend * 20 + (dam / 2), 1)
+			if(prob(used))
+				attempted_wounds += /datum/wound/sunder/head
 
 	var/has_crit_attempt = length(attempted_wounds) || try_knockout
 	if(!has_crit_attempt)
@@ -461,11 +496,12 @@
 			winset(owner.client, "outputwindow.output", "max-lines=1")
 			winset(owner.client, "outputwindow.output", "max-lines=100")
 
+
 	for(var/wound_type in shuffle(attempted_wounds))
 		var/datum/wound/applied = add_wound(wound_type, silent, crit_message)
 		if(applied)
 			if(user?.client)
-				GLOB.azure_round_stats[STATS_CRITS_MADE]++
+				record_round_statistic(STATS_CRITS_MADE)
 			return applied
 	return FALSE
 
@@ -476,7 +512,7 @@
 	if(owner && ((owner.status_flags & GODMODE) || HAS_TRAIT(owner, TRAIT_PIERCEIMMUNE)))
 		return FALSE
 	if(istype(embedder, /obj/item/natural/worms/leech))
-		GLOB.azure_round_stats[STATS_LEECHES_EMBEDDED]++
+		record_round_statistic(STATS_LEECHES_EMBEDDED)
 	LAZYADD(embedded_objects, embedder)
 	embedder.is_embedded = TRUE
 	embedder.forceMove(src)
@@ -493,6 +529,10 @@
 		if(crit_message)
 			owner.next_attack_msg += " <span class='userdanger'>[embedder] runs through [owner]'s [src]!</span>"
 		update_disabled()
+		if(embedder.is_silver && HAS_TRAIT(owner, TRAIT_SILVER_WEAK) && !owner.has_status_effect(STATUS_EFFECT_ANTIMAGIC))
+			var/datum/component/silverbless/psyblessed = embedder.GetComponent(/datum/component/silverbless)
+			owner.adjust_fire_stacks(1, psyblessed?.is_blessed ? /datum/status_effect/fire_handler/fire_stacks/sunder/blessed : /datum/status_effect/fire_handler/fire_stacks/sunder)
+			to_chat(owner, span_danger("the [embedder] in your body painfully jostles!"))
 	return TRUE
 
 /// Removes an embedded object from this bodypart
@@ -513,7 +553,6 @@
 	if(owner)
 		if(!owner.has_embedded_objects())
 			owner.clear_alert("embeddedobject")
-			SEND_SIGNAL(owner, COMSIG_CLEAR_MOOD_EVENT, "embedded")
 		update_disabled()
 	return TRUE
 
@@ -524,26 +563,30 @@
 	new_bandage.forceMove(src)
 	return TRUE
 
-/obj/item/bodypart/proc/try_bandage_expire()
+/obj/item/bodypart/proc/process_bandage(bleed_rate)
 	if(!bandage)
 		return FALSE
-	var/bandage_effectiveness = 0.5
+	var/obj/item/natural/cloth/cloth
 	if(istype(bandage, /obj/item/natural/cloth))
-		var/obj/item/natural/cloth/cloth = bandage
-		bandage_effectiveness = cloth.bandage_effectiveness
-	var/highest_bleed_rate = 0
-	for(var/datum/wound/wound as anything in wounds)
-		if(wound.bleed_rate < highest_bleed_rate)
-			continue
-		highest_bleed_rate = wound.bleed_rate
-	for(var/obj/item/embedded as anything in embedded_objects)
-		if(!embedded.embedding.embedded_bloodloss)
-			continue
-		if(embedded.embedding.embedded_bloodloss < highest_bleed_rate)
-			continue
-		highest_bleed_rate = embedded.embedding.embedded_bloodloss
-	highest_bleed_rate = round(highest_bleed_rate, 0.1)
-	if(bandage_effectiveness < highest_bleed_rate)
+		cloth = bandage
+	if(cloth.medicine_quality)
+		if(cloth.medicine_amount >= 0)
+			heal_wounds(cloth.medicine_quality * 1)
+			heal_damage(cloth.medicine_quality * 1, cloth.medicine_quality * 1, 0, null, FALSE)
+			cloth.medicine_amount -= 0.25
+		else
+			cloth.medicine_amount = 0
+			cloth.medicine_quality = 0
+			cloth.detail_color = null
+			cloth.desc = initial(cloth.desc)
+			cloth.update_icon()
+	if(!bleed_rate)
+		return FALSE
+	var/bandage_health = 1
+	if(istype(bandage, /obj/item/natural/cloth))
+		cloth.bandage_health -= bleed_rate
+		bandage_health = cloth.bandage_health
+	if(bandage_health <= 0)
 		return bandage_expire()
 	return FALSE
 
@@ -554,7 +597,7 @@
 	if(!bandage)
 		return FALSE
 	if(owner.stat != DEAD)
-		to_chat(owner, span_warning("Blood soaks through the bandage on my [name]."))
+		owner.visible_message(span_warning("Blood soaks through the bandage on [owner]'s [name]."), span_warning("Blood soaks through the bandage on my [name]."), vision_distance = 3)
 	return bandage.add_mob_blood(owner)
 
 /obj/item/bodypart/proc/remove_bandage()
@@ -591,6 +634,7 @@
 
 /// Returns surgery flags applicable to this bodypart
 /obj/item/bodypart/proc/get_surgery_flags()
+	// oh sweet mother of christ what the FUCK is this. this is called EVERY TIME BLEED RATE IS CHECKED.
 	var/returned_flags = NONE
 	if(can_bloody_wound())
 		returned_flags |= SURGERY_BLOODY

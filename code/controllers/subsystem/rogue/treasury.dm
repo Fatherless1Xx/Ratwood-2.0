@@ -55,9 +55,12 @@ SUBSYSTEM_DEF(treasury)
 	var/total_noble_income = 0
 	var/total_import = 0
 	var/total_export = 0
+	var/obj/structure/roguemachine/steward/steward_machine // Reference to the nerve master
+	var/initial_payment_done = FALSE // Flag to track if initial round-start payment has been distributed
 
 /datum/controller/subsystem/treasury/Initialize()
 	treasury_value = rand(1000, 2000)
+	force_set_round_statistic(STATS_STARTING_TREASURY, treasury_value)
 
 	for(var/path in subtypesof(/datum/roguestock/bounty))
 		var/datum/D = new path
@@ -74,6 +77,9 @@ SUBSYSTEM_DEF(treasury)
 	if(world.time > next_treasury_check)
 		next_treasury_check = world.time + TREASURY_TICK_AMOUNT
 		if(SSticker.current_state == GAME_STATE_PLAYING)
+			if(!initial_payment_done) // Distribute initial payments once at round start
+				initial_payment_done = TRUE
+				distribute_daily_payments()
 			for(var/datum/roguestock/X in stockpile_datums)
 				if(!X.stable_price && !X.mint_item)
 					if(X.demand < initial(X.demand))
@@ -88,6 +94,7 @@ SUBSYSTEM_DEF(treasury)
 			if(istype(VB))
 				VB.update_icon()
 		give_money_treasury(RURAL_TAX, "Rural Tax Collection") //Give the King's purse to the treasury
+		record_round_statistic(STATS_RURAL_TAXES_COLLECTED, RURAL_TAX)
 		total_rural_tax += RURAL_TAX
 		auto_export()
 
@@ -144,6 +151,7 @@ SUBSYSTEM_DEF(treasury)
 
 	if (amt > 0)
 		// Player received money
+		record_round_statistic(STATS_DIRECT_TREASURY_TRANSFERS, amt)
 		if(source)
 			send_ooc_note("<b>NERVELOCK:</b> You received [amt]m. ([source])", name = target_name)
 			log_to_steward("+[amt] from treasury to [target_name] ([source])")
@@ -152,6 +160,7 @@ SUBSYSTEM_DEF(treasury)
 			log_to_steward("+[amt] from treasury to [target_name]")
 	else
 		// Player was fined
+		record_round_statistic(STATS_FINES_INCOME, amt)
 		if(source)
 			send_ooc_note("<b>NERVELOCK:</b> You were fined [amt]m. ([source])", name = target_name)
 			log_to_steward("[target_name] was fined [amt] ([source])")
@@ -217,12 +226,32 @@ SUBSYSTEM_DEF(treasury)
 /datum/controller/subsystem/treasury/proc/distribute_estate_incomes()
 	for(var/mob/living/welfare_dependant in noble_incomes)
 		var/how_much = noble_incomes[welfare_dependant]
+		record_round_statistic(STATS_NOBLE_INCOME_TOTAL, how_much)
 		give_money_treasury(how_much, silent = TRUE)
 		total_noble_income += how_much
 		if(welfare_dependant.job == "Merchant")
 			give_money_account(how_much, welfare_dependant, "The Guild")
 		else
 			give_money_account(how_much, welfare_dependant, "Noble Estate")
+
+/datum/controller/subsystem/treasury/proc/distribute_daily_payments()
+	if(!steward_machine || !steward_machine.daily_payments || !steward_machine.daily_payments.len)
+		return
+
+	var/total_paid = 0
+	for(var/job_name in steward_machine.daily_payments)
+		var/payment_amount = steward_machine.daily_payments[job_name]
+		for(var/mob/living/carbon/human/H in GLOB.human_list)
+			if(H.job == job_name)
+				// Skip payment if wages are suspended
+				if(HAS_TRAIT(H, TRAIT_WAGES_SUSPENDED))
+					continue
+				if(give_money_account(payment_amount, H, "Daily Wage"))
+					total_paid += payment_amount
+					record_round_statistic(STATS_WAGES_PAID)
+
+	if(total_paid > 0)
+		log_to_steward("Daily wages distributed: [total_paid]m total")
 
 /datum/controller/subsystem/treasury/proc/do_export(var/datum/roguestock/D, silent = FALSE)
 	if((D.held_items[1] < D.importexport_amt))
@@ -237,6 +266,7 @@ SUBSYSTEM_DEF(treasury)
 	SStreasury.treasury_value += amt
 	SStreasury.total_export += amt
 	SStreasury.log_to_steward("+[amt] exported [D.name]")
+	record_round_statistic(STATS_STOCKPILE_EXPORTS_VALUE, amt)
 	if(!silent && amt >= EXPORT_ANNOUNCE_THRESHOLD) //Only announce big spending.
 		scom_announce("Rotwood Vale exports [D.name] for [amt] mammon.")
 	D.lower_demand()
@@ -303,8 +333,18 @@ SUBSYSTEM_DEF(treasury)
 	if(HAS_TRAIT(person, TRAIT_NOBLE))
 		return taxation_cat_settings[TAX_CAT_NOBLE]["fineExemption"]
 	else if(HAS_TRAIT(person, TRAIT_RESIDENT) || (person.job in GLOB.yeoman_positions))
-		return taxation_cat_settings[TAX_CAT_NOBLE]["fineExemption"]
+		return taxation_cat_settings[TAX_CAT_YEOMEN]["fineExemption"]
 	else if(person.job in GLOB.church_positions)
 		return taxation_cat_settings[TAX_CAT_CHURCH]["fineExemption"]
 	else
 		return taxation_cat_settings[TAX_CAT_PEASANTS]["fineExemption"]
+
+/// Checks if there is a valid amount in the treasury, if so, withdraw that amount and log it
+/// Currently only used by Chimeric heartbeasts
+/datum/controller/subsystem/treasury/proc/withdraw_money_treasury(amt, target)
+	if(!amt || treasury_value < amt)
+		return FALSE // Not enough funds
+
+	treasury_value -= amt
+	log_to_steward("-[amt] withdrawn from treasury by [target]")
+	return TRUE

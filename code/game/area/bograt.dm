@@ -70,6 +70,7 @@
 
 /area/rogue/outdoors/bograt/west
 	name = "Western Terrorbog"
+	first_time_text = "The Terrormarsh"
 	threat_region = THREAT_REGION_ROCKHILL_BOG_WEST
 	ambush_mobs = list(
 		/mob/living/carbon/human/species/skeleton/npc/rockhill = 15,
@@ -86,15 +87,17 @@
 		new /datum/ambush_config/deepone_party = 20,)
 	
 /area/rogue/outdoors/bograt/sunken
-	name = "Sunken Mire"
-	first_time_text = "THE SUNKEN MIRE"
-	threat_region = THREAT_REGION_ROCKHILL_BOG_WEST
+	name = "Cursed Mire"
+	first_time_text = "THE CURSED MIRE"
+	threat_region = THREAT_REGION_ROCKHILL_BOG_SUNKMIRE
+	droning_sound = 'sound/music/area/underworlddrone.ogg'
 	ambush_mobs = list(
 		/mob/living/simple_animal/hostile/retaliate/rogue/troll/bog = 20,
 		/mob/living/simple_animal/hostile/retaliate/rogue/spider/rock = 40,
 		/mob/living/carbon/human/species/skeleton/npc/bogguard = 20,
 		/mob/living/carbon/human/species/skeleton/npc/rockhill = 15,
 		/mob/living/carbon/human/species/goblin/npc/ambush/moon = 30,
+		/mob/living/simple_animal/hostile/retaliate/rogue/wolf_undead = 15,
 		new /datum/ambush_config/mirespiders_ambush = 110,
 		new /datum/ambush_config/mirespiders_crawlers = 25,
 		new /datum/ambush_config/mirespiders_aragn = 10,

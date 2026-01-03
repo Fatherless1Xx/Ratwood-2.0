@@ -40,6 +40,19 @@
 				return
 			else
 				follower.sate_addiction()
+		if(HAS_TRAIT(follower, TRAIT_CONVICTION))
+			follower.apply_status_effect(/datum/status_effect/buff/healing/prayer, 2)//Mend those wounds.
+			follower.reagents.add_reagent(/datum/reagent/consumable/nutriment, 3)//Just a small sum.
+
+		//Can the Martyr hear this?
+		if(!(patron in ALL_INHUMEN_PATRONS))
+			for (var/mob/living/player in GLOB.player_list)
+				if (player.stat == DEAD || isbrain(player))
+					continue
+				//Do they even have the boon/trait? If so, send it and heal them.
+				if (HAS_TRAIT(player, TRAIT_CONVICTION))
+					to_chat(player, span_dead("I hear the passing of whispers, knowledge forbidden to share: <br>[span_info(prayer)]"))
+					player.apply_status_effect(/datum/status_effect/buff/healing/prayer_power, 6)//GET IT?
 
 	/* admin stuff - tells you the followers name, key, and what patron they follow */
 	var/follower_ident = "[follower.key]/([follower.real_name]) (follower of [patron])"
@@ -51,9 +64,6 @@
 
 	if(SEND_SIGNAL(follower, COMSIG_CARBON_PRAY, prayer) & CARBON_PRAY_CANCEL)
 		return
-
-	for(var/mob/living/LICKMYBALLS in hearers(2,src))	// Lickmyballs = person in crit.
-		LICKMYBALLS.succumb_timer = world.time			//..succumb timer does nothing rn btw..
 
 /datum/emote/living/meditate
 	key = "meditate"
@@ -453,6 +463,7 @@
 	message = "blows a kiss."
 	message_param = "kisses %t."
 	emote_type = EMOTE_VISIBLE
+	use_params_for_runechat = TRUE
 
 /mob/living/carbon/human/verb/emote_kiss()
 	set name = "Kiss"
@@ -498,19 +509,22 @@
 				message_param = "kisses %t on \the [parse_zone(H.zone_selected)]."
 	playsound(target.loc, pick('sound/vo/kiss (1).ogg','sound/vo/kiss (2).ogg'), 100, FALSE, -1)
 	if(user.mind)
-		GLOB.azure_round_stats[STATS_KISSES_MADE]++
+		record_round_statistic(STATS_KISSES_MADE)
+		if(target.mind)
+			SEND_SIGNAL(target, COMSIG_MOB_KISSED)
+		SEND_SIGNAL(user, COMSIG_MOB_KISS)
 
 /datum/emote/living/lick
 	key = "lick"
 	key_third_person = "licks"
-	message = ""
+	message = "licking."
 	message_param = "licks %t."
 	emote_type = EMOTE_VISIBLE
+	use_params_for_runechat = TRUE
 
 /mob/living/carbon/human/verb/emote_lick()
 	set name = "Lick"
 	set category = "Emotes"
-
 	emote("lick", intentional = TRUE, targetted = TRUE)
 
 /datum/emote/living/lick/adjacentaction(mob/user, mob/target)
@@ -528,9 +542,9 @@
 				do_change = TRUE
 		if(do_change)
 			if(J.zone_selected == BODY_ZONE_PRECISE_MOUTH)
-				message_param = "licks %t on the lips."
+				message_param = "licks %t lips."
 			else if(J.zone_selected == BODY_ZONE_PRECISE_EARS)
-				message_param = "licks %t on the ear."
+				message_param = "licks the ear of %t."
 				var/mob/living/carbon/human/O = target
 				if(iself(O) || ishalfelf(O) || isdarkelf(O))
 					if(!O.cmode)
@@ -545,7 +559,7 @@
 				message_param = "licks %t on the cheek."
 			else
 				message_param = "licks %t on \the [parse_zone(J.zone_selected)]."
-	playsound(target.loc, pick("sound/vo/lick.ogg"), 100, FALSE, -1)	
+	playsound(target.loc, pick("sound/vo/lick.ogg"), 100, FALSE, -1)
 
 /datum/emote/living/spit
 	key = "spit"
@@ -603,39 +617,47 @@
 	if(ishuman(target))
 		playsound(target.loc, pick('sound/body/hug.ogg'), 100, FALSE, -1)
 		if(user.mind)
-			GLOB.azure_round_stats[STATS_HUGS_MADE]++
+			record_round_statistic(STATS_HUGS_MADE)
 			SEND_SIGNAL(user, COMSIG_MOB_HUGGED, target)
 
 /datum/emote/living/holdbreath
-	key = "hold"
-	key_third_person = "holds"
-	message = "begins to hold their breath."
-	stat_allowed = SOFT_CRIT
+    key = "hold"
+    key_third_person = "holds"
+    message = null
 
 /mob/living/carbon/human/verb/emote_hold()
-	set name = "Hold Breath"
-	set category = "Emotes"
-
-	emote("hold", intentional = TRUE)
+    set name = "Hold Breath"
+    set category = "Emotes"
+    emote("hold", intentional = TRUE)
 
 /datum/emote/living/holdbreath/can_run_emote(mob/living/user, status_check = TRUE, intentional)
-	. = ..()
-	if(. && intentional && !HAS_TRAIT(user, TRAIT_HOLDBREATH) && !HAS_TRAIT(user, TRAIT_PARALYSIS))
-		to_chat(user, span_warning("I'm not desperate enough to do that."))
-		return FALSE
+    . = ..()
+    if(!.)
+        return FALSE
+    return TRUE
 
 /datum/emote/living/holdbreath/run_emote(mob/user, params, type_override, intentional)
-	. = ..()
-	if(.)
-		if(HAS_TRAIT(user, TRAIT_HOLDBREATH))
-			REMOVE_TRAIT(user, TRAIT_HOLDBREATH, "[type]")
-		else
-			ADD_TRAIT(user, TRAIT_HOLDBREATH, "[type]")
+    if(!ishuman(user))
+        return FALSE
 
-/datum/emote/living/holdbreath/select_message_type(mob/user, intentional)
-	. = ..()
-	if(HAS_TRAIT(user, TRAIT_HOLDBREATH))
-		. = "stops holding their breath."
+    var/mob/living/carbon/human/H = user
+    var/is_holding = HAS_TRAIT(H, TRAIT_HOLDBREATH)
+
+    if(is_holding)
+        REMOVE_TRAIT(H, TRAIT_HOLDBREATH, "[type]")
+        H.visible_message(
+            span_notice("[H] stops holding [H.p_their()] breath."),
+            span_notice("You stop holding your breath.")
+        )
+    else
+        ADD_TRAIT(H, TRAIT_HOLDBREATH, "[type]")
+        H.visible_message(
+            span_notice("[H] begins to hold [H.p_their()] breath."),
+            span_notice("You begin to hold your breath.")
+        )
+
+    return TRUE
+
 
 /datum/emote/living/slap
 	key = "slap"
@@ -701,7 +723,7 @@
 /datum/emote/living/laugh/run_emote(mob/user, params, type_override, intentional, targetted)
 	. = ..()
 	if(. && user.mind)
-		GLOB.azure_round_stats[STATS_LAUGHS_MADE]++
+		record_round_statistic(STATS_LAUGHS_MADE)
 
 /datum/emote/living/laugh
 	key = "laugh"
@@ -822,6 +844,8 @@
 	if(.)
 		for(var/mob/living/carbon/human/L in viewers(7,user))
 			if(L == user)
+				if(L.has_flaw(/datum/charflaw/addiction/masochist))
+					L.sate_addiction()
 				continue
 			if(L.has_flaw(/datum/charflaw/addiction/sadist))
 				L.sate_addiction()
@@ -845,7 +869,9 @@
 	if(.)
 		for(var/mob/living/carbon/human/L in viewers(7,user))
 			if(L == user)
-				continue
+				if(L.has_flaw(/datum/charflaw/addiction/masochist))
+					L.sate_addiction()
+				continue // i hope this shit works.
 			if(L.has_flaw(/datum/charflaw/addiction/sadist))
 				L.sate_addiction()
 
@@ -861,7 +887,9 @@
 	if(.)
 		for(var/mob/living/carbon/human/L in viewers(7,user))
 			if(L == user)
-				continue
+				if(L.has_flaw(/datum/charflaw/addiction/masochist))
+					L.sate_addiction()
+				continue // i hope this shit works.
 			if(L.has_flaw(/datum/charflaw/addiction/sadist))
 				L.sate_addiction()
 
@@ -967,7 +995,7 @@
 /datum/emote/living/rage/run_emote(mob/user, params, type_override, intentional, targetted)
 	. = ..()
 	if(. && user.mind)
-		GLOB.azure_round_stats[STATS_WARCRIES]++
+		record_round_statistic(STATS_WARCRIES)
 
 /datum/emote/living/attnwhistle
 	key = "attnwhistle"
@@ -1648,6 +1676,19 @@
 
 	emote("blink", intentional = TRUE)
 
+/datum/emote/living/stomp
+	key = "stomp"
+	key_third_person = "stomps!"
+	message = "stomps!"
+	emote_type = EMOTE_VISIBLE
+	show_runechat = FALSE
+
+/mob/living/carbon/human/verb/emote_stomp()
+	set name = "Stomp"
+	set category = "Noises"
+
+	emote("stomp", intentional = TRUE)
+
 /datum/emote/living/snap2
 	key = "snap2"
 	key_third_person = "finger snaps twice!"
@@ -1858,6 +1899,19 @@
 
 	emote("yip", intentional = TRUE)
 
+/datum/emote/living/yap
+	key = "yap"
+	key_third_person = "yaps"
+	message = "yaps!"
+	emote_type = EMOTE_AUDIBLE
+	message_muffled = "makes a muffled yap!"
+	is_animal = TRUE
+	show_runechat = FALSE
+/mob/living/carbon/human/verb/yap()
+	set name = "Yap"
+	set category = "Noises"
+	emote("yap", intentional = TRUE)
+
 /* Vomit emote */
 /mob/living/carbon/human/verb/emote_vomit()
 	set name = "Vomit"
@@ -1929,3 +1983,280 @@
 	set category = "Noises"
 
 	emote("sniff", intentional = TRUE)
+
+/datum/emote/living/stat_roll
+	var/delay = 2.5 SECONDS
+	var/list/attempt_message_list
+	var/list/success_message_list
+	var/list/failure_message_list
+
+/datum/emote/living/stat_roll/run_emote(mob/user, params, type_override, intentional = FALSE)
+	. = ..()
+	if(.)
+		sleep(delay)
+
+		var/mob/living/living = user
+		var/chance_per_point = 5
+		var/success = FALSE
+		var/chance = 0
+
+		switch(key)
+			if("strength")
+				success = living.stat_roll(STAT_STRENGTH, chance_per_point)
+				chance = living.get_stat(STAT_STRENGTH)
+			if("perception")
+				success = living.stat_roll(STAT_PERCEPTION, chance_per_point)
+				chance = living.get_stat(STAT_PERCEPTION)
+			if("intelligence")
+				success = living.stat_roll(STAT_INTELLIGENCE, chance_per_point)
+				chance = living.get_stat(STAT_INTELLIGENCE)
+			if("constitution")
+				success = living.stat_roll(STAT_CONSTITUTION, chance_per_point)
+				chance = living.get_stat(STAT_CONSTITUTION)
+			if("willpower")
+				success = living.stat_roll(STAT_WILLPOWER, chance_per_point)
+				chance = living.get_stat(STAT_WILLPOWER)
+			if("speed")
+				success = living.stat_roll(STAT_SPEED, chance_per_point)
+				chance = living.get_stat(STAT_SPEED)
+			if("fortune")
+				success = living.stat_roll(STAT_FORTUNE, chance_per_point)
+				chance = living.get_stat(STAT_FORTUNE)
+
+		chance *= chance_per_point
+
+		var/msg = success ? span_green("SUCCEEDS and [pick(success_message_list)]") : span_danger("FAILS and [pick(failure_message_list)] [chance]%")
+
+		msg = replace_pronoun(user, msg)
+
+		if(!msg)
+			return
+
+		// A COMSIG here would be nice, in my attempts it sadly didn't work out well for the relay.
+		var/atom/movable/emotelocation = user
+		var/mob/living/carbon/human/human
+		if(ishuman(user))
+			human = user
+
+		var/obj/item/organ/dullahan_vision/vision
+		var/datum/species/dullahan/dullahan
+		if(isdullahan(user))
+			dullahan = human.dna.species
+			vision = human.getorganslot(ORGAN_SLOT_HUD)
+			if(dullahan.headless && vision.viewing_head)
+				emotelocation = dullahan.my_head
+
+		user.log_message(msg, LOG_EMOTE)
+		var/pre_color_msg = msg
+		if (use_params_for_runechat) // apply puncutation stripping here where appropriate
+			var/static/regex/regex = regex(@"[,.!?]", "g")
+			pre_color_msg = regex.Replace(pre_color_msg, "")
+			pre_color_msg = trim(pre_color_msg, MAX_MESSAGE_LEN)
+		// Checks to see if we're emoting on the body while we have a head, or if we're emoting on the head.
+		if(human && human.voice_color)
+			msg = "<span style='color:#[human.voice_color];text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;'><b>[emotelocation]</b></span> " + msg
+		else
+			msg = "<b>[emotelocation]</b> " + msg
+		for(var/mob/M in GLOB.dead_mob_list)
+			if(!M.client || isnewplayer(M))
+				continue
+			var/T = get_turf(emotelocation)
+			if(M.stat == DEAD && M.client && (M.client.prefs?.chat_toggles & CHAT_GHOSTSIGHT) && !(M in viewers(T, null)))
+				M.show_message(msg)
+		var/runechat_msg_to_use = null
+		if(show_runechat)
+			runechat_msg_to_use = runechat_msg ? runechat_msg : pre_color_msg
+		emotelocation.visible_message(msg, runechat_message = runechat_msg_to_use, log_seen = SEEN_LOG_EMOTE)
+
+/datum/emote/living/stat_roll/select_message_type(mob/user, msg, intentional)
+	return pick(attempt_message_list)
+
+/datum/emote/living/stat_roll/strength
+	key = "strength"
+	key_third_person = "str"
+	attempt_message_list = list(
+		"tests their strength...",
+		"puts their back into it...",
+		"begins to flex...",
+	)
+
+	success_message_list = list(
+		"is brimming with power!",
+		"is truly beefy!",
+		"shows off their muscle!",
+	)
+
+	failure_message_list = list(
+		"is a little wet noodle...",
+		"would lose in an arm wrestling match against a rous...",
+		"should eat more sausage...",
+	)
+
+/mob/living/carbon/human/verb/emote_strength_roll()
+	set name = "Roll Strength"
+	set category = "Emotes"
+
+	emote("strength", intentional = TRUE)
+
+/datum/emote/living/stat_roll/perception
+	key = "perception"
+	key_third_person = "per"
+	attempt_message_list = list(
+		"takes a good, long look...",
+		"focuses in...",
+		"squints...",
+	)
+
+	success_message_list = list(
+		"has eyes like a hawk!",
+		"sees what others don't!",
+		"has perfect 20/20 vision!",
+	)
+
+	failure_message_list = list(
+		"is totally oblivious...",
+		"has cataracts in their eyes...",
+		"is blind...",
+	)
+
+/mob/living/carbon/human/verb/emote_perception_roll()
+	set name = "Roll Perception"
+	set category = "Emotes"
+
+	emote("perception", intentional = TRUE)
+
+
+/datum/emote/living/stat_roll/intelligence
+	key = "intelligence"
+	key_third_person = "int"
+	attempt_message_list = list(
+		"thinks hard...",
+		"furrows their brows...",
+		"rubs their chin...",
+	)
+
+	success_message_list = list(
+		"is a genius!",
+		"has a mind sharp as a whip!",
+		"knows what they're doing!",
+	)
+
+	failure_message_list = list(
+		"is as dumb as a rock...",
+		"has an empty head...",
+		"couldn't put 2 and 2 together...",
+	)
+
+/mob/living/carbon/human/verb/emote_intelligence_roll()
+	set name = "Roll Intelligence"
+	set category = "Emotes"
+
+	emote("intelligence", intentional = TRUE)
+
+/datum/emote/living/stat_roll/constitution
+	key = "constitution"
+	key_third_person = "con"
+	attempt_message_list = list(
+		"tests their toughness...",
+		"braces for impact...",
+		"prepares to endure...",
+	)
+
+	success_message_list = list(
+		"doesn't even flinch!",
+		"is solid as an oak!",
+		"is one tough nut to crack!",
+	)
+
+	failure_message_list = list(
+		"has paper skin...",
+		"would be torn to shreds by a light breeze...",
+		"has a glass jaw...",
+	)
+
+/mob/living/carbon/human/verb/emote_constitution_roll()
+	set name = "Roll Constitution"
+	set category = "Emotes"
+
+	emote("constitution", intentional = TRUE)
+
+/datum/emote/living/stat_roll/willpower
+	key = "willpower"
+	key_third_person = "wil"
+	attempt_message_list = list(
+		"tests their willpower...",
+		"gathers their courage...",
+		"prepares to use their determination...",
+	)
+
+	success_message_list = list(
+		"proves mighty!",
+		"never gives up!",
+		"persists through anything!",
+	)
+
+	failure_message_list = list(
+		"is a weak willed chicken...",
+		"gives up trying...",
+		"faints when they get a splinter...",
+	)
+
+/mob/living/carbon/human/verb/emote_willpower_roll()
+	set name = "Roll Willpower"
+	set category = "Emotes"
+
+	emote("willpower", intentional = TRUE)
+
+/datum/emote/living/stat_roll/speed
+	key = "speed"
+	key_third_person = "spd"
+	attempt_message_list = list(
+		"prepares their moves...",
+		"starts to get limber...",
+		"tries to get speedy...",
+	)
+
+	success_message_list = list(
+		"is in perfect control!",
+		"is as agile as a cat!",
+		"is very flexible!",
+	)
+
+	failure_message_list = list(
+		"has two left feet...",
+		"trips over themselves...",
+		"is slower than a snail...",
+	)
+
+/mob/living/carbon/human/verb/emote_speed_roll()
+	set name = "Roll Speed"
+	set category = "Emotes"
+
+	emote("speed", intentional = TRUE)
+
+/datum/emote/living/stat_roll/fortune
+	key = "fortune"
+	key_third_person = "for"
+	attempt_message_list = list(
+		"tries their fortune...",
+		"takes a chance...",
+		"prepares to gamble...",
+	)
+
+	success_message_list = list(
+		"could make an arrow turn around and climb back into the bow!",
+		"has a rabbit's paw in their pocket!",
+		"persists through pure luck!",
+	)
+
+	failure_message_list = list(
+		"realizes the game was rigged from the start...",
+		"gets dealt a bad hand...",
+		"has the odds stacked against them...",
+	)
+
+/mob/living/carbon/human/verb/emote_fortune_roll()
+	set name = "Roll Fortune"
+	set category = "Emotes"
+
+	emote("fortune", intentional = TRUE)
