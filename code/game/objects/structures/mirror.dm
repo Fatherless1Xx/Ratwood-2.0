@@ -301,7 +301,7 @@
 	var/mob/living/carbon/human/H = user
 
 	if(HAS_TRAIT(H, TRAIT_MIRROR_MAGIC))
-		to_chat(H, span_info("You tilt your jaw from side to side, concentrating on the glamoring magicks limning your form..."))
+		to_chat(H, span_info("You gaze into the mirror, concentrating on the glamoring magicks limning your form..."))
 		if(do_after(H, 3 SECONDS))
 			perform_mirror_transform(H)
 		return
@@ -325,3 +325,21 @@
 		H.apply_status_effect(/datum/status_effect/buff/xylix_joy)
 		to_chat(H, span_info("My beauty brings a smile to my face, and fortune to my steps!"))
 	return
+
+/obj/item/handmirror/afterattack(atom/target, mob/user, proximity_flag, click_parameters)
+	. = ..()
+	if(!proximity_flag)
+		return
+	if(!ishuman(user))
+		return
+	if(!istype(target, /turf/open/water))
+		return
+	
+	var/mob/living/carbon/human/H = user
+	if(HAS_TRAIT(H, TRAIT_MIRROR_MAGIC))
+		to_chat(H, span_info("You gaze at your reflection in the water, concentrating on the glamoring magicks..."))
+		if(do_after(H, 3 SECONDS, target))
+			perform_mirror_transform(H)
+		return
+	else
+		to_chat(H, span_notice("You see your reflection in the water."))
