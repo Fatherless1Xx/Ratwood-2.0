@@ -135,33 +135,33 @@ var/global/list/pridelist = list(
 
 	var/obj/item/inserted_item = inserted
 
-	// == Preview system ==
+	//Preview system
 	dat += "<div style='text-align:center;'>"
 	
-	// Create preview icon. extracts only SOUTH direction
+	//Create preview icon - extracts only SOUTH direction.
 	var/obj/item/preview_item = inserted_item
 	var/icon/preview_icon = new /icon()
 	preview_icon.Insert(new /icon(preview_item.icon, preview_item.icon_state), "", SOUTH, 0)
 	preview_icon.Blend(activecolor, ICON_MULTIPLY)
 	
-	// Apply detail overlay if exists
+	//Apply detail overlay if it exists.
 	if(preview_item.detail_tag && preview_item.detail_color)
 		var/icon/detail_overlay = new /icon()
 		detail_overlay.Insert(new /icon(preview_item.icon, "[preview_item.icon_state][preview_item.detail_tag]"), "", SOUTH, 0)
 		detail_overlay.Blend(activecolor_detail, ICON_MULTIPLY)
 		preview_icon.Blend(detail_overlay, ICON_OVERLAY)
 	
-	// Apply altdetail overlay if exists
+	//Apply altdetail overlay if it exists.
 	if(preview_item.altdetail_tag && preview_item.altdetail_color)
 		var/icon/altdetail_overlay = new /icon()
 		altdetail_overlay.Insert(new /icon(preview_item.icon, "[preview_item.icon_state][preview_item.altdetail_tag]"), "", SOUTH, 0)
 		altdetail_overlay.Blend(activecolor_altdetail, ICON_MULTIPLY)
 		preview_icon.Blend(altdetail_overlay, ICON_OVERLAY)
 	
-	// Show offmob item icon
+	//Show offmob item icon.
 	dat += "<img src='data:image/png;base64,[icon2base64(preview_icon)]' style='vertical-align:middle; width:64px; height:64px; image-rendering: pixelated; image-rendering: crisp-edges;'>"
 	
-	// Show onmob icon
+	//Show onmob icon.
 	if(istype(preview_item, /obj/item/clothing))
 		var/obj/item/clothing/clothing_item = preview_item
 		var/mob_icon_to_use = clothing_item.mob_overlay_icon
@@ -172,21 +172,21 @@ var/global/list/pridelist = list(
 			worn_preview.Insert(new /icon(mob_icon_to_use, worn_state), "", SOUTH, 0)
 			worn_preview.Blend(activecolor, ICON_MULTIPLY)
 			
-			// apply detail overlay if exists
+			//Apply detail overlay if it exists.
 			if(preview_item.detail_tag && preview_item.detail_color)
 				var/icon/detail_overlay = new /icon()
 				detail_overlay.Insert(new /icon(mob_icon_to_use, "[worn_state][preview_item.detail_tag]"), "", SOUTH, 0)
 				detail_overlay.Blend(activecolor_detail, ICON_MULTIPLY)
 				worn_preview.Blend(detail_overlay, ICON_OVERLAY)
 			
-			// apply altdetail overlay if exists
+			//Apply altdetail overlay if it exists.
 			if(preview_item.altdetail_tag && preview_item.altdetail_color)
 				var/icon/altdetail_overlay = new /icon()
 				altdetail_overlay.Insert(new /icon(mob_icon_to_use, "[worn_state][preview_item.altdetail_tag]"), "", SOUTH, 0)
 				altdetail_overlay.Blend(activecolor_altdetail, ICON_MULTIPLY)
 				worn_preview.Blend(altdetail_overlay, ICON_OVERLAY)
 			
-			// add sleeved parts if they exist (for cloaks)
+			//Add sleeved parts if they exist (for cloaks).
 			if(clothing_item.sleeved && "[worn_state]" in icon_states(clothing_item.sleeved))
 				// check if r_ and l_ prefixed states exist before trying to use them
 				if("r_[worn_state]" in icon_states(clothing_item.sleeved))
@@ -201,7 +201,7 @@ var/global/list/pridelist = list(
 					l_sleeve.Blend(activecolor, ICON_MULTIPLY)
 					worn_preview.Blend(l_sleeve, ICON_OVERLAY)
 				
-				// add sleeved detail if exists
+				//Add sleeved detail if it exists.
 				if(preview_item.detail_tag && preview_item.detail_color && clothing_item.sleeved_detail)
 					if("r_[worn_state][preview_item.detail_tag]" in icon_states(clothing_item.sleeved))
 						var/icon/r_detail = new /icon()
