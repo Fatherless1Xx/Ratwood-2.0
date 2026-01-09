@@ -438,20 +438,11 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["vice5"] >> vice5_type
 	
 	// Only instantiate if type path exists in savefile
-	if(vice1_type && ispath(vice1_type))
-		vice1 = new vice1_type()
-		
-	if(vice2_type && ispath(vice2_type))
-		vice2 = new vice2_type()
-		
-	if(vice3_type && ispath(vice3_type))
-		vice3 = new vice3_type()
-		
-	if(vice4_type && ispath(vice4_type))
-		vice4 = new vice4_type()
-		
-	if(vice5_type && ispath(vice5_type))
-		vice5 = new vice5_type()
+	vice1 = (vice1_type && ispath(vice1_type)) ? new vice1_type() : null
+	vice2 = (vice2_type && ispath(vice2_type)) ? new vice2_type() : null
+	vice3 = (vice3_type && ispath(vice3_type)) ? new vice3_type() : null
+	vice4 = (vice4_type && ispath(vice4_type)) ? new vice4_type() : null
+	vice5 = (vice5_type && ispath(vice5_type)) ? new vice5_type() : null
 
 /datum/preferences/proc/_load_culinary_preferences(S)
 	var/list/loaded_culinary_preferences
@@ -613,9 +604,18 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 /datum/preferences/proc/_save_loadout_presets(S)
 	// Save loadout presets as JSON
-	WRITE_FILE(S["loadout_preset_1"] , loadout_preset_1 ? json_encode(loadout_preset_1) : null)
-	WRITE_FILE(S["loadout_preset_2"] , loadout_preset_2 ? json_encode(loadout_preset_2) : null)
-	WRITE_FILE(S["loadout_preset_3"] , loadout_preset_3 ? json_encode(loadout_preset_3) : null)
+	if(loadout_preset_1)
+		WRITE_FILE(S["loadout_preset_1"] , json_encode(loadout_preset_1))
+	else
+		WRITE_FILE(S["loadout_preset_1"] , null)
+	if(loadout_preset_2)
+		WRITE_FILE(S["loadout_preset_2"] , json_encode(loadout_preset_2))
+	else
+		WRITE_FILE(S["loadout_preset_2"] , null)
+	if(loadout_preset_3)
+		WRITE_FILE(S["loadout_preset_3"] , json_encode(loadout_preset_3))
+	else
+		WRITE_FILE(S["loadout_preset_3"] , null)
 
 
 /datum/preferences/proc/_load_loadout_colours(S)
@@ -1028,10 +1028,16 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["pronouns"] , pronouns)
 	WRITE_FILE(S["statpack"] , statpack?.type)
 	// Save virtues with explicit null-safety
-	WRITE_FILE(S["virtue"] , (virtue && virtue.type) ? virtue.type : /datum/virtue/none)
-	WRITE_FILE(S["virtuetwo"], (virtuetwo && virtuetwo.type) ? virtuetwo.type : /datum/virtue/none)
+	if(virtue && virtue.type)
+		WRITE_FILE(S["virtue"] , virtue.type)
+	else
+		WRITE_FILE(S["virtue"] , /datum/virtue/none)
+	if(virtuetwo && virtuetwo.type)
+		WRITE_FILE(S["virtuetwo"], virtuetwo.type)
+	else
+		WRITE_FILE(S["virtuetwo"], /datum/virtue/none)
 	WRITE_FILE(S["race_bonus"], race_bonus)
-	WRITE_FILE(S["combat_music"], combat_music.type)
+	WRITE_FILE(S["combat_music"], combat_music?.type)
 	WRITE_FILE(S["body_size"] , features["body_size"])
 	WRITE_FILE(S["nsfwflavortext"] , html_decode(nsfwflavortext))
 	WRITE_FILE(S["erpprefs"] , html_decode(erpprefs))
