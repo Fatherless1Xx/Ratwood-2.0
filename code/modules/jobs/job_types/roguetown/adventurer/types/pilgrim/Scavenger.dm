@@ -17,24 +17,35 @@
 
 /datum/outfit/job/roguetown/refugee/harvester/pre_equip(mob/living/carbon/human/H)
 	..()
-	H.adjust_skillrank(/datum/skill/combat/axes, 2, TRUE) //less than a dedicated lumberjack
-	H.adjust_skillrank(/datum/skill/combat/wrestling, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/unarmed, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/knives, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/polearms, 2, TRUE)
+
 	H.adjust_skillrank(/datum/skill/misc/athletics, 3, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/swimming, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/climbing, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/crafting, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/carpentry, 2, TRUE) //gotta build your farmstead
-	H.adjust_skillrank(/datum/skill/craft/masonry, 2, TRUE)
-	H.adjust_skillrank(/datum/skill/labor/butchering, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/labor/lumberjacking, 2, TRUE) //probably don't need much higher
-	H.adjust_skillrank(/datum/skill/labor/farming, 3, TRUE) //less than a dedicated farmer
-	H.adjust_skillrank(/datum/skill/craft/traps, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/misc/medicine, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/craft/cooking, 1, TRUE)
+	H.adjust_skillrank(/datum/skill/misc/swimming, 3, TRUE)
+	H.adjust_skillrank(/datum/skill/misc/climbing, 3, TRUE)
+
+	H.adjust_skillrank(/datum/skill/combat/knives, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/combat/axes, 2, TRUE) //less than a dedicated lumberjack
+	H.adjust_skillrank(/datum/skill/combat/wrestling, 3, TRUE)
+	H.adjust_skillrank(/datum/skill/combat/unarmed, 3, TRUE)
+	H.adjust_skillrank(/datum/skill/combat/polearms, 3, TRUE)
+
 	H.adjust_skillrank(/datum/skill/misc/reading, 1, TRUE)
+
+	H.adjust_skillrank(/datum/skill/craft/crafting, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/labor/fishing, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/traps, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/carpentry, 3, TRUE) //gotta build your farmstead
+	H.adjust_skillrank(/datum/skill/craft/masonry, 3, TRUE)
+	H.adjust_skillrank(/datum/skill/labor/farming, 3, TRUE) //less than a dedicated farmer
+
+	H.adjust_skillrank(/datum/skill/misc/medicine, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/alchemy, 2, TRUE)
+
+	H.adjust_skillrank(/datum/skill/craft/cooking, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/labor/lumberjacking, 2, TRUE) //probably don't need much higher
+	H.adjust_skillrank(/datum/skill/labor/butchering, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/tanning, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/craft/sewing, 2, TRUE)
+
 	belt = /obj/item/storage/belt/rogue/leather/rope
 	head = /obj/item/clothing/head/roguetown/strawhat
 	shoes = /obj/item/clothing/shoes/roguetown/simpleshoes
@@ -44,6 +55,7 @@
 	wrists = /obj/item/clothing/wrists/roguetown/bracers/leather
 	beltr = /obj/item/storage/belt/rogue/pouch/coins/poor
 	beltl = /obj/item/rogueweapon/sickle
+
 	backpack_contents = list(
 		/obj/item/flint = 1,
 		/obj/item/flashlight/flare/torch = 1,
@@ -116,7 +128,7 @@
 	H.adjust_skillrank(/datum/skill/combat/swords, 1, TRUE)
 	H.adjust_skillrank(/datum/skill/combat/knives, 1, TRUE)
 	H.adjust_skillrank(/datum/skill/combat/crossbows, 1, TRUE)
-	H.adjust_skillrank(/datum/skill/combat/maces, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/combat/maces, 3, TRUE)
 	H.adjust_skillrank(/datum/skill/combat/axes, 2, TRUE)
 	H.adjust_skillrank(/datum/skill/misc/athletics, 2, TRUE)
 	H.adjust_skillrank(/datum/skill/misc/climbing, 3, TRUE) //for climbing in those mines
