@@ -19,14 +19,24 @@
 		/datum/job/roguetown/physician = "You are a master physician, trusted by the Duke to administer expert care to the court,\
 		its protectors and its subjects. While primarily a resident of the keep in the keep's medical quarters, you also have access\
 		 to local hightown clinic, where lesser licensed apothecaries ply their trade under your occasional tutelage.\
-		clinic."
-		
+		clinic.",
+
 		/datum/job/roguetown/bogguardsman = "Typically a denizen of the sparsely populated regions surrounding Rockhill, you volunteered up with the wardens--a group of ranger types who keep a vigil over Lowtown and the untamed wilderness. \
 				While Wardens have no higher authority, operating as a fraternity of rangers, you will be called upon as members of the garrison by the Marshal or the Crown. \
-				Serve their will, hold the lowtown fort, and recieve what a ranger craves the most - freedom and safety."
-				
+				Serve their will, hold the lowtown fort, and recieve what a ranger craves the most - freedom and safety.",
+
 		// /datum/job/roguetown/archivist = "CHANGE THIS!! - Teach people skills, whether DIRECTLY or by writing SKILLBOOKS. You and the Veteran next door teach people shit."
-	
+
 	)
 	species_adjust = list()
 	sexes_adjust = list()
+	//Threat regions is used for displaying specific regions on notice boards
+	threat_regions = list(
+		THREAT_REGION_ROCKHILL_BASIN,
+		THREAT_REGION_ROCKHILL_BOG_NORTH,
+		THREAT_REGION_ROCKHILL_BOG_WEST,
+		THREAT_REGION_ROCKHILL_BOG_SOUTH,
+		THREAT_REGION_ROCKHILL_BOG_SUNKMIRE,
+		THREAT_REGION_ROCKHILL_WOODS_NORTH,
+		THREAT_REGION_ROCKHILL_WOODS_SOUTH
+	)
