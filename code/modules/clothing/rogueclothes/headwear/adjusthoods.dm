@@ -106,6 +106,7 @@
 	icon_state = "deserthood"
 	hidesnoutADJ = FALSE
 	flags_inv = HIDEEARS|HIDEHAIR	//Does not hide face.
+	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_MASK|ITEM_SLOT_NECK
 	block2add = null
 
 /obj/item/clothing/neck/roguetown/roguehood/shalal/hijab/ComponentInitialize()
@@ -116,6 +117,7 @@
 	desc = "A common sight amongst those travelling the long desert routes, it offers protection from the heat and a modicum of it against the beasts that prowl its more comfortable nites."
 	max_integrity = 100
 	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT, BCLASS_TWIST)
+	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_MASK|ITEM_SLOT_NECK
 	armor = ARMOR_SPELLSINGER //basically the same as a warscholar hood
 	item_state = "hijab"
 	icon_state = "deserthood"
@@ -126,6 +128,7 @@
 	desc = "This thick lump of burlap completely shrouds your head, protecting it from harsh weather and nosey protagonists alike."
 	color = CLOTHING_BROWN
 	body_parts_covered = HEAD|HAIR|EARS|NECK
+	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_MASK|ITEM_SLOT_NECK
 	item_state = "heavyhood"
 	icon_state = "heavyhood"
 	hidesnoutADJ = FALSE
@@ -134,6 +137,7 @@
 	name = "shadowed hood"
 	desc = "It sits just so, obscuring the face just enough to spoil recognition."
 	color = CLOTHING_BLACK
+	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_MASK|ITEM_SLOT_NECK
 
 // Holy Hoods
 

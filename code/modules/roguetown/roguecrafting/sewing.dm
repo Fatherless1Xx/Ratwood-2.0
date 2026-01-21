@@ -251,6 +251,13 @@
 	reqs = list(/obj/item/natural/cloth = 3)
 	craftdiff = 1
 
+/datum/crafting_recipe/roguetown/sewing/scarf
+	name = "scarf (1 fibers, 1 cloth)"
+	result = list(/obj/item/clothing/head/roguetown/scarf)
+	reqs = list(/obj/item/natural/cloth = 1,
+				/obj/item/natural/fibers = 1)
+	craftdiff = 1
+
 /* craftdif of 2+ */
 
 /datum/crafting_recipe/roguetown/sewing/wrappings

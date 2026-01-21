@@ -206,6 +206,10 @@ GLOBAL_LIST_EMPTY(loadout_items)
 	name = "Tricorn Hat"
 	path = /obj/item/clothing/head/roguetown/helmet/tricorn
 
+/datum/loadout_item/scarf
+	name = "Scarf"
+	path = /obj/item/clothing/head/roguetown/scarf
+
 /datum/loadout_item/nurseveil
 	name = "Nurse's Veil"
 	path = /obj/item/clothing/head/roguetown/veiled
@@ -397,6 +401,10 @@ GLOBAL_LIST_EMPTY(loadout_items)
 /datum/loadout_item/poncho
 	name = "Poncho"
 	path = /obj/item/clothing/cloak/poncho
+
+/datum/loadout_item/guardhood
+	name = "Guard's Hood"
+	path = /obj/item/clothing/cloak/stabard/guardhood
 
 //SHOES
 /datum/loadout_item/darkboots

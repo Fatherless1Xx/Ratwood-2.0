@@ -28,10 +28,6 @@
 	traits_applied = list(TRAIT_CICERONE, TRAIT_HOMESTEAD_EXPERT, TRAIT_SEWING_EXPERT, TRAIT_ROYALSERVANT) // They have Expert Sewing
 	category_tags = list(CTAG_SENESCHAL)
 
-/datum/advclass/seneschal
-	traits_applied = list(TRAIT_CICERONE)
-	category_tags = list(CTAG_SENESCHAL)
-
 /datum/advclass/seneschal/seneschal
 	name = "Seneschal"
 	tutorial = "While still expected to fill in for the duties of the household servantry as needed, you have styled yourself as a figure beyond them."
