@@ -234,7 +234,7 @@
 	"Yeomen" = JCOLOR_YEOMAN,\
 	"Guildsmen" = JCOLOR_GUILD,\
 	"Peasants" = JCOLOR_PEASANT,\
-	"Youngfolk" = "grey",\
+	"Sidefolk" = "grey",\
 	"Wanderers" = JCOLOR_WANDERER,\
 )
 
