@@ -185,6 +185,8 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	if(!message)
 		return
 
+	message = ensure_terminal_punctuation(message)
+
 	// Allow sign languages and other tongueless speech to bypass the vocal speech check
 	var/using_tongueless_speech = language && (initial(language.flags) & TONGUELESS_SPEECH)
 	if(!can_speak_vocal(message) && !using_tongueless_speech)
@@ -647,6 +649,15 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	message = capitalize(message)
 
 	return message
+
+/mob/living/proc/ensure_terminal_punctuation(message)
+	var/trimmed = trim_right(message)
+	if(!trimmed)
+		return message
+	var/last_char = copytext_char(trimmed, -1)
+	if(last_char == "." || last_char == "!" || last_char == "?" || last_char == "~")
+		return message
+	return "[trimmed]."
 
 /mob/living/proc/radio(message, message_mode, list/spans, language)
 	switch(message_mode)
