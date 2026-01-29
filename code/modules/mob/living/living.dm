@@ -1839,7 +1839,7 @@
 			fall(!canstand_involuntary)
 		layer = LYING_MOB_LAYER //so mob lying always appear behind standing mobs
 		if (is_shifted)
-			layer = 3.99 + pixelshift_layer //So mobs can pixelshift layers while lying down
+			layer = LYING_MOB_LAYER + pixelshift_layer //So mobs can pixelshift layers while lying down
 	else
 		if(layer == LYING_MOB_LAYER)
 			layer = initial(layer)
@@ -2343,7 +2343,7 @@
 			vision_distance = COMBAT_MESSAGE_RANGE, \
 			ignored_mobs = list(offered_to)
 		)
-		to_chat(offered_to, span_notice("[offered_to] offers [offered_item] to me..."))
+		to_chat(offered_to, span_notice("[src] offers [offered_item] to me..."))
 
 	new /obj/effect/temp_visual/offered_item_effect(get_turf(src), offered_item, src, offered_to, stealthy)
 
