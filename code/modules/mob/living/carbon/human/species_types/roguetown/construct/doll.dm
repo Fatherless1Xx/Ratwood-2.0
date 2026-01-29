@@ -96,7 +96,7 @@ In Malum’s absence, modern dolls are often animated through darker rituals by 
 		"Porcelain" = DOLL_PORCELAIN,
 		"Sienna" = DOLL_SIENNA,
 		"Lotus" = DOLL_KAZENGUN,
-		"Scarlet Reach" = DOLL_SCARLET_REACH,
+		"Scarlet" = DOLL_SCARLET_REACH,
 		"Walnut" = DOLL_WALNUT,
 		"Gloom" = DOLL_GLOOMHAVEN,
 		"Ebon" = DOLL_EBON,
