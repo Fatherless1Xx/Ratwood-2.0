@@ -159,6 +159,22 @@
 	. = ..()
 	M.reset_offsets("bed_buckle")
 
+/obj/structure/bondage/torture_table/user_unbuckle_mob(mob/living/buckled_mob, mob/living/user)
+	// Someone else is unbuckling the victim
+	if(user != buckled_mob)
+		user.visible_message(span_notice("[user] starts unchaining [buckled_mob] from [src]..."), \
+			span_notice("You start unchaining [buckled_mob] from [src]..."))
+		if(do_after(user, 3 SECONDS, src))
+			return ..()
+		return
+
+	// Victim trying to unbuckle self (long struggle)
+	to_chat(user, span_warning("You struggle against the tight chains..."))
+	if(do_after(user, 3 MINUTES, src))
+		user.visible_message(span_warning("[user] manages to unstrap [user.p_them()]self from [src]!"), \
+			span_notice("You manage to unstrap yourself from [src]!"))
+		return ..()
+
 /obj/structure/bondage/torture_table/lever
 	name = "torture table lever"
 	desc = "A torture table with a built-in lever mechanism."
