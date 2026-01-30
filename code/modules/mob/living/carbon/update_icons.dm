@@ -45,6 +45,9 @@
 		add_overlay(.)
 	if(client)
 		update_vision_cone()
+	if(isliving(src))
+		var/mob/living/L = src
+		L.schedule_reflection_update()
 
 /mob/living/proc/remove_overlay(cache_index)
 	var/I = overlays_standing[cache_index]
@@ -53,6 +56,9 @@
 		overlays_standing[cache_index] = null
 	if(client)
 		update_vision_cone()
+	if(isliving(src))
+		var/mob/living/L = src
+		L.schedule_reflection_update()
 
 /mob/living/carbon/regenerate_icons()
 	if(notransform)
@@ -403,6 +409,7 @@
 
 /mob/living/carbon/update_body(redraw = FALSE)
 	update_body_parts(redraw)
+	update_reflection()
 
 /mob/living/carbon/proc/update_body_parts(redraw)
 	//CHECK FOR UPDATE

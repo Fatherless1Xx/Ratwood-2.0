@@ -48,3 +48,10 @@
 		.["x"] = x
 	if(!isnull(y))
 		.["y"] = y
+
+/proc/motion_blur_filter(x, y)
+	. = list("type" = "motion_blur")
+	if(!isnull(x))
+		.["x"] = x
+	if(!isnull(y))
+		.["y"] = y
