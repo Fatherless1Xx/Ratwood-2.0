@@ -70,6 +70,7 @@
 
 /obj/item/bomb/throw_impact(atom/hit_atom, datum/thrownthing/throwingdatum)
 	..()
+	sleep(1)
 	explode()
 
 /obj/item/bomb/process()
@@ -455,6 +456,7 @@
 
 /obj/item/impact_grenade/throw_impact(atom/hit_atom, datum/thrownthing/throwingdatum)
 	..()
+	sleep(1)
 	explodes()
 
 /obj/item/impact_grenade/attack_self(mob/user)
