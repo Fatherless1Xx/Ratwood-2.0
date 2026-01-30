@@ -127,6 +127,9 @@
 	if(!L || obj_broken)
 		clear_mirror_reflection()
 		return
+	if(get_mirror_target() != L)
+		clear_mirror_reflection()
+		return
 	if(mirror_reflection)
 		cut_overlay(mirror_reflection)
 
