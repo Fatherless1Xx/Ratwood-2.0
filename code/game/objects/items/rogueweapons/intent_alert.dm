@@ -78,8 +78,8 @@
 	icon = 'icons/effects/spell_cast.dmi'
 	icon_state = "rune"
 	vis_flags = NONE
-	layer = ABOVE_ALL_MOB_LAYER
-	plane = GAME_PLANE_UPPER
+	layer = BELOW_MOB_LAYER
+	plane = GAME_PLANE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	base_pixel_x = -8
 	base_pixel_y = -8
