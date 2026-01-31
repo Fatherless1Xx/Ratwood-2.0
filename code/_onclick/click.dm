@@ -95,15 +95,22 @@
 
 	last_client_interact = world.time
 
-	if(check_click_intercept(params,A))
-		return
-
 	if(notransform)
 		return
 
-	// Cancel a charging spell if the player left-clicks while holding middle to charge.
-	if(modifiers["left"] && client?.charging && atkswinging == "middle" && istype(mmb_intent, /datum/intent/spell))
-		stop_attack(FALSE)
+	// Cancel a charging or readied spell if the player left-clicks.
+	if(modifiers["left"] && istype(mmb_intent, /datum/intent/spell))
+		var/obj/effect/proc_holder/spell/spell_ability = ranged_ability
+		if(client?.charging || (istype(spell_ability) && spell_ability.require_mmb_target_after_charge && spell_ability.awaiting_mmb_target))
+			if(istype(spell_ability))
+				spell_ability.awaiting_mmb_target = FALSE
+			if(client)
+				client.chargedprog = 0
+				client.charging = 0
+			stop_attack(FALSE)
+			return
+
+	if(check_click_intercept(params,A))
 		return
 
 	if(SEND_SIGNAL(src, COMSIG_MOB_CLICKON, A, params) & COMSIG_MOB_CANCEL_CLICKON)

@@ -492,6 +492,9 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 		if(require_mmb_target_after_charge)
 			awaiting_mmb_target = FALSE
 			if(ranged_ability_user?.mmb_intent)
+				if(ranged_ability_user.client)
+					ranged_ability_user.client.chargedprog = 0
+					ranged_ability_user.client.charging = 0
 				ranged_ability_user.mmb_intent.on_mouse_up()
 				if(ranged_ability_user.client)
 					ranged_ability_user.client.mouse_pointer_icon = 'icons/effects/mousemice/human.dmi'

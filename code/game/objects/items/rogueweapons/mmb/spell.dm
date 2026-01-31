@@ -15,6 +15,16 @@
 	return TRUE
 
 /datum/intent/spell/on_mmb(atom/target, mob/living/user, params)
+	if(!target)
+		return
+	if(istype(target, /atom/movable/screen/click_catcher))
+		return
+	var/obj/effect/proc_holder/spell/spell_ability = user?.ranged_ability
+	if(istype(spell_ability) && spell_ability.require_mmb_target_after_charge && spell_ability.awaiting_mmb_target)
+		if(!isliving(target))
+			return
+		if(!spell_ability.can_target(target))
+			return
 	if(user.ranged_ability?.InterceptClickOn(user, params, target))
 		user.changeNext_move(clickcd)
 		if(releasedrain)

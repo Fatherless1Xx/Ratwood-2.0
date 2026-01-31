@@ -132,6 +132,7 @@
 			if(mob.mmb_intent.get_chargetime() && mob.mmb_intent.can_charge(object) && !AD.blockscharging)
 				var/obj/effect/proc_holder/spell/S = mob.ranged_ability
 				if(istype(S) && S.require_mmb_target_after_charge && S.awaiting_mmb_target)
+					chargedprog = 100
 					mouse_pointer_icon = mob.mmb_intent.pointer
 				else
 					mob.face_atom(object, location, control, params)
@@ -184,6 +185,7 @@
 	var/datum/intent/curplaying
 
 /client/MouseUp(object, location, control, params)
+	var/was_charging = charging
 	charging = 0
 //	mob.update_warning()
 	var/list/modifiers = params2list(params)
@@ -211,7 +213,7 @@
 
 	if(modifiers["middle"])
 		var/obj/effect/proc_holder/spell/spell_ability = mob?.ranged_ability
-		if(istype(spell_ability) && spell_ability.require_mmb_target_after_charge && chargedprog >= 100)
+		if(istype(spell_ability) && spell_ability.require_mmb_target_after_charge && chargedprog >= 100 && was_charging)
 			mob.skip_next_mmb_spell_cast = TRUE
 
 	// var/list/modifiers = params2list(params)
