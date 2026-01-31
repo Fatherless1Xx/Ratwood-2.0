@@ -101,6 +101,11 @@
 	if(notransform)
 		return
 
+	// Cancel a charging spell if the player left-clicks while holding middle to charge.
+	if(modifiers["left"] && client?.charging && atkswinging == "middle" && istype(mmb_intent, /datum/intent/spell))
+		stop_attack(FALSE)
+		return
+
 	if(SEND_SIGNAL(src, COMSIG_MOB_CLICKON, A, params) & COMSIG_MOB_CANCEL_CLICKON)
 		return
 
