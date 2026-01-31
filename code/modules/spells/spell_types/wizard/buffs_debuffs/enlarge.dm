@@ -10,6 +10,7 @@
 	human_req = TRUE
 	warnie = "spellwarning"
 	no_early_release = TRUE
+	require_mmb_target_after_charge = TRUE
 	movement_interrupt = FALSE
 	charging_slowdown = 3
 	spell_tier = 2
@@ -48,3 +49,5 @@
 	target.update_transform()
 	to_chat(target, span_warning("I feel smaller all of a sudden."))
 	target.visible_message("[target]'s body shrinks quickly!")
+
+

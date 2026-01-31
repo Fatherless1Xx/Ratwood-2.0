@@ -163,6 +163,12 @@
 			return
 		A.MiddleClick(src, params)
 	else
+		if(skip_next_mmb_spell_cast && istype(mmb_intent, /datum/intent/spell))
+			var/obj/effect/proc_holder/spell/spell_ability = ranged_ability
+			if(istype(spell_ability) && spell_ability.require_mmb_target_after_charge && spell_ability.awaiting_mmb_target)
+				skip_next_mmb_spell_cast = FALSE
+				return
+			skip_next_mmb_spell_cast = FALSE
 		mmb_intent.on_mmb(A, src, params)
 
 //Return TRUE to cancel other attack hand effects that respect it.

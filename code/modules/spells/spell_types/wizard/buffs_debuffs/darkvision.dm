@@ -8,6 +8,7 @@
 	chargedrain = 0
 	chargetime = 1 SECONDS
 	no_early_release = TRUE
+	require_mmb_target_after_charge = TRUE
 	recharge_time = 1.5 MINUTES
 	chargedloop = /datum/looping_sound/invokegen
 	associated_skill = /datum/skill/magic/arcane
@@ -29,3 +30,5 @@
 	for(var/mob/living/L in range(1, usr))
 		L.apply_status_effect(/datum/status_effect/buff/darkvision, user.get_skill_level(associated_skill))
 	return TRUE
+
+

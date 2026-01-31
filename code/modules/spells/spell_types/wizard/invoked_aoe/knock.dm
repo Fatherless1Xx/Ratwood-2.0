@@ -41,3 +41,7 @@
 /obj/effect/proc_holder/spell/invoked/knock/proc/open_window(obj/structure/roguewindow/openclose/W)
 	if(istype(W))
 		W.force_open()
+
+
+
+

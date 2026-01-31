@@ -240,6 +240,9 @@
 	if(mob_charge_effect)
 		mastermob.vis_contents += mob_charge_effect
 
+/datum/intent/proc/on_charge_complete()
+	return
+
 /datum/intent/proc/on_mouse_up()
 	if(chargedloop)
 		chargedloop.stop()

@@ -8,6 +8,7 @@
 	recharge_time = 2 MINUTES
 	warnie = "spellwarning"
 	no_early_release = TRUE
+	require_mmb_target_after_charge = TRUE
 	movement_interrupt = FALSE
 	gesture_required = TRUE // Mobility spell
 	spell_tier = 1
@@ -37,3 +38,5 @@
 	REMOVE_TRAIT(target, TRAIT_ZJUMP, MAGIC_TRAIT)
 	to_chat(target, span_warning("My legs feel remarkably weaker."))
 	target.Immobilize(5)
+
+

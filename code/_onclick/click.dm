@@ -10,6 +10,7 @@
 // THESE DO NOT EFFECT THE BASE 1 DECISECOND DELAY OF NEXT_CLICK
 /mob/var/next_move_adjust = 0 //Amount to adjust action/click delays by, + or -
 /mob/var/next_move_modifier = 1 //Value to multiply action/click delays by
+/mob/var/skip_next_mmb_spell_cast = FALSE
 
 
 //Delays the mob's next click/action by num deciseconds
@@ -113,7 +114,12 @@
 	if(modifiers["middle"] && atkswinging == "middle")
 		if(mmb_intent)
 			if(mmb_intent.get_chargetime())
-				if(mmb_intent.no_early_release && client?.chargedprog < 100)
+				var/allow_uncharged_release = FALSE
+				if(istype(mmb_intent, /datum/intent/spell))
+					var/obj/effect/proc_holder/spell/S = ranged_ability
+					if(istype(S) && S.require_mmb_target_after_charge && S.awaiting_mmb_target)
+						allow_uncharged_release = TRUE
+				if(mmb_intent.no_early_release && client?.chargedprog < 100 && !allow_uncharged_release)
 					changeNext_move(mmb_intent.clickcd)
 					return
 	if(modifiers["left"] && atkswinging == "left")

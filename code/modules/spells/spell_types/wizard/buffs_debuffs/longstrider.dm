@@ -11,6 +11,7 @@
 	human_req = TRUE
 	warnie = "spellwarning"
 	no_early_release = TRUE
+	require_mmb_target_after_charge = TRUE
 	spell_tier = 1 // Not direct combat useful but still good, replicated by polearm
 	invocations = list("Aranea Deambulatio")
 	invocation_type = "whisper"
@@ -29,3 +30,5 @@
 		L.apply_status_effect(/datum/status_effect/buff/longstrider)
 
 	return TRUE
+
+

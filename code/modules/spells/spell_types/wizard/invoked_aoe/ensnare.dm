@@ -57,3 +57,7 @@
 
 /obj/effect/temp_visual/ensnare/long
 	duration = 3 SECONDS
+
+
+
+

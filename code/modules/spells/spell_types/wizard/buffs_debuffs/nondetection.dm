@@ -1,4 +1,5 @@
 /obj/effect/proc_holder/spell/targeted/touch/nondetection
+	require_mmb_target_after_charge = TRUE
 	name = "Nondetection"
 	desc = "Consume a handful of ash and shroud a target that you touch from divination magic for 1 hour."
 	clothes_req = FALSE
@@ -67,3 +68,5 @@
 		base_spell.add_buff_timer(spelltarget)
 		attached_spell.remove_hand()
 	return
+
+

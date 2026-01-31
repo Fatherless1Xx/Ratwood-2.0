@@ -10,6 +10,7 @@
 	recharge_time = 2 MINUTES
 	warnie = "spellwarning"
 	no_early_release = TRUE
+	require_mmb_target_after_charge = TRUE
 	movement_interrupt = TRUE
 	spell_tier = 1 // Not directly combat useful
 	invocations = list("Lenis Cadere")
@@ -29,3 +30,5 @@
 		L.apply_status_effect(/datum/status_effect/buff/featherfall)
 
 	return TRUE
+
+

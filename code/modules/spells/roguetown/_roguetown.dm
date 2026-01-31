@@ -61,7 +61,8 @@
 	var/percentage_progress = client?.chargedprog
 	var/charge_progress = client?.progress // This is in seconds, same unit as chargetime
 	var/goal = src.get_chargetime() //if we have no chargetime then we can freely cast (and no early release flag was not set)
-	if(src.no_early_release) //This is to stop half-channeled spells from casting as the repeated-casts somehow bypass into this function.
+	var/allow_ready_cast = (require_mmb_target_after_charge && awaiting_mmb_target)
+	if(src.no_early_release && !allow_ready_cast) //This is to stop half-channeled spells from casting as the repeated-casts somehow bypass into this function.
 		if(percentage_progress < 100 && charge_progress < goal)//Conditions for failure: a) not 100% progress, b) charge progress less than goal
 			to_chat(usr, span_warning("[src.name] was not finished charging! It fizzles."))
 			src.revert_cast()
@@ -113,3 +114,4 @@
 		ready_projectile(P, target, user, i)
 		P.fire()
 	return TRUE
+

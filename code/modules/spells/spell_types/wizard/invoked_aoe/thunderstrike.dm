@@ -91,3 +91,7 @@
 	if(duration_override)
 		duration = duration_override
 	. = ..() // Call parent AFTER setting duration
+
+
+
+

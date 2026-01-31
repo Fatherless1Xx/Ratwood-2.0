@@ -604,6 +604,20 @@
 			mmb_intent.glow_intensity = ranged_ability.glow_intensity
 			mmb_intent.glow_color = ranged_ability.glow_color
 			mmb_intent.mob_charge_effect = ranged_ability.mob_charge_effect
+			var/obj/effect/spell_rune/rune = mmb_intent.mob_charge_effect
+			if(istype(rune))
+				var/obj/effect/proc_holder/spell/typed_spell = ranged_ability
+				var/is_evil_miracle = FALSE
+				if(istype(typed_spell) && typed_spell.miracle)
+					var/mob/living/living_src = src
+					if(typed_spell.zizo_spell || istype(living_src?.patron, /datum/patron/inhumen))
+						is_evil_miracle = TRUE
+				if(is_evil_miracle)
+					rune.set_tint("#800080")
+				else
+					rune.clear_tint()
+			mmb_intent.charge_pointer = 'icons/effects/mousemice/charge/spell_charging.dmi'
+			mmb_intent.charged_pointer = 'icons/effects/mousemice/charge/spell_charged.dmi'
 			mmb_intent.update_chargeloop()
 
 	if(hud_used)

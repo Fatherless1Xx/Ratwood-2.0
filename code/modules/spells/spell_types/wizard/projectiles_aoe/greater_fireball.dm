@@ -32,3 +32,7 @@
 	damage = 90 // This is gonna fucking HURT
 	npc_simple_damage_mult = 2 // HAHAHA
 	flag = "magic"
+
+
+
+

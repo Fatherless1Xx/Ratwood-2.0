@@ -12,6 +12,7 @@
 	school = "transmutation"
 	overlay_state = "fortitude"
 	no_early_release = TRUE
+	require_mmb_target_after_charge = TRUE
 	movement_interrupt = FALSE
 	spell_tier = 2
 	invocations = list("Tenax")
@@ -69,3 +70,5 @@
 	owner.remove_filter(FORTITUDE_FILTER)
 	to_chat(owner, span_warning("The weight of the world rests upon my shoulders once more."))
 	REMOVE_TRAIT(owner, TRAIT_FORTITUDE, MAGIC_TRAIT)
+
+

@@ -17,6 +17,7 @@
 	glow_color = GLOW_COLOR_BUFF
 	glow_intensity = GLOW_INTENSITY_LOW
 	no_early_release = TRUE
+	require_mmb_target_after_charge = TRUE
 	movement_interrupt = FALSE
 	charging_slowdown = 2
 	chargedloop = /datum/looping_sound/invokegen
@@ -71,3 +72,5 @@
 	REMOVE_TRAIT(owner, TRAIT_GUIDANCE, MAGIC_TRAIT)
 
 #undef GUIDANCE_FILTER
+
+

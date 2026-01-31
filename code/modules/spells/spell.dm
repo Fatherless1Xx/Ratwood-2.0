@@ -41,6 +41,8 @@
 	/// This spell holder's cooldown does not scale with any stat
 	var/is_cdr_exempt = FALSE
 	var/obj/effect/mob_charge_effect = null
+	var/require_mmb_target_after_charge = FALSE
+	var/awaiting_mmb_target = FALSE
 
 	/// This "spell" (miracle) is excluded from Priest's round-start selection.
 	var/priest_excluded = FALSE
@@ -49,11 +51,16 @@
 	. = ..()
 	if(has_action)
 		action = new base_action(src)
-	if(overlay_state && !hide_charge_effect)
-		var/obj/effect/R = new /obj/effect/spell_rune
-		R.icon = action_icon
-		R.icon_state = overlay_state // Weird af but that's how spells work???
-		action.overlay_alpha = overlay_alpha
+	if(istype(src, /obj/effect/proc_holder/spell) && chargetime && !hide_charge_effect)
+		var/obj/effect/spell_rune/R = new
+		var/obj/effect/proc_holder/spell/typed_spell = src
+		if(typed_spell.overlay && typed_spell.overlay_icon && typed_spell.overlay_icon_state)
+			R.set_overlay(typed_spell.overlay_icon, typed_spell.overlay_icon_state, overlay_alpha)
+		else if(overlay_state)
+			R.set_overlay(action_icon, overlay_state, overlay_alpha)
+			action.overlay_alpha = overlay_alpha
+		if(typed_spell.miracle && (!typed_spell.overlay_icon_state || typed_spell.overlay_icon_state == "null") && (!overlay_state || overlay_state == "null"))
+			R.use_miracle_icon()
 		mob_charge_effect = R
 	update_icon()
 
@@ -112,6 +119,9 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 			return
 	user.ranged_ability = src
 	ranged_ability_user = user
+	if(istype(src, /obj/effect/proc_holder/spell))
+		var/obj/effect/proc_holder/spell/spell_holder = src
+		spell_holder.awaiting_mmb_target = FALSE
 	if(!mmb)
 		user.click_intercept = src
 		user.update_mouse_pointer()
@@ -125,6 +135,9 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	if(!ranged_ability_user || !ranged_ability_user.client || (ranged_ability_user.ranged_ability && ranged_ability_user.ranged_ability != src)) //To avoid removing the wrong ability
 		return
 	ranged_ability_user.ranged_ability = null
+	if(istype(src, /obj/effect/proc_holder/spell))
+		var/obj/effect/proc_holder/spell/spell_holder = src
+		spell_holder.awaiting_mmb_target = FALSE
 	if(!mmb)
 		ranged_ability_user.click_intercept = null
 		ranged_ability_user.update_mouse_pointer()
@@ -476,6 +489,12 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	if(cast(targets, user = user))
 		invocation(user)
 		start_recharge()
+		if(require_mmb_target_after_charge)
+			awaiting_mmb_target = FALSE
+			if(ranged_ability_user?.mmb_intent)
+				ranged_ability_user.mmb_intent.on_mouse_up()
+				if(ranged_ability_user.client)
+					ranged_ability_user.client.mouse_pointer_icon = 'icons/effects/mousemice/human.dmi'
 		if(sound)
 			playMagSound()
 		after_cast(targets, user = user)
@@ -774,3 +793,4 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 #undef FATIGUE_REDUCTION_PER_INT
 #undef COOLDOWN_REDUCTION_PER_INT
 #undef CHARGE_REDUCTION_PER_SKILL
+

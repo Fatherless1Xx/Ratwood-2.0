@@ -130,8 +130,12 @@
 			mouse_pointer_icon = 'icons/effects/mousemice/human_looking.dmi'
 		else
 			if(mob.mmb_intent.get_chargetime() && mob.mmb_intent.can_charge(object) && !AD.blockscharging)
-				mob.face_atom(object, location, control, params)
-				updateprogbar(object)
+				var/obj/effect/proc_holder/spell/S = mob.ranged_ability
+				if(istype(S) && S.require_mmb_target_after_charge && S.awaiting_mmb_target)
+					mouse_pointer_icon = mob.mmb_intent.pointer
+				else
+					mob.face_atom(object, location, control, params)
+					updateprogbar(object)
 			else
 				mouse_pointer_icon = mob.mmb_intent.pointer
 		return
@@ -182,8 +186,14 @@
 /client/MouseUp(object, location, control, params)
 	charging = 0
 //	mob.update_warning()
-
-	mouse_pointer_icon = 'icons/effects/mousemice/human.dmi'
+	var/list/modifiers = params2list(params)
+	var/keep_charge_icon = FALSE
+	if(modifiers["middle"])
+		var/obj/effect/proc_holder/spell/spell_ability = mob?.ranged_ability
+		if(istype(spell_ability) && spell_ability.require_mmb_target_after_charge && chargedprog >= 100)
+			keep_charge_icon = TRUE
+	if(!keep_charge_icon)
+		mouse_pointer_icon = 'icons/effects/mousemice/human.dmi'
 
 	if(mob.curplaying)
 		mob.curplaying.on_mouse_up()
@@ -199,7 +209,12 @@
 	if(!mob.atkswinging)
 		return
 
-	var/list/modifiers = params2list(params)
+	if(modifiers["middle"])
+		var/obj/effect/proc_holder/spell/spell_ability = mob?.ranged_ability
+		if(istype(spell_ability) && spell_ability.require_mmb_target_after_charge && chargedprog >= 100)
+			mob.skip_next_mmb_spell_cast = TRUE
+
+	// var/list/modifiers = params2list(params)
 	if(modifiers["left"])
 		if(mob.atkswinging != "left")
 			mob.atkswinging = null
@@ -297,6 +312,7 @@
 			if(!doneset)
 				doneset = 1
 				chargedprog = 100
+				L.used_intent.on_charge_complete()
 				if(!(mob.used_intent.charge_pointer & mob.used_intent.charged_pointer))
 					mouse_pointer_icon = 'icons/effects/mousemice/charge/default/100.dmi'
 				else

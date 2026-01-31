@@ -230,9 +230,8 @@
 	// Note: there is no logic to remove the component yet, this should be fine
 	. = ..()
 	if(overlay_state && !hide_charge_effect)
-		var/obj/effect/R = new /obj/effect/spell_rune
-		R.icon = action_icon
-		R.icon_state = "infestation10"
+		var/obj/effect/spell_rune/R = new
+		R.set_overlay(action_icon, "infestation10", overlay_alpha)
 		action.overlay_alpha = overlay_alpha
 		mob_charge_effect = R
 	if(user && !charge_component)

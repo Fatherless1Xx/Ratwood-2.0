@@ -63,3 +63,7 @@
 				to_chat(M, "<span class='danger'>You're thrown back by [user]!</span>")
 			AM.safe_throw_at(throwtarget, ((CLAMP((maxthrow - (CLAMP(distfromcaster - 2, 0, distfromcaster))), 3, maxthrow))), 1,user, force = repulse_force)//So stuff gets tossed around at the same time.
 	return TRUE
+
+
+
+

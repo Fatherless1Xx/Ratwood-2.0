@@ -82,3 +82,7 @@
 			damaged.take_damage(damage, BRUTE, "blunt", 1)
 	for(var/turf/closed/wall/damagedwalls in view(radius, fallzone))
 		damagedwalls.take_damage(damage, BRUTE, "blunt", 1)
+
+
+
+

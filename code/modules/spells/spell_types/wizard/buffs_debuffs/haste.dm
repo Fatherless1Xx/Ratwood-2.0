@@ -17,6 +17,7 @@
 	glow_color = GLOW_COLOR_BUFF
 	glow_intensity = GLOW_INTENSITY_MEDIUM
 	no_early_release = TRUE
+	require_mmb_target_after_charge = TRUE
 	movement_interrupt = FALSE
 	charging_slowdown = 2
 	chargedloop = /datum/looping_sound/invokegen
@@ -79,3 +80,5 @@
 
 /datum/status_effect/buff/haste/nextmove_modifier()
 	return 0.85
+
+

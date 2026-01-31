@@ -365,6 +365,7 @@
 
 /obj/projectile/magic/aoe/fireball
 	name = "bolt of fireball"
+	icon = 'icons/obj/projectiles_fireball_vanderlin.dmi'
 	icon_state = "fireball"
 	damage = 10
 	damage_type = BRUTE
@@ -373,10 +374,12 @@
 	light_outer_range =  2
 
 	//explosion values
+	var/exp_devi = -1
 	var/exp_heavy = 0
 	var/exp_light = 2
 	var/exp_flash = 3
 	var/exp_fire = 2
+	var/exp_hotspot = 0
 
 /obj/projectile/magic/aoe/fireball/on_hit(target)
 	. = ..()
@@ -385,14 +388,27 @@
 		if(M.anti_magic_check())
 			visible_message(span_warning("[src] vanishes into smoke on contact with [target]!"))
 			return BULLET_ACT_BLOCK
-		if(exp_fire)
-			M.adjust_fire_stacks(exp_fire*3)
+		M.adjust_fire_stacks(6)
+		M.ignite_mob()
 	var/turf/T
 	if(isturf(target))
-		T = target
+		if(isclosedturf(target))
+			var/turf/impact_turf = get_turf(target)
+			if(impact_turf)
+				var/datum/effect_system/spark_spread/impact_sparks = new()
+				impact_sparks.set_up(1, 1, impact_turf)
+				impact_sparks.start()
+			var/datum/point/vector/previous = trajectory.return_vector_after_increments(1, -1)
+			T = previous.return_turf()
+			explosion(T, exp_devi, exp_heavy, exp_light, exp_flash, 0, flame_range = exp_fire, soundin = explode_sound)
+			return TRUE
+		else
+			T = target
 	else
 		T = get_turf(target)
-	explosion(T, -1, exp_heavy, exp_light, exp_flash, 0, flame_range = exp_fire, soundin = explode_sound)
+	explosion(T, 0, 0, 0, exp_flash, 0, flame_range = exp_fire, soundin = explode_sound)
+	for(var/turf/flash_turf in RANGE_TURFS(1, T))
+		flash_turf.flash_lighting_fx(_range = 1, _power = 2, _color = LIGHT_COLOR_FIRE, _duration = 0.3 SECONDS)
 	if(ismob(target))
 		var/mob/living/M = target
 		var/atom/throw_target = get_edge_target_turf(M, angle2dir(Angle))
