@@ -57,6 +57,14 @@
 		return FALSE
 	if(!can_cast(caller) || !cast_check(FALSE, ranged_ability_user))
 		return FALSE
+	// If we're in the post-charge "click to cast" state, only cast on valid targets.
+	if(require_mmb_target_after_charge && awaiting_mmb_target)
+		if(istype(src, /obj/effect/proc_holder/spell/targeted))
+			if(!istype(target, /mob/living))
+				return TRUE
+			var/mob/living/L = target
+			if(!can_target(L))
+				return TRUE
 	var/client/client = caller.client
 	var/percentage_progress = client?.chargedprog
 	var/charge_progress = client?.progress // This is in seconds, same unit as chargetime
