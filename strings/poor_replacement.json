@@ -11,6 +11,17 @@
 		"mercenary": "sellsword",
 		"tailor": "stitcher",
 		"doctor": "shurgeon",
+		"those": "them",
+		"one": "won",
+		"two": "tew",
+		"three": "thryee",
+		"four": "fore",
+		"five": "fayve",
+		"six": "sicks",
+		"seven": "sevenn",
+		"eight": "ayte",
+		"nine": "naeyn",
+		"ten": "tenn",
 		"archivist": "bookie",
 		"su": "shu",
 		"my": "m'",
@@ -25,7 +36,8 @@
 		"ing": "in'",
 		"re": "s",
 		"ve": "s'a",
-		"he": "'"
+		"he": "'",
+		"ie": "y"
     },
 	"multiword": {
 	},
