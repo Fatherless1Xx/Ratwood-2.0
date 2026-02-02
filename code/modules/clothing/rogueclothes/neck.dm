@@ -749,6 +749,18 @@
 	slot_flags = ITEM_SLOT_NECK|ITEM_SLOT_MASK
 	body_parts_covered = NECK|FACE
 
+/obj/item/clothing/neck/roguetown/collar/court
+	name = "court physician's collar"
+	icon = 'icons/roguetown/clothing/neck.dmi'
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/neck.dmi'
+	desc = "A stiff collar denoting the court physician's station."
+	icon_state = "courtcollar"
+	item_state = "courtcollar"
+	resistance_flags = FIRE_PROOF
+	dropshrink = 0.5
+	slot_flags = ITEM_SLOT_NECK|ITEM_SLOT_MASK
+	body_parts_covered = NECK|FACE
+
 /obj/item/clothing/neck/roguetown/luckcharm
 	name = "luck charm"
 	desc = "A cabbit's foot necklace. Some say it brings good luck. It only feels more lucky when it's worn around the neck."

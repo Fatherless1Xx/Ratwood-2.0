@@ -232,6 +232,15 @@
 	l_sleeve_status = SLEEVE_NORMAL
 	resistance_flags = FIRE_PROOF
 
+/obj/item/clothing/suit/roguetown/shirt/robe/physician/court
+	name = "court physician's robe"
+	desc = "A formal robe tailored for the court physician."
+	icon = 'icons/roguetown/clothing/shirts.dmi'
+	mob_overlay_icon = 'icons/roguetown/clothing/onmob/shirts.dmi'
+	icon_state = "courtrobe"
+	item_state = "courtrobe"
+	sleeved = null
+
 //Eora content from Stonekeep
 
 /obj/item/clothing/suit/roguetown/shirt/robe/eora

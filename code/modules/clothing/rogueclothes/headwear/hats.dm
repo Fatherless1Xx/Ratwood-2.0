@@ -431,6 +431,11 @@
 	desc = "My cure is most effective."
 	icon_state = "physhat"
 
+/obj/item/clothing/head/roguetown/physician/court
+	name = "court physician's hat"
+	desc = "A formal hat reserved for the court physician."
+	icon_state = "courthat"
+
 
 /obj/item/clothing/head/roguetown/helmet/tricorn
 	slot_flags = ITEM_SLOT_HEAD

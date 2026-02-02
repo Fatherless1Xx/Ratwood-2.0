@@ -66,10 +66,10 @@
 /datum/outfit/job/roguetown/physician/basic/pre_equip(mob/living/carbon/human/H)
 	..()
 	H.adjust_blindness(-3)
-	head = /obj/item/clothing/head/roguetown/physician
-	mask = /obj/item/clothing/mask/rogue/physician
-	neck = /obj/item/storage/belt/rogue/pouch/coins/mid            //coin to hire mercenaries or adventurers with
-	armor = /obj/item/clothing/suit/roguetown/shirt/robe/physician
+	head = /obj/item/clothing/head/roguetown/physician/court
+	mask = /obj/item/clothing/mask/rogue/physician/court
+	neck = /obj/item/clothing/neck/roguetown/collar/court
+	armor = /obj/item/clothing/suit/roguetown/shirt/robe/physician/court
 	shirt = /obj/item/clothing/suit/roguetown/shirt/tunic/black
 	gloves = /obj/item/clothing/gloves/roguetown/leather
 	pants = /obj/item/clothing/under/roguetown/trou/leather/mourning
@@ -84,6 +84,7 @@
 		/obj/item/reagent_containers/glass/bottle/rogue/healthpot = 2,
 		/obj/item/natural/worms/leech/cheele = 1, //little buddy
 		/obj/item/reagent_containers/glass/bottle/waterskin = 1,
+		/obj/item/storage/belt/rogue/pouch/coins/mid = 1, //coin to hire mercenaries or adventurers with
 		/obj/item/recipe_book/alchemy = 1,
 	)
 	if(H.mind)

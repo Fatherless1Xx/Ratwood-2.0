@@ -543,6 +543,11 @@
 	salvage_result = /obj/item/natural/hide/cured
 	salvage_amount = 1
 
+/obj/item/clothing/mask/rogue/physician/court
+	name = "court plague mask"
+	desc = "A refined beaked mask worn by the court physician."
+	icon_state = "courtmask"
+
 /obj/item/clothing/mask/rogue/skullmask
 	name = "skull mask"
 	desc = "A mask in the shape of a skull, designed to terrify."
