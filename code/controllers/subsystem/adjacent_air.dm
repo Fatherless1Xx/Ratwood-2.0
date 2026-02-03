@@ -86,9 +86,12 @@ SUBSYSTEM_DEF(adjacent_air)
 			compiled_list[R.type] = R.volume * multiplier
 	if(!compiled_list.len) //No reagents to add, don't bother going further
 		return
+	var/had_liquids = !!liquids
 	if(!liquids)
 		liquids = new(src)
 	liquids.liquid_group.add_reagents(liquids, compiled_list, chem_temp)
+	if(had_liquids && liquids?.liquid_group?.reagents_per_turf > LIQUID_HEIGHT_DIVISOR)
+		liquids.liquid_group.process_cached_edges()
 
 //More efficient than add_liquid for multiples
 /turf/proc/add_liquid_list(reagent_list, no_react = FALSE, chem_temp)

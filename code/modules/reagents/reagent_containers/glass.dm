@@ -194,10 +194,11 @@
 								span_notice("I splash the contents of [src] onto [target]."))
 			var/turf/target_turf = get_turf(target)
 			if(target_turf)
-				if(istype(target_turf, /turf/open))
-					target_turf.add_liquid_from_reagents(reagents, FALSE, reagents.chem_temp)
-			reagents.reaction(target, TOUCH)
-			reagents.clear_reagents()
+				while(istype(target_turf, /turf/closed) && target_turf != user.loc)
+					target_turf = get_step(target_turf, get_dir(target_turf, user.loc))
+				reagents.reaction(target_turf, TOUCH)
+				chem_splash(target_turf, 2, list(reagents), bias_dir = user.dir, nondirectional_chance = 5)
+				playsound(target_turf, pick('sound/foley/water_land1.ogg','sound/foley/water_land2.ogg', 'sound/foley/water_land3.ogg'), 100, FALSE)
 			return
 
 /obj/item/reagent_containers/glass/afterattack(obj/target, mob/user, proximity)
@@ -216,10 +217,11 @@
 			user.visible_message(span_danger("[user] splashes the contents of [src] onto [target]!"), \
 								span_notice("I splash the contents of [src] onto [target]."))
 			var/turf/target_turf = target
-			if(istype(target_turf, /turf/open))
-				target_turf.add_liquid_from_reagents(reagents, FALSE, reagents.chem_temp)
-			reagents.reaction(target, TOUCH)
-			reagents.clear_reagents()
+			while(istype(target_turf, /turf/closed) && target_turf != user.loc)
+				target_turf = get_step(target_turf, get_dir(target_turf, user.loc))
+			reagents.reaction(target_turf, TOUCH)
+			chem_splash(target_turf, 2, list(reagents), bias_dir = user.dir, nondirectional_chance = 5)
+			playsound(target_turf, pick('sound/foley/water_land1.ogg','sound/foley/water_land2.ogg', 'sound/foley/water_land3.ogg'), 100, FALSE)
 			return
 
 /obj/item/reagent_containers/glass/attackby(obj/item/I, mob/user, params)

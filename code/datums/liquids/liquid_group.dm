@@ -450,12 +450,18 @@ GLOBAL_VAR_INIT(liquid_debug_colors, FALSE)
 	var/amount = 0
 	for(var/list_item in reagent_list)
 		amount += reagent_list[list_item]
+	total_reagent_volume = reagents.total_volume
+	if(length(members))
+		reagents_per_turf = total_reagent_volume / length(members)
 	handle_visual_changes()
 	process_group()
 
 /datum/liquid_group/proc/add_reagent(obj/effect/abstract/liquid_turf/member, datum/reagent/reagent, amount, temperature)
 	reagents.add_reagent(reagent, amount, reagtemp = temperature, no_react = TRUE)
 
+	total_reagent_volume = reagents.total_volume
+	if(length(members))
+		reagents_per_turf = total_reagent_volume / length(members)
 	handle_visual_changes()
 	process_group()
 
@@ -536,6 +542,8 @@ GLOBAL_VAR_INIT(liquid_debug_colors, FALSE)
 		new_color = mix_color_from_reagents(reagents.reagent_list)
 		cached_reagent_list = list()
 		cached_reagent_list |= reagents.reagent_list
+	else
+		new_color = old_color
 
 	var/alpha_setting = 1
 	var/alpha_divisor = 1
@@ -559,9 +567,12 @@ GLOBAL_VAR_INIT(liquid_debug_colors, FALSE)
 				member.liquids?.update_liquid_overlays()
 
 	var/old_alpha = group_alpha
-	if(new_color == old_color && group_alpha == old_alpha || !new_color)
+	var/new_alpha = clamp(round(alpha_setting / alpha_divisor, 1), 120, 255)
+	if(!new_color)
 		return
-	group_alpha = clamp(round(alpha_setting / alpha_divisor, 1), 120, 255)
+	if(new_color == old_color && new_alpha == old_alpha)
+		return
+	group_alpha = new_alpha
 	group_color = new_color
 	for(var/turf/member in members)
 		if(QDELETED(member.liquids))
@@ -714,8 +725,14 @@ GLOBAL_VAR_INIT(liquid_debug_colors, FALSE)
 	return TRUE
 
 /datum/liquid_group/proc/process_cached_edges()
-	for(var/turf/cached_turf in cached_edge_turfs)
-		for(var/direction in cached_edge_turfs[cached_turf])
+	var/list/cached_turfs = cached_edge_turfs.Copy()
+	if(length(cached_turfs) > 1)
+		cached_turfs = shuffle(cached_turfs)
+	for(var/turf/cached_turf in cached_turfs)
+		var/list/directions = cached_edge_turfs[cached_turf]
+		if(length(directions) > 1)
+			directions = shuffle(directions)
+		for(var/direction in directions)
 			var/turf/directional_turf = get_step(cached_turf, direction)
 			if(isclosedturf(directional_turf))
 				continue
@@ -735,6 +752,9 @@ GLOBAL_VAR_INIT(liquid_debug_colors, FALSE)
 		if(!QDELETED(directional_turf.liquids))
 			continue
 		passed_directions.Add(direction)
+
+	if(length(passed_directions) > 1)
+		passed_directions = shuffle(passed_directions)
 
 	if(length(passed_directions))
 		if(!islist(cached_edge_turfs)) // what the fuck???
