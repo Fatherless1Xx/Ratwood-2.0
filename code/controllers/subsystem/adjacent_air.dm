@@ -157,11 +157,12 @@ SUBSYSTEM_DEF(adjacent_air)
 //	air with both of the related adjacent cardinal tiles
 /turf/proc/GetAtmosAdjacentTurfs(alldir = 0)
 	var/adjacent_turfs
-	air_update_turf(TRUE) // since no atmos subsystem, we need to generate turf atmos adjacency manually
-	if(length(atmos_adjacent_turfs))
+	if(!atmos_adjacent_turfs)
+		ImmediateCalculateAdjacentTurfs()
+	if(atmos_adjacent_turfs)
 		adjacent_turfs = atmos_adjacent_turfs.Copy()
 	else
-		return null
+		adjacent_turfs = list()
 	if (!alldir)
 		return adjacent_turfs
 	var/turf/curloc = src
@@ -170,6 +171,8 @@ SUBSYSTEM_DEF(adjacent_air)
 		var/turf/S = get_step_multiz(curloc, direction)
 		if(!S)
 			continue
+		if(!S.atmos_adjacent_turfs)
+			S.ImmediateCalculateAdjacentTurfs()
 		for (var/checkDirection in GLOB.cardinals_multiz)
 			var/turf/checkTurf = get_step(S, checkDirection)
 			if(!S.atmos_adjacent_turfs || !S.atmos_adjacent_turfs[checkTurf])
