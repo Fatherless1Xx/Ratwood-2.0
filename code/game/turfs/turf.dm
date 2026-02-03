@@ -109,6 +109,9 @@
 	if (opacity)
 		has_opaque_atom = TRUE
 
+	if(shine)
+		make_shiny(shine)
+
 	ComponentInitialize()
 
 	queue_smooth_neighbors(src)
@@ -675,4 +678,3 @@
 //Should return new turf
 /turf/proc/Melt()
 	return ScrapeAway(flags = CHANGETURF_INHERIT_AIR)
-
