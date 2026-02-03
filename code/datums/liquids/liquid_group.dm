@@ -551,12 +551,12 @@ GLOBAL_VAR_INIT(liquid_debug_colors, FALSE)
 		if(!glows)
 			glows = TRUE
 			for(var/turf/member in members)
-				member.liquids?.update_appearance(UPDATE_OVERLAYS)
+				member.liquids?.update_liquid_overlays()
 	else
 		if(glows)
 			glows = FALSE
 			for(var/turf/member in members)
-				member.liquids?.update_appearance(UPDATE_OVERLAYS)
+				member.liquids?.update_liquid_overlays()
 
 	var/old_alpha = group_alpha
 	if(new_color == old_color && group_alpha == old_alpha || !new_color)

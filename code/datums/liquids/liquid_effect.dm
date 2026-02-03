@@ -12,6 +12,7 @@
 	light_color = LIGHT_COLOR_FIRE
 
 	mouse_opacity = FALSE
+	shine = SHINE_REFLECTIVE
 
 	var/datum/liquid_group/liquid_group
 	var/turf/my_turf
@@ -42,11 +43,11 @@
 
 /obj/effect/abstract/liquid_turf/proc/set_connection(dir)
 	connected["[dir]"] = 1
-	update_appearance(UPDATE_ICON)
+	update_icon()
 
 /obj/effect/abstract/liquid_turf/proc/unset_connection(dir)
 	connected["[dir]"] = 0
-	update_appearance(UPDATE_ICON)
+	update_icon()
 
 /obj/effect/abstract/liquid_turf/update_icon_state()
 	. = ..()
@@ -66,6 +67,15 @@
 		. += mutable_appearance('icons/effects/liquid_overlays.dmi', "stage[number]_top", plane =GAME_PLANE, layer = BELOW_MOB_LAYER)
 	if(liquid_group?.glows)
 		. += mutable_appearance(icon, icon_state, plane = EMISSIVE_PLANE)
+
+/obj/effect/abstract/liquid_turf/proc/update_liquid_overlays()
+	var/list/new_overlays = update_overlays()
+	if(managed_overlays)
+		cut_overlay(managed_overlays)
+		managed_overlays = null
+	if(length(new_overlays))
+		managed_overlays = new_overlays
+		add_overlay(new_overlays)
 
 /obj/effect/abstract/liquid_turf/Initialize(mapload, datum/liquid_group/group_to_add)
 	. = ..()
@@ -102,12 +112,12 @@
 			set_connection(get_dir(src, pipe))
 			pipe.set_connection(get_dir(pipe, src))
 	if(z)
-		update_appearance(UPDATE_ICON)
+		update_icon()
 		for(var/direction in GLOB.cardinals)
 			var/turf/turf = get_step(src, direction)
 			if(!turf.liquids)
 				continue
-			turf.liquids.update_appearance(UPDATE_ICON)
+			turf.liquids.update_icon()
 
 /obj/effect/abstract/liquid_turf/Destroy(force)
 	UnregisterSignal(my_turf, list(COMSIG_ATOM_ENTERED, COMSIG_PARENT_EXAMINE))
@@ -127,7 +137,7 @@
 				return
 			set_connection(get_dir(src, pipe))
 			pipe.set_connection(get_dir(pipe, src))
-			pipe.update_appearance(UPDATE_ICON)
+			pipe.update_icon()
 
 	for(var/direction in GLOB.cardinals)
 		var/turf/turf = get_step(src, direction)
@@ -174,16 +184,16 @@
 	var/number = new_state - 1
 	if(number != 0)
 		icon_state = null
-		update_appearance(UPDATE_OVERLAYS)
+		update_liquid_overlays()
 	else
 		icon_state = initial(icon_state)
-		update_appearance(UPDATE_OVERLAYS)
+		update_liquid_overlays()
 		for(var/direction in GLOB.cardinals)
 			var/turf/turf = get_step(src, direction)
 			if(!turf.liquids)
 				continue
-			turf.liquids.update_appearance(UPDATE_OVERLAYS)
-		update_appearance(UPDATE_OVERLAYS)
+			turf.liquids.update_liquid_overlays()
+		update_liquid_overlays()
 
 /obj/effect/abstract/liquid_turf/proc/set_fire_effect()
 	if(displayed_content)
@@ -240,7 +250,7 @@
 	else if (isliving(AM))
 		var/mob/living/L = AM
 		if(liquid_group.slippery)
-			if(prob(7) && !(L.movement_type & FLYING) && L.body_position != LYING_DOWN)
+			if(prob(7) && !(L.movement_type & FLYING) && (L.mobility_flags & MOBILITY_STAND))
 				L.slip(30, T, NO_SLIP_WHEN_WALKING, 0, TRUE)
 
 	if(fire_state)
