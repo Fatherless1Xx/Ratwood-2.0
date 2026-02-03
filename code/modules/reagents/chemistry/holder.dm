@@ -540,6 +540,7 @@
 			update_total()
 			if(my_atom)
 				my_atom.on_reagent_change(DEL_REAGENT)
+			SEND_SIGNAL(src, COMSIG_REAGENTS_DEL_REAGENT, reagent)
 	return 1
 
 /datum/reagents/proc/update_total()
@@ -883,6 +884,8 @@
 		var/datum/reagent/R = i
 		R.on_temp_change()
 	handle_reactions()
+	if(my_atom)
+		SEND_SIGNAL(my_atom, COMSIG_REAGENTS_EXPOSE_TEMPERATURE, null, chem_temp)
 
 ///////////////////////////////////////////////////////////////////////////////////
 
