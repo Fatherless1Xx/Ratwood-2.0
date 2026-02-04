@@ -14,7 +14,6 @@ Format:
 endmap
 
 map roguetest
-	default
 endmap
 
 map dun_manor
@@ -25,5 +24,6 @@ map dun_world
 endmap
 
 map rockhill
+	default
 	votable
 endmap
