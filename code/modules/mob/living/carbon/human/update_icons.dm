@@ -874,10 +874,9 @@ There are several things that need to be remembered:
 				standing_front += mbeltoverlay
 				if(istype(belt, /obj/item/storage/belt/rogue)) // check if belt has dildo attached
 					var/obj/item/storage/belt/rogue/belt_with_dildo = belt
-					if(istype(belt_with_dildo.attached_toy, /obj/item/dildo))
-						var/obj/item/dildo/dildo = belt_with_dildo.attached_toy
+					if(istype(belt_with_dildo.attached_toy, /obj/item/dildo)) // draw dildo in correct position
 						var/mutable_appearance/mbeltoverlaydildo = mutable_appearance('modular/icons/obj/lewd/dildo.dmi', "dildo_belt")
-						mbeltoverlaydildo.color = dildo.color
+						mbeltoverlaydildo.color = belt_with_dildo.attached_toy.color // get material color
 						mbeltoverlaydildo.pixel_x = mbeltoverlay.pixel_x
 						mbeltoverlaydildo.pixel_y = mbeltoverlay.pixel_y
 						standing_front += mbeltoverlaydildo
