@@ -22,7 +22,7 @@
 	return TRUE
 
 /datum/sex_action/toy_other_oral/on_start(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	var/obj/item/dildo = !pegging ? get_dildo_in_either_hand(user) : get_dildo_on_belt(user)
+	var/obj/item/dildo/dildo = !pegging ? get_dildo_in_either_hand(user) : get_dildo_on_belt(user)
 	user.visible_message(span_warning("[user] forces [target]'s to gobble on \the [dildo]..."))
 
 /datum/sex_action/toy_other_oral/on_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
@@ -30,7 +30,7 @@
 	target.make_sucking_noise()
 
 /datum/sex_action/toy_other_oral/on_finish(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	var/obj/item/dildo = pegging ? get_dildo_in_either_hand(user) : get_dildo_on_belt(user)
+	var/obj/item/dildo/dildo = pegging ? get_dildo_in_either_hand(user) : get_dildo_on_belt(user)
 	user.visible_message(span_warning("[user] pulls \the [dildo] from [target]'s mouth."))
 
 /datum/sex_action/toy_other_oral/is_finished(mob/living/carbon/human/user, mob/living/carbon/human/target)

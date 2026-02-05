@@ -30,7 +30,7 @@
 	playsound(user, 'sound/misc/mat/fingering.ogg', 30, TRUE, -2, ignore_walls = FALSE)
 
 /datum/sex_action/toy_other_masturbate/on_finish(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	var/obj/item/dildo = get_dildo_on_belt(target)
+	var/obj/item/dildo/dildo = get_dildo_on_belt(target)
 	if(dildo)
 		user.visible_message(span_warning("[user] stops jerking \the [dildo]."))
 	else

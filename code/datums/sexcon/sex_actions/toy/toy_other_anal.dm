@@ -21,7 +21,7 @@
 	return TRUE
 
 /datum/sex_action/toy_other_anal/on_start(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	var/obj/item/dildo = !pegging ? get_dildo_in_either_hand(user) : get_dildo_on_belt(user)
+	var/obj/item/dildo/dildo = !pegging ? get_dildo_in_either_hand(user) : get_dildo_on_belt(user)
 	user.visible_message(span_warning("[user] shoves \the [dildo] in [target]'s butt..."))
 
 /datum/sex_action/toy_other_anal/on_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
@@ -32,7 +32,7 @@
 	target.sexcon.handle_passive_ejaculation()
 
 /datum/sex_action/toy_other_anal/on_finish(mob/living/carbon/human/user, mob/living/carbon/human/target)
-	var/obj/item/dildo = !pegging ? get_dildo_in_either_hand(user) : get_dildo_on_belt(user)
+	var/obj/item/dildo/dildo = !pegging ? get_dildo_in_either_hand(user) : get_dildo_on_belt(user)
 	user.visible_message(span_warning("[user] pulls \the [dildo] from [target]'s butt."))
 
 /datum/sex_action/toy_other_anal/is_finished(mob/living/carbon/human/user, mob/living/carbon/human/target)
