@@ -1281,6 +1281,29 @@
 	to_chat(owner, span_warning("My mind is clear again, no longer clouded with foggy peace!"))
 	REMOVE_TRAIT(owner, TRAIT_PACIFISM, id)
 
+/datum/status_effect/buff/barbarian_rage
+	id = "barbarian_rage"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/barbarian_rage
+	duration = 30 SECONDS
+	effectedstats = list(STATKEY_STR = 1, STATKEY_CON = 2, STATKEY_PER = -2, STATKEY_INT = -2)
+
+/atom/movable/screen/alert/status_effect/buff/barbarian_rage
+	name = "Rage"
+	desc = "A surge of fury sharpens my blows, but clouds my judgment."
+	icon_state = "call_to_arms"
+
+/datum/status_effect/buff/barbarian_rage/on_apply()
+	. = ..()
+	ADD_TRAIT(owner, TRAIT_BLOODLOSS_IMMUNE, id)
+	ADD_TRAIT(owner, TRAIT_HARDDISMEMBER, id)
+	ADD_TRAIT(owner, TRAIT_STRENGTH_UNCAPPED, id)
+
+/datum/status_effect/buff/barbarian_rage/on_remove()
+	. = ..()
+	REMOVE_TRAIT(owner, TRAIT_BLOODLOSS_IMMUNE, id)
+	REMOVE_TRAIT(owner, TRAIT_HARDDISMEMBER, id)
+	REMOVE_TRAIT(owner, TRAIT_STRENGTH_UNCAPPED, id)
+
 /datum/status_effect/buff/call_to_arms
 	id = "call_to_arms"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/call_to_arms
