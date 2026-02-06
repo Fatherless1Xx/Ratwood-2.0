@@ -1,9 +1,8 @@
-// Barbarian/Berserker rage skill
 /obj/effect/proc_holder/spell/self/barbarian_rage
 	name = "Rage"
 	desc = "Enter a state of martial fervor, increasing offensive capabilities at the cost of making yourself vulnerable."
 	overlay_state = "call_to_arms"
-	recharge_time = 1 MINUTES
+	recharge_time = 5 MINUTES
 	releasedrain = 10
 	chargedrain = 0
 	chargetime = 0
