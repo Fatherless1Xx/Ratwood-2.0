@@ -34,13 +34,23 @@
 	var/atom/movable/screen/text/stress_popup
 	var/atom/movable/screen/text/stress_message_blurb
 
-/mob/living/carbon/proc/show_stress_popup(message, text_color = "#FFFFFF", duration = 3 SECONDS, fade_time = 0.5 SECONDS, speed = 0.5, screen_position = "WEST+8,SOUTH+2", text_alignment = "left")
+/mob/living/carbon/proc/get_stress_popup_screen_position()
+	// Wider, safe jitter lane that stays between left HUD and right chat panel.
+	var/x = rand(6, 10)
+	var/y = rand(2, 8)
+	var/pixel_x = rand(0, 20)
+	var/pixel_y = rand(0, 20)
+	return "WEST+[x]:[pixel_x],SOUTH+[y]:[pixel_y]"
+
+/mob/living/carbon/proc/show_stress_popup(message, text_color = "#FFFFFF", duration = 3 SECONDS, fade_time = 0.5 SECONDS, speed = 0.5, screen_position = null, text_alignment = "left")
 	if(!client || !message)
 		return
 	if(stress_popup)
 		client.screen -= stress_popup
 		qdel(stress_popup)
 		stress_popup = null
+	if(!screen_position)
+		screen_position = get_stress_popup_screen_position()
 	var/style = "font-family: 'Fixedsys'; font-size: 6px; text-align: [text_alignment]; color: [text_color]; -dm-text-outline: 1px #000000;"
 	var/atom/movable/screen/text/popup = ScreenText(null, "", screen_position, 96, 260)
 	stress_popup = popup
@@ -74,17 +84,21 @@
 	qdel(popup)
 
 /mob/living/carbon/proc/get_stress_blurb_screen_position(text_alignment = "left")
-	// Vanderlin style random scatter with alignment-aware x clamps to avoid chat overlap.
-	var/min_x = 2
-	var/max_x = 6
+	// Vanderlin style scatter in a wider but safe center corridor.
+	var/min_x = 5
+	var/max_x = 8
 	switch(text_alignment)
 		if("center")
-			min_x = 3
-			max_x = 7
-		if("right")
-			min_x = 4
+			min_x = 7
 			max_x = 10
-	return "WEST+[rand(min_x, max_x)],SOUTH+[rand(2, 12)]"
+		if("right")
+			min_x = 9
+			max_x = 12
+	var/x = rand(min_x, max_x)
+	var/y = rand(2, 13)
+	var/pixel_x = rand(0, 20)
+	var/pixel_y = rand(0, 20)
+	return "WEST+[x]:[pixel_x],SOUTH+[y]:[pixel_y]"
 
 /mob/living/carbon/proc/show_stress_blurb(message, duration = 3 SECONDS, fade_time = 3 SECONDS, screen_position = "WEST+2,SOUTH+2", text_alignment = "left")
 	if(!client || !message)
