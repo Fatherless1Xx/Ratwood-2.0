@@ -1,5 +1,3 @@
-GLOBAL_LIST_INIT(stress_messages, world.file2list("strings/rt/stress_messages.txt"))
-
 /mob/proc/add_stress(event_type)
 	return
 
@@ -33,6 +31,95 @@ GLOBAL_LIST_INIT(stress_messages, world.file2list("strings/rt/stress_messages.tx
 /mob/living/carbon
 	var/oldstress = 0
 	var/list/stressors = list()
+	var/atom/movable/screen/text/stress_popup
+	var/atom/movable/screen/text/stress_message_blurb
+
+/mob/living/carbon/proc/show_stress_popup(message, text_color = "#FFFFFF", duration = 3 SECONDS, fade_time = 0.5 SECONDS, speed = 0.5, screen_position = "WEST+8,SOUTH+2", text_alignment = "left")
+	if(!client || !message)
+		return
+	if(stress_popup)
+		client.screen -= stress_popup
+		qdel(stress_popup)
+		stress_popup = null
+	var/style = "font-family: 'Fixedsys'; font-size: 6px; text-align: [text_alignment]; color: [text_color]; -dm-text-outline: 1px #000000;"
+	var/atom/movable/screen/text/popup = ScreenText(null, "", screen_position, 96, 260)
+	stress_popup = popup
+	client.screen += popup
+	INVOKE_ASYNC(src, PROC_REF(type_stress_popup), popup, message, style, speed)
+	addtimer(CALLBACK(src, PROC_REF(clear_stress_popup), popup, fade_time), duration)
+
+/mob/living/carbon/proc/type_stress_popup(atom/movable/screen/text/popup, message, style, speed = 0.5)
+	if(!popup)
+		return
+	for(var/i in 1 to length(message) + 1)
+		if(QDELETED(popup) || popup != stress_popup)
+			return
+		popup.maptext = MAPTEXT("<span style=\"[style]\">[html_encode(copytext(message, 1, i))]</span>")
+		if(speed)
+			sleep(speed)
+
+/mob/living/carbon/proc/clear_stress_popup(atom/movable/screen/text/popup, fade_time = 0.5 SECONDS)
+	if(!popup)
+		return
+	animate(popup, alpha = 0, time = fade_time, easing = EASE_OUT)
+	addtimer(CALLBACK(src, PROC_REF(remove_stress_popup), popup), fade_time + 1)
+
+/mob/living/carbon/proc/remove_stress_popup(atom/movable/screen/text/popup)
+	if(!popup)
+		return
+	if(client)
+		client.screen -= popup
+	if(stress_popup == popup)
+		stress_popup = null
+	qdel(popup)
+
+/mob/living/carbon/proc/get_stress_blurb_screen_position(text_alignment = "left")
+	// Vanderlin style random scatter with alignment-aware x clamps to avoid chat overlap.
+	var/min_x = 2
+	var/max_x = 6
+	switch(text_alignment)
+		if("center")
+			min_x = 3
+			max_x = 7
+		if("right")
+			min_x = 4
+			max_x = 10
+	return "WEST+[rand(min_x, max_x)],SOUTH+[rand(2, 12)]"
+
+/mob/living/carbon/proc/show_stress_blurb(message, duration = 3 SECONDS, fade_time = 3 SECONDS, screen_position = "WEST+2,SOUTH+2", text_alignment = "left")
+	if(!client || !message)
+		return
+	if(stress_message_blurb)
+		client.screen -= stress_message_blurb
+		qdel(stress_message_blurb)
+		stress_message_blurb = null
+	var/style = "font-family: 'Fixedsys'; font-size: 6px; text-align: [text_alignment]; color: #ff0000; -dm-text-outline: 1px #000000;"
+	var/atom/movable/screen/text/blurb = ScreenText(null, MAPTEXT("<span style=\"[style]\">[html_encode(message)]</span>"), screen_position, 96, 205)
+	switch(text_alignment)
+		if("center")
+			blurb.maptext_x = -86
+		if("right")
+			blurb.maptext_x = -173
+		else
+			blurb.maptext_x = 0
+	stress_message_blurb = blurb
+	client.screen += blurb
+	addtimer(CALLBACK(src, PROC_REF(clear_stress_blurb), blurb, fade_time), duration)
+
+/mob/living/carbon/proc/clear_stress_blurb(atom/movable/screen/text/blurb, fade_time = 3 SECONDS)
+	if(!blurb)
+		return
+	animate(blurb, alpha = 0, time = fade_time, easing = EASE_OUT)
+	addtimer(CALLBACK(src, PROC_REF(remove_stress_blurb), blurb), fade_time + 1)
+
+/mob/living/carbon/proc/remove_stress_blurb(atom/movable/screen/text/blurb)
+	if(!blurb)
+		return
+	if(client)
+		client.screen -= blurb
+	if(stress_message_blurb == blurb)
+		stress_message_blurb = null
+	qdel(blurb)
 
 /mob/living/carbon/add_stress(event_type)
 	var/datum/stressevent/event = get_stress_event(event_type)
@@ -86,12 +173,12 @@ GLOBAL_LIST_INIT(stress_messages, world.file2list("strings/rt/stress_messages.tx
 		var/diff_abs = abs(new_stress - oldstress)
 		if(diff_abs > 1)
 			if(ascending)
-				to_chat(src, span_smallred("I gain stress."))
+				show_stress_popup("I gain stress.", "#dc7373")
 				if(diff_abs > 2)
 					if(!rogue_sneaking || alpha >= 100)
 						play_stress_indicator()
 			else
-				to_chat(src, span_smallgreen("I gain peace."))
+				show_stress_popup("I gain peace.", "#6fd58a")
 				if(diff_abs > 2)
 					if(!rogue_sneaking || alpha >= 100)
 						play_relief_indicator()
@@ -102,40 +189,43 @@ GLOBAL_LIST_INIT(stress_messages, world.file2list("strings/rt/stress_messages.tx
 		remove_status_effect(/datum/status_effect/mood)
 		switch(new_threshold)
 			if(STRESS_THRESHOLD_NICE)
-				to_chat(src, span_green("I feel great!"))
+				show_stress_popup("I feel great!", "#69d58c")
 				apply_status_effect(/datum/status_effect/mood/vgood)
 			if(STRESS_THRESHOLD_GOOD)
 				if(ascending)
-					to_chat(src, span_info("I no longer feel as good."))
+					show_stress_popup("I no longer feel as good.", "#d3d8df")
 				else
-					to_chat(src, span_green("I feel good."))
+					show_stress_popup("I feel good.", "#7ce09b")
 				apply_status_effect(/datum/status_effect/mood/good)
 			if(STRESS_THRESHOLD_NEUTRAL)
 				if(ascending)
-					to_chat(src, span_info("I no longer feel good."))
+					show_stress_popup("I no longer feel good.", "#d3d8df")
 				else
-					to_chat(src, span_info("I no longer feel stressed."))
+					show_stress_popup("I no longer feel stressed.", "#d3d8df")
 			if(STRESS_THRESHOLD_STRESSED)
 				if(ascending)
-					to_chat(src, span_red("I'm getting stressed..."))
+					show_stress_popup("I'm getting stressed...", "#ff8a8a")
 				else
-					to_chat(src, span_red("I'm stressed a little less, now."))
+					show_stress_popup("I'm stressed a little less, now.", "#ff8a8a")
 				apply_status_effect(/datum/status_effect/mood/bad)
 			if(STRESS_THRESHOLD_STRESSED_BAD)
 				if(!HAS_TRAIT(src, TRAIT_EORAN_CALM) && !HAS_TRAIT(src, TRAIT_EORAN_SERENE))
 					if(ascending)
-						to_chat(src, span_boldred("I'm getting at my limit..."))
+						show_stress_popup("I'm getting at my limit...", "#ff5f5f")
 					else
-						to_chat(src, span_boldred("I'm not freaking out that badly anymore."))
+						show_stress_popup("I'm not freaking out that badly anymore.", "#ff5f5f")
 					apply_status_effect(/datum/status_effect/mood/vbad)
 			if(STRESS_THRESHOLD_FREAKING_OUT)
-				to_chat(src, span_boldred("I'M FREAKING OUT!!!"))
+				show_stress_popup("I'M FREAKING OUT!!!", "#ff3e3e")
 				play_mental_break_indicator()
 				apply_status_effect(/datum/status_effect/mood/vbad)
 
-	if(new_stress >=13)
-		if(!HAS_TRAIT(src, TRAIT_EORAN_CALM) && !HAS_TRAIT(src, TRAIT_EORAN_SERENE))
-			random_stress_message()
+	if(new_threshold >= STRESS_THRESHOLD_STRESSED)
+		if(old_threshold < STRESS_THRESHOLD_STRESSED)
+			mob_timers["next_stress_message"] = 0
+		random_stress_message()
+	else
+		mob_timers["next_stress_message"] = 0
 
 	if(new_stress >= 20)
 		if(!HAS_TRAIT(src, TRAIT_EORAN_CALM) && !HAS_TRAIT(src, TRAIT_EORAN_SERENE))
@@ -198,7 +288,7 @@ GLOBAL_LIST_INIT(stress_messages, world.file2list("strings/rt/stress_messages.tx
 	stress_freakout()
 
 /mob/living/carbon/proc/stress_freakout()
-	to_chat(src, span_boldred("I PANIC!!!"))
+	show_stress_popup("I PANIC!!!", "#ff3e3e")
 	Stun(2 SECONDS)
 	blur_eyes(2)
 	freakout_hud_skew()
@@ -228,9 +318,14 @@ GLOBAL_LIST_INIT(stress_messages, world.file2list("strings/rt/stress_messages.tx
 	if(mob_timers["next_stress_message"])
 		if(world.time < mob_timers["next_stress_message"])
 			return
-	mob_timers["next_stress_message"] = world.time + rand(80 SECONDS, 160 SECONDS) //not as important as freakout
-	var/stress_message_picked = pick(GLOB.stress_messages)
-	to_chat(client, span_danger("<b>[stress_message_picked]</b>"))
+	mob_timers["next_stress_message"] = world.time + rand(8 SECONDS, 14 SECONDS)
+	var/stress_message_picked = pick_list("rt/stress_messages.json", "insanity")
+	var/text_alignment = pick("left", "right", "center")
+	show_stress_blurb(
+		stress_message_picked,
+		screen_position = get_stress_blurb_screen_position(text_alignment),
+		text_alignment = text_alignment
+	)
 
 
 /mob/living/carbon/get_stress_amount()
