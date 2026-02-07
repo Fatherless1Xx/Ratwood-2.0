@@ -35,11 +35,29 @@
 	var/atom/movable/screen/text/stress_message_blurb
 
 /mob/living/carbon/proc/get_stress_popup_screen_position()
-	// Wider, safe jitter lane that stays between left HUD and right chat panel.
-	var/x = rand(6, 10)
-	var/y = rand(2, 8)
-	var/pixel_x = rand(0, 20)
-	var/pixel_y = rand(0, 20)
+	var/x
+	var/y
+	switch(rand(1, 6))
+		if(1) // bottom-left
+			x = rand(5, 6)
+			y = rand(2, 4)
+		if(2) // bottom-right
+			x = rand(8, 9)
+			y = rand(2, 4)
+		if(3) // top-left
+			x = rand(5, 6)
+			y = rand(10, 12)
+		if(4) // top-right
+			x = rand(8, 9)
+			y = rand(10, 12)
+		if(5) // center-left
+			x = rand(6, 7)
+			y = rand(6, 8)
+		if(6) // center-right
+			x = rand(7, 8)
+			y = rand(6, 8)
+	var/pixel_x = rand(0, 18)
+	var/pixel_y = rand(0, 18)
 	return "WEST+[x]:[pixel_x],SOUTH+[y]:[pixel_y]"
 
 /mob/living/carbon/proc/show_stress_popup(message, text_color = "#FFFFFF", duration = 3 SECONDS, fade_time = 0.5 SECONDS, speed = 0.5, screen_position = null, text_alignment = "left")
