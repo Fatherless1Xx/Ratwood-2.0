@@ -34,28 +34,14 @@
 	var/atom/movable/screen/text/stress_popup
 	var/atom/movable/screen/text/stress_message_blurb
 
-/mob/living/carbon/proc/get_stress_popup_screen_position()
-	var/x
-	var/y
-	switch(rand(1, 6))
-		if(1) // bottom-left
-			x = rand(5, 6)
-			y = rand(2, 4)
-		if(2) // bottom-right
-			x = rand(8, 9)
-			y = rand(2, 4)
-		if(3) // top-left
-			x = rand(5, 6)
-			y = rand(10, 12)
-		if(4) // top-right
-			x = rand(8, 9)
-			y = rand(10, 12)
-		if(5) // center-left
-			x = rand(6, 7)
-			y = rand(6, 8)
-		if(6) // center-right
-			x = rand(7, 8)
-			y = rand(6, 8)
+/mob/living/carbon/proc/get_stress_popup_screen_position(horizontal_side = null, vertical_side = null)
+	// Explicit 50/50 side and vertical picks to remove placement bias.
+	if(!horizontal_side)
+		horizontal_side = pick("left", "right")
+	if(!vertical_side)
+		vertical_side = pick("bottom", "top")
+	var/x = (horizontal_side == "left") ? rand(2, 4) : rand(9, 11)
+	var/y = (vertical_side == "bottom") ? rand(2, 4) : rand(10, 12)
 	var/pixel_x = rand(0, 18)
 	var/pixel_y = rand(0, 18)
 	return "WEST+[x]:[pixel_x],SOUTH+[y]:[pixel_y]"
@@ -101,19 +87,9 @@
 		stress_popup = null
 	qdel(popup)
 
-/mob/living/carbon/proc/get_stress_blurb_screen_position(text_alignment = "left")
-	// Vanderlin style scatter in a wider but safe center corridor.
-	var/min_x = 5
-	var/max_x = 8
-	switch(text_alignment)
-		if("center")
-			min_x = 7
-			max_x = 10
-		if("right")
-			min_x = 9
-			max_x = 12
-	var/x = rand(min_x, max_x)
-	var/y = rand(2, 13)
+/mob/living/carbon/proc/get_stress_blurb_screen_position(horizontal_side = "left", vertical_side = "bottom")
+	var/x = (horizontal_side == "left") ? rand(1, 3) : rand(9, 11)
+	var/y = (vertical_side == "bottom") ? rand(2, 6) : rand(9, 13)
 	var/pixel_x = rand(0, 20)
 	var/pixel_y = rand(0, 20)
 	return "WEST+[x]:[pixel_x],SOUTH+[y]:[pixel_y]"
@@ -133,7 +109,7 @@
 		if("right")
 			blurb.maptext_x = -173
 		else
-			blurb.maptext_x = 0
+			blurb.maptext_x = -12
 	stress_message_blurb = blurb
 	client.screen += blurb
 	addtimer(CALLBACK(src, PROC_REF(clear_stress_blurb), blurb, fade_time), duration)
@@ -352,10 +328,12 @@
 			return
 	mob_timers["next_stress_message"] = world.time + rand(8 SECONDS, 14 SECONDS)
 	var/stress_message_picked = pick_list("rt/stress_messages.json", "insanity")
-	var/text_alignment = pick("left", "right", "center")
+	var/horizontal_side = pick("left", "right")
+	var/vertical_side = pick("bottom", "top")
+	var/text_alignment = (horizontal_side == "left") ? "left" : "right"
 	show_stress_blurb(
 		stress_message_picked,
-		screen_position = get_stress_blurb_screen_position(text_alignment),
+		screen_position = get_stress_blurb_screen_position(horizontal_side, vertical_side),
 		text_alignment = text_alignment
 	)
 
