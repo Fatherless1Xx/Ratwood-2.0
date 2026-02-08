@@ -6,6 +6,7 @@
 	warnie = "aimwarn"
 	warnoffset = 0
 	var/obj/effect/spell_cast_rune/charge_rune = null
+	var/obj/effect/spell_charge_particles/charge_particles = null
 
 /datum/intent/spell/can_charge(atom/clicked_object)
 	var/obj/effect/proc_holder/spell/spell_ability = mastermob.ranged_ability
@@ -50,16 +51,11 @@
 	if(!charge_rune)
 		charge_rune = new
 	mastermob.vis_contents += charge_rune
-	spawn_charge_particles()
+	if(!charge_particles)
+		charge_particles = new
+	mastermob.vis_contents += charge_particles
 	var/obj/effect/temp_visual/spell_charge_wave_up/wave = new
 	mastermob.vis_contents += wave
-
-/datum/intent/spell/proc/spawn_charge_particles()
-	if(!mastermob || mastermob.curplaying != src)
-		return
-	var/obj/effect/temp_visual/spell_charge_particle_up/particles = new
-	mastermob.vis_contents += particles
-	addtimer(CALLBACK(src, PROC_REF(spawn_charge_particles)), 3.6 SECONDS, TIMER_UNIQUE | TIMER_OVERRIDE)
 
 /datum/intent/spell/on_mouse_up()
 	var/obj/effect/proc_holder/spell/spell_ability = mastermob?.ranged_ability
@@ -88,3 +84,6 @@
 		if(charge_rune && mastermob)
 			mastermob.vis_contents -= charge_rune
 		QDEL_NULL(charge_rune)
+		if(charge_particles && mastermob)
+			mastermob.vis_contents -= charge_particles
+		QDEL_NULL(charge_particles)
