@@ -54,8 +54,24 @@
 	if(!charge_particles)
 		charge_particles = new
 	mastermob.vis_contents += charge_particles
+	refresh_charge_particles()
 	var/obj/effect/temp_visual/spell_charge_wave_up/wave = new
 	mastermob.vis_contents += wave
+
+/datum/intent/spell/proc/refresh_charge_particles()
+	if(!mastermob || !charge_particles)
+		return
+	var/obj/effect/proc_holder/spell/spell_ability = mastermob.ranged_ability
+	var/still_active = (mastermob.curplaying == src)
+	if(istype(spell_ability) && spell_ability.require_mmb_target_after_charge && spell_ability.awaiting_mmb_target)
+		still_active = TRUE
+	if(!still_active)
+		return
+	if(!(charge_particles in mastermob.vis_contents))
+		mastermob.vis_contents += charge_particles
+	// particle_up is a one-shot icon animation; replay it while the spell stays active.
+	flick("particle_up", charge_particles)
+	addtimer(CALLBACK(src, PROC_REF(refresh_charge_particles)), 3.6 SECONDS, TIMER_UNIQUE | TIMER_OVERRIDE)
 
 /datum/intent/spell/on_mouse_up()
 	var/obj/effect/proc_holder/spell/spell_ability = mastermob?.ranged_ability
