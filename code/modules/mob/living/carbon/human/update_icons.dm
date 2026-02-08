@@ -108,10 +108,11 @@ There are several things that need to be remembered:
 
 /mob/living/carbon/human/proc/update_smell(smelly_icon = "generic_mob_smell")
 	remove_overlay(SMELL_LAYER)
-	if(hygiene != HYGIENE_LEVEL_DISGUSTING)
+	if(hygiene > HYGIENE_LEVEL_DIRTY)
 		return
 	var/mutable_appearance/new_smell_overlay = mutable_appearance('icons/mob/smelly.dmi', smelly_icon)
 	new_smell_overlay.layer = -BODY_FRONT_FRONT_LAYER
+	new_smell_overlay.pixel_y = -6
 	overlays_standing[SMELL_LAYER] = new_smell_overlay
 	apply_overlay(SMELL_LAYER)
 

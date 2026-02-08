@@ -135,6 +135,8 @@
 	dna.species.handle_environment(src)
 
 /mob/living/carbon/human/proc/handle_hygiene()
+	if(!client)
+		return
 	if(stat == DEAD || HAS_TRAIT(src, TRAIT_NOHYGIENE))
 		return
 	if(HAS_TRAIT(src, TRAIT_ALWAYS_CLEAN))
