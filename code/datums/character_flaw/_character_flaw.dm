@@ -749,10 +749,11 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	desc = "Whether through intentionally seeking out heretical ritualists or against my will, I have been marked by Baotha. I am branded visibly on my groin and am able to be impregnated regardless of physical states that would usually prevent this"
 
 /datum/charflaw/marked_by_baotha/on_mob_creation(mob/user)
-	var/mutable_appearance/marking_overlay = mutable_appearance('icons/roguetown/misc/baotha_marking.dmi', "marking_[target.gender == "male" ? "m" : "f"]", -BODY_LAYER)
-	target.add_overlay(marking_overlay)
-	target.update_body_parts()
-		ADD_TRAIT(target, TRAIT_BAOTHA_FERTILITY_BOON, TRAIT_GENERIC)
-		var/obj/item/organ/vagina/vagina = target.getorganslot(ORGAN_SLOT_VAGINA)
+	var/mutable_appearance/marking_overlay = mutable_appearance('icons/roguetown/misc/baotha_marking.dmi', "marking_[user.gender == "male" ? "m" : "f"]", -BODY_LAYER)
+	user.add_overlay(marking_overlay)
+	spawn(40)
+
+		ADD_TRAIT(user, TRAIT_BAOTHA_FERTILITY_BOON, TRAIT_GENERIC)
+		var/obj/item/organ/vagina/vagina = user.getorganslot(ORGAN_SLOT_VAGINA)
 		if(vagina && !vagina.fertility)
 			vagina.fertility = TRUE
