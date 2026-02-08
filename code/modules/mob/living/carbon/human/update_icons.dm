@@ -110,7 +110,8 @@ There are several things that need to be remembered:
 	remove_overlay(SMELL_LAYER)
 	if(hygiene != HYGIENE_LEVEL_DISGUSTING)
 		return
-	var/mutable_appearance/new_smell_overlay = mutable_appearance('icons/mob/smelly.dmi', smelly_icon, -SMELL_LAYER)
+	var/mutable_appearance/new_smell_overlay = mutable_appearance('icons/mob/smelly.dmi', smelly_icon)
+	new_smell_overlay.layer = -BODY_FRONT_FRONT_LAYER
 	overlays_standing[SMELL_LAYER] = new_smell_overlay
 	apply_overlay(SMELL_LAYER)
 
