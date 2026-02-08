@@ -37,9 +37,6 @@
 	if(istype(checking,/turf/open/transparent/openspace))
 		return FALSE
 	return TRUE
-*/
-
-
 /datum/crafting_recipe/roguetown/structure/wooden_horse
 	name = "static wooden horse"
 	result = /obj/structure/wooden_horse
