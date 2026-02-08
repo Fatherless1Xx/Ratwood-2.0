@@ -40,6 +40,7 @@
 	var/water_maximum = 100
 	water_level = 2
 	var/wash_in = TRUE
+	var/cleanliness_factor = 1
 	var/swim_skill = FALSE
 	nomouseover = FALSE
 	var/swimdir = FALSE
@@ -267,6 +268,14 @@
 				if(wash_in)
 					wash_atom(user, CLEAN_STRONG)
 					user.remove_stress(/datum/stressevent/sewertouched)
+					if(ishuman(L))
+						var/mob/living/carbon/human/H = L
+						var/list/equipped_items = H.get_equipped_items()
+						if(length(equipped_items) > 0)
+							to_chat(user, span_notice("I could probably clean myself faster if I weren't wearing clothes..."))
+							H.adjust_hygiene(HYGIENE_GAIN_CLOTHED * cleanliness_factor)
+						else
+							H.adjust_hygiene(HYGIENE_GAIN_UNCLOTHED * cleanliness_factor)
 				playsound(user, pick(wash), 100, FALSE)
 				if(istype(src,/turf/open/water/sewer) || istype(src,/turf/open/water/swamp) || istype(src, /turf/open/water/sewer))
 					if (istype(src, /turf/open/water/sewer))
@@ -373,6 +382,7 @@
 	water_level = 2
 	water_color = "#FFFFFF"
 	slowdown = 3
+	cleanliness_factor = 5
 	water_reagent = /datum/reagent/water/bathwater
 
 /turf/open/water/bath/Initialize()
@@ -388,6 +398,7 @@
 	water_color = "#705a43"
 	slowdown = 3
 	wash_in = FALSE
+	cleanliness_factor = -5
 	water_reagent = /datum/reagent/water/gross/sewage
 
 /turf/open/water/sewer/Initialize()
@@ -404,6 +415,7 @@
 	water_color = "#705a43"
 	slowdown = 3
 	wash_in = TRUE
+	cleanliness_factor = -5
 	water_reagent = /datum/reagent/water/gross
 
 /turf/open/water/bloody
@@ -415,6 +427,7 @@
 	water_color = "#941010"
 	slowdown = 3
 	wash_in = FALSE
+	cleanliness_factor = -5
 	water_reagent = /datum/reagent/blood/shitty
 
 /turf/open/water/swamp/Initialize()

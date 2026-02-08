@@ -150,6 +150,19 @@
 /datum/component/rot/gibs
 	amount = MIASMA_GIBS_MOLES
 
+/datum/component/rot/stinky_person
+	soundloop = null
+
+/datum/component/rot/stinky_person/process()
+	..()
+	var/mob/living/L = parent
+	if(!istype(L))
+		qdel(src)
+		return
+	var/turf/open/T = get_turf(L)
+	if(istype(T))
+		T.pollute_turf(/datum/pollutant/rot, 0.25)
+
 /datum/looping_sound/fliesloop
 	mid_sounds = list('sound/misc/fliesloop.ogg')
 	mid_length = 60

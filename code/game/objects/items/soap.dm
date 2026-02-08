@@ -93,6 +93,7 @@
 		visible_message(span_info("[user] begins washing [target] with the [src]."))
 		if(do_after(user, 50))
 			wash_atom(target,CLEAN_MEDIUM)
+			target.adjust_hygiene(50)
 			if(HAS_TRAIT(user, TRAIT_GOODLOVER))
 				visible_message(span_info("[user] expertly cleans and soothes [target] with the [src]."))
 				to_chat(target, span_love("I feel so relaxed and clean!"))

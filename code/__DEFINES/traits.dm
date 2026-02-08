@@ -646,6 +646,7 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 #define TRAIT_SURGEON           "surgeon"
 #define TRAIT_STRONG_GRABBER	"strong_grabber"
 #define TRAIT_MAGIC_CHOKE		"magic_choke"
+#define TRAIT_NOHYGIENE			"no_hygiene"
 #define TRAIT_SOOTHED_THROAT    "soothed-throat"
 #define TRAIT_LAW_ENFORCEMENT_METABOLISM "law-enforcement-metabolism"
 #define TRAIT_ALWAYS_CLEAN      "always-clean"

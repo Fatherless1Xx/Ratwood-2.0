@@ -361,6 +361,32 @@
 	desc = "You felt lyfe itself course through you, restoring your lux and your essance. You.. live - but your body aches. It still needs time to recover.."
 	icon_state = "revived"
 
+/datum/status_effect/debuff/stinky_person
+	id = "stinky_person"
+	alert_type = /atom/movable/screen/alert/status_effect/debuff/stinky_person
+	duration = -1
+
+/atom/movable/screen/alert/status_effect/debuff/stinky_person
+	name = "Stinky Person"
+	desc = "<span class='warning'>I smell HORRID.</span>\n"
+	icon_state = "stinky"
+
+/datum/status_effect/debuff/stinky_person/on_apply()
+	. = ..()
+	owner.AddComponent(/datum/component/rot/stinky_person)
+	if(ishuman(owner))
+		var/mob/living/carbon/human/H = owner
+		H.update_smell()
+
+/datum/status_effect/debuff/stinky_person/on_remove()
+	. = ..()
+	var/datum/component/rot/stinky_component = owner.GetComponent(/datum/component/rot/stinky_person)
+	if(stinky_component)
+		qdel(stinky_component)
+	if(ishuman(owner))
+		var/mob/living/carbon/human/H = owner
+		H.update_smell()
+
 //For de-rot - your body ROTTED. Harsher penalty for longer, can be fully off-set with a cure-rot potion.
 /datum/status_effect/debuff/rotted
 	id = "rotted_body"

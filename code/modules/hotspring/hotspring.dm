@@ -78,6 +78,14 @@
 			if(do_after(L, 3 SECONDS, target = src))
 				wash_atom(user, CLEAN_STRONG)
 				user.remove_stress(/datum/stressevent/sewertouched)
+				if(ishuman(L))
+					var/mob/living/carbon/human/H = L
+					var/list/equipped_items = H.get_equipped_items()
+					if(length(equipped_items) > 0)
+						to_chat(user, span_notice("I could probably clean myself faster if I weren't wearing clothes..."))
+						H.adjust_hygiene(HYGIENE_GAIN_CLOTHED * 5)
+					else
+						H.adjust_hygiene(HYGIENE_GAIN_UNCLOTHED * 5)
 				playsound(user, pick(wash), 100, FALSE)
 		else
 			user.visible_message(span_info("[user] starts to wash [item2wash] in [src]."))

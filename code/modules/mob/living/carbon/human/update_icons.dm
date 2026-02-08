@@ -106,6 +106,14 @@ There are several things that need to be remembered:
 
 #undef SUNDER_FILTER
 
+/mob/living/carbon/human/proc/update_smell(smelly_icon = "generic_mob_smell")
+	remove_overlay(SMELL_LAYER)
+	if(hygiene != HYGIENE_LEVEL_DISGUSTING)
+		return
+	var/mutable_appearance/new_smell_overlay = mutable_appearance('icons/mob/smelly.dmi', smelly_icon, -SMELL_LAYER)
+	overlays_standing[SMELL_LAYER] = new_smell_overlay
+	apply_overlay(SMELL_LAYER)
+
 /mob/living/carbon/human/update_damage_overlays()
 	START_PROCESSING(SSdamoverlays,src)
 

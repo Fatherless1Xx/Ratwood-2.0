@@ -200,6 +200,16 @@
 #define HYDRATION_LEVEL_START_MIN 500
 #define HYDRATION_LEVEL_START_MAX 600
 
+//Hygiene
+#define HYGIENE_LEVEL_CLEAN 250
+#define HYGIENE_LEVEL_NORMAL 200
+#define HYGIENE_LEVEL_DIRTY 75
+#define HYGIENE_LEVEL_DISGUSTING 0
+
+//For washing
+#define HYGIENE_GAIN_CLOTHED 10
+#define HYGIENE_GAIN_UNCLOTHED 25
+
 //Disgust levels for humans
 #define DISGUST_LEVEL_MAXEDOUT 150
 #define DISGUST_LEVEL_DISGUSTED 75
@@ -352,6 +362,7 @@
 #define DOOR_CRUSH_DAMAGE	15	//the amount of damage that airlocks deal when they crush you
 
 #define HUNGER_FACTOR		0.15	//factor at which mob nutrition decreases
+#define	HYGIENE_FACTOR  	0.05	//factor at which hygiene decreases
 #define ETHEREAL_CHARGE_FACTOR	0.12 //factor at which ethereal's charge decreases
 #define REAGENTS_METABOLISM 1	//How many units of reagent are consumed per tick, by default.
 #define REAGENTS_EFFECT_MULTIPLIER (REAGENTS_METABOLISM / 0.4)	// By defining the effect multiplier this way, it'll exactly adjust all effects according to how they originally were with the 0.4 metabolism

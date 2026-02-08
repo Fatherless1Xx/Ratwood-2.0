@@ -72,6 +72,7 @@
 	handle_heart()
 	update_stamina()
 	update_energy()
+	handle_hygiene()
 	
 	// Process all vices
 	if(mind && length(vices))
@@ -132,6 +133,59 @@
 /mob/living/carbon/human/handle_environment()
 
 	dna.species.handle_environment(src)
+
+/mob/living/carbon/human/proc/handle_hygiene()
+	if(stat == DEAD || HAS_TRAIT(src, TRAIT_NOHYGIENE))
+		return
+	if(HAS_TRAIT(src, TRAIT_ALWAYS_CLEAN))
+		set_hygiene(HYGIENE_LEVEL_CLEAN)
+	else
+		var/hygiene_adjustment = 0
+
+		var/obj/item/head_item = get_item_by_slot(SLOT_HEAD)
+		if(head_item && HAS_BLOOD_DNA(head_item))
+			hygiene_adjustment -= 1 * HYGIENE_FACTOR
+
+		var/obj/item/neck_item = get_item_by_slot(SLOT_NECK)
+		if(neck_item && HAS_BLOOD_DNA(neck_item))
+			hygiene_adjustment -= 1 * HYGIENE_FACTOR
+
+		var/obj/item/mask_item = get_item_by_slot(SLOT_WEAR_MASK)
+		if(mask_item && HAS_BLOOD_DNA(mask_item))
+			hygiene_adjustment -= 1 * HYGIENE_FACTOR
+
+		var/obj/item/shirt_item = get_item_by_slot(SLOT_SHIRT)
+		if(shirt_item && HAS_BLOOD_DNA(shirt_item))
+			hygiene_adjustment -= 2 * HYGIENE_FACTOR
+
+		var/obj/item/cloak_item = get_item_by_slot(SLOT_CLOAK)
+		if(cloak_item && HAS_BLOOD_DNA(cloak_item))
+			hygiene_adjustment -= 2 * HYGIENE_FACTOR
+
+		var/obj/item/pants_item = get_item_by_slot(SLOT_PANTS)
+		if(pants_item && HAS_BLOOD_DNA(pants_item))
+			hygiene_adjustment -= 3 * HYGIENE_FACTOR
+
+		var/obj/item/armor_item = get_item_by_slot(SLOT_ARMOR)
+		if(armor_item && HAS_BLOOD_DNA(armor_item))
+			hygiene_adjustment -= 3 * HYGIENE_FACTOR
+
+		var/obj/item/shoes_item = get_item_by_slot(SLOT_SHOES)
+		if(shoes_item && HAS_BLOOD_DNA(shoes_item))
+			hygiene_adjustment -= 0.5 * HYGIENE_FACTOR
+
+		var/turf/current_turf = get_turf(src)
+		if(istype(current_turf, /turf/open/water))
+			var/turf/open/water/water_turf = current_turf
+			hygiene_adjustment += water_turf.cleanliness_factor
+
+		var/hygiene_mod = 1
+		if(dna?.species)
+			hygiene_mod = dna.species.hygiene_mod
+		hygiene_adjustment *= hygiene_mod
+		adjust_hygiene(hygiene_adjustment)
+
+	dna?.species?.handle_hygiene(src)
 
 /mob/living/carbon/human/proc/get_thermal_protection()
 	var/thermal_protection = 0 //Simple check to estimate how protected we are against multiple temperatures

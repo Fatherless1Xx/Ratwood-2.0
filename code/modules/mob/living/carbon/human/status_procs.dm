@@ -36,6 +36,21 @@
 	if(.)
 		update_hair()
 
+/mob/proc/adjust_hygiene(amount)
+	return
+
+/mob/living/carbon/human/adjust_hygiene(amount)
+	..()
+	hygiene = CLAMP(hygiene + amount, 0, HYGIENE_LEVEL_CLEAN)
+	update_smell()
+
+/mob/proc/set_hygiene(amount)
+	return
+
+/mob/living/carbon/human/set_hygiene(amount)
+	hygiene = CLAMP(amount, 0, HYGIENE_LEVEL_CLEAN)
+	update_smell()
+
 /mob/living/carbon/human/set_drugginess(amount)
 	..()
 //	if(!amount)
