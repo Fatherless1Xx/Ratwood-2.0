@@ -112,7 +112,7 @@ There are several things that need to be remembered:
 		return
 	var/mutable_appearance/new_smell_overlay = mutable_appearance('icons/mob/smelly.dmi', smelly_icon)
 	new_smell_overlay.layer = -BODY_FRONT_FRONT_LAYER
-	new_smell_overlay.pixel_y = -6
+	new_smell_overlay.pixel_y = -5
 	overlays_standing[SMELL_LAYER] = new_smell_overlay
 	apply_overlay(SMELL_LAYER)
 

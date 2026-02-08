@@ -41,15 +41,31 @@
 
 /mob/living/carbon/human/adjust_hygiene(amount)
 	..()
-	hygiene = CLAMP(hygiene + amount, 0, HYGIENE_LEVEL_CLEAN)
-	update_smell()
+	if(!amount)
+		return
+	var/old_hygiene = hygiene
+	var/new_hygiene = CLAMP(hygiene + amount, 0, HYGIENE_LEVEL_CLEAN)
+	if(new_hygiene == old_hygiene)
+		return
+	hygiene = new_hygiene
+	var/old_dirty = (old_hygiene <= HYGIENE_LEVEL_DIRTY)
+	var/new_dirty = (new_hygiene <= HYGIENE_LEVEL_DIRTY)
+	if(old_dirty != new_dirty)
+		update_smell()
 
 /mob/proc/set_hygiene(amount)
 	return
 
 /mob/living/carbon/human/set_hygiene(amount)
-	hygiene = CLAMP(amount, 0, HYGIENE_LEVEL_CLEAN)
-	update_smell()
+	var/old_hygiene = hygiene
+	var/new_hygiene = CLAMP(amount, 0, HYGIENE_LEVEL_CLEAN)
+	if(new_hygiene == old_hygiene)
+		return
+	hygiene = new_hygiene
+	var/old_dirty = (old_hygiene <= HYGIENE_LEVEL_DIRTY)
+	var/new_dirty = (new_hygiene <= HYGIENE_LEVEL_DIRTY)
+	if(old_dirty != new_dirty)
+		update_smell()
 
 /mob/living/carbon/human/set_drugginess(amount)
 	..()

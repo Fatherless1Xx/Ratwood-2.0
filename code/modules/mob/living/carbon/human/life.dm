@@ -144,35 +144,35 @@
 	else
 		var/hygiene_adjustment = 0
 
-		var/obj/item/head_item = get_item_by_slot(SLOT_HEAD)
+		var/obj/item/head_item = head
 		if(head_item && HAS_BLOOD_DNA(head_item))
 			hygiene_adjustment -= 1 * HYGIENE_FACTOR
 
-		var/obj/item/neck_item = get_item_by_slot(SLOT_NECK)
+		var/obj/item/neck_item = wear_neck
 		if(neck_item && HAS_BLOOD_DNA(neck_item))
 			hygiene_adjustment -= 1 * HYGIENE_FACTOR
 
-		var/obj/item/mask_item = get_item_by_slot(SLOT_WEAR_MASK)
+		var/obj/item/mask_item = wear_mask
 		if(mask_item && HAS_BLOOD_DNA(mask_item))
 			hygiene_adjustment -= 1 * HYGIENE_FACTOR
 
-		var/obj/item/shirt_item = get_item_by_slot(SLOT_SHIRT)
+		var/obj/item/shirt_item = wear_shirt
 		if(shirt_item && HAS_BLOOD_DNA(shirt_item))
 			hygiene_adjustment -= 2 * HYGIENE_FACTOR
 
-		var/obj/item/cloak_item = get_item_by_slot(SLOT_CLOAK)
+		var/obj/item/cloak_item = cloak
 		if(cloak_item && HAS_BLOOD_DNA(cloak_item))
 			hygiene_adjustment -= 2 * HYGIENE_FACTOR
 
-		var/obj/item/pants_item = get_item_by_slot(SLOT_PANTS)
+		var/obj/item/pants_item = wear_pants
 		if(pants_item && HAS_BLOOD_DNA(pants_item))
 			hygiene_adjustment -= 3 * HYGIENE_FACTOR
 
-		var/obj/item/armor_item = get_item_by_slot(SLOT_ARMOR)
+		var/obj/item/armor_item = wear_armor
 		if(armor_item && HAS_BLOOD_DNA(armor_item))
 			hygiene_adjustment -= 3 * HYGIENE_FACTOR
 
-		var/obj/item/shoes_item = get_item_by_slot(SLOT_SHOES)
+		var/obj/item/shoes_item = shoes
 		if(shoes_item && HAS_BLOOD_DNA(shoes_item))
 			hygiene_adjustment -= 0.5 * HYGIENE_FACTOR
 
@@ -185,7 +185,8 @@
 		if(dna?.species)
 			hygiene_mod = dna.species.hygiene_mod
 		hygiene_adjustment *= hygiene_mod
-		adjust_hygiene(hygiene_adjustment)
+		if(hygiene_adjustment)
+			adjust_hygiene(hygiene_adjustment)
 
 	dna?.species?.handle_hygiene(src)
 

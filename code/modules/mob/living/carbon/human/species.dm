@@ -1134,15 +1134,14 @@ GLOBAL_LIST_EMPTY(roundstart_races)
 	if(HAS_TRAIT(H, TRAIT_NOHYGIENE))
 		return
 
-	switch(H.hygiene)
-		if(HYGIENE_LEVEL_CLEAN to HYGIENE_LEVEL_CLEAN)
-			H.remove_status_effect(/datum/status_effect/debuff/stinky_person)
-		if(HYGIENE_LEVEL_DISGUSTING to HYGIENE_LEVEL_DISGUSTING)
-			H.apply_status_effect(/datum/status_effect/debuff/stinky_person)
-		if(HYGIENE_LEVEL_DIRTY to HYGIENE_LEVEL_CLEAN)
-			H.remove_status_effect(/datum/status_effect/debuff/stinky_person)
-		if(HYGIENE_LEVEL_DISGUSTING to HYGIENE_LEVEL_DIRTY)
-			H.remove_status_effect(/datum/status_effect/debuff/stinky_person)
+	var/should_stink = (H.hygiene <= HYGIENE_LEVEL_DIRTY)
+	var/has_stink = H.has_status_effect(/datum/status_effect/debuff/stinky_person)
+	if(should_stink == has_stink)
+		return
+	if(should_stink)
+		H.apply_status_effect(/datum/status_effect/debuff/stinky_person)
+	else
+		H.remove_status_effect(/datum/status_effect/debuff/stinky_person)
 
 //////////////////
 // ATTACK PROCS //
