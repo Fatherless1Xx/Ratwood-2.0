@@ -51,11 +51,14 @@
 			/obj/item/rope/chain = 1,
 			/obj/item/flashlight/flare/torch/lantern = 1
 		)
-		var/weapons = list(
-			"CRUSHER"	= /obj/item/rogueweapon/mace/goden/steel/ogre/graggar,
-			"EXECUTIONER" 	= /obj/item/rogueweapon/greataxe/steel/doublehead/graggar/ogre,
-			"None" = null
+		var/list/weapons = list(
+			"CRUSHER",
+			"EXECUTIONER",
+			"None"
 		)
-		var/weaponchoice = input(H,"Choose your weapon.", "WEAPON SELECTION") as anything in weapons
-		if(weaponchoice != "None")
-			r_hand = weapons[weaponchoice] // doing it this way cuz the normal way runtimes for some fucking reason, despite it being a 1 to 1 copy/paste of trollslayer
+		var/weaponchoice = input(H,"Choose your weapon.", "WEAPON SELECTION") as null|anything in weapons
+		switch(weaponchoice)
+			if("CRUSHER")
+				r_hand = /obj/item/rogueweapon/mace/goden/steel/ogre/graggar
+			if("EXECUTIONER")
+				r_hand = /obj/item/rogueweapon/greataxe/steel/doublehead/graggar/ogre

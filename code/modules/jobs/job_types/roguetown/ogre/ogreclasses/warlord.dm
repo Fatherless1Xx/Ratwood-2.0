@@ -49,14 +49,19 @@
 			/obj/item/rope/chain = 1,
 			/obj/item/flashlight/flare/torch/lantern = 1
 		)
-		var/weapons = list(
-			"Big Stick"	= /obj/item/rogueweapon/mace/goden/steel/ogre,
-			"Choppa" 	= /obj/item/rogueweapon/greatsword/zwei/ogre,
-			"None" = null
+		var/list/weapons = list(
+			"Big Stick",
+			"Choppa",
+			"None"
 		)
-		var/weaponchoice = input(H,"Choose your weapon.", "WEAPON SELECTION") as anything in weapons
-		if(weaponchoice != "None")
-			backl = weapons[weaponchoice] // doing it this way cuz the normal way runtimes for some fucking reason, despite it being a 1 to 1 copy/paste of trollslayer
+		var/weaponchoice = input(H,"Choose your weapon.", "WEAPON SELECTION") as null|anything in weapons
+		switch(weaponchoice)
+			if("Choppa")
+				backl = /obj/item/rogueweapon/greatsword/zwei/ogre
+			if("None")
+				backl = null
+			else
+				backl = /obj/item/rogueweapon/mace/goden/steel/ogre
 
 /obj/effect/proc_holder/spell/self/convertrole/warlord
 	name = "Recruit Follower"
