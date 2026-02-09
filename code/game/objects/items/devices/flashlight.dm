@@ -311,6 +311,7 @@
 	var/open = TRUE
 	var/list/occupants = list()
 	var/max_occupants = 1 // Hard-cap so a single lamptern can't carry multiple Seelie.
+	var/breakout_time = 20 SECONDS
 	metalizer_result = null
 
 /obj/item/flashlight/flare/torch/lantern/afterattack(atom/movable/A, mob/user, proximity)
@@ -397,14 +398,32 @@
 		. += span_notice("It has nothing inside.")
 
 /obj/item/flashlight/flare/torch/lantern/rmb_self(mob/living/user)
+	return toggle_door(user)
+
+/obj/item/flashlight/flare/torch/lantern/attack_right(mob/user)
+	. = ..()
+	if(!isliving(user))
+		return .
+	var/mob/living/L = user
+	if(L.loc != src && !L.Adjacent(src))
+		return .
+	return toggle_door(L)
+
+/obj/item/flashlight/flare/torch/lantern/proc/toggle_door(mob/living/user)
+	if(!user)
+		return FALSE
+	if(user in occupants)
+		container_resist(user)
+		return TRUE
 	if(open)
 		to_chat(user, span_notice("I close [src]'s door."))
-		playsound(user, 'sound/blank.ogg', 50, TRUE)
+		playsound(src, 'sound/blank.ogg', 50, TRUE)
 		open = FALSE
 	else
 		to_chat(user, span_notice("I open [src]'s door."))
-		playsound(user, 'sound/blank.ogg', 50, TRUE)
+		playsound(src, 'sound/blank.ogg', 50, TRUE)
 		open = TRUE
+	return TRUE
 
 /// Checks if target can be stored in the lamptern.
 /obj/item/flashlight/flare/torch/lantern/proc/can_store_mob(mob/living/target, mob/living/user, do_warning = TRUE)
@@ -456,11 +475,29 @@
 	return TRUE
 
 /obj/item/flashlight/flare/torch/lantern/attack(mob/living/target, mob/living/user)
-	if(!istype(user.rmb_intent, /datum/rmb_intent/weak))
+	if(user.pulling != target || user.grab_state < GRAB_AGGRESSIVE)
 		return ..()
+	if(!open)
+		to_chat(user, span_warning("[src]'s door is shut. Open it first."))
+		return
 	if(!can_store_mob(target, user))
 		return
 	load_occupant(user, target)
+
+/obj/item/flashlight/flare/torch/lantern/attackby(obj/item/I, mob/living/user, params)
+	if(istype(I, /obj/item/grabbing))
+		var/obj/item/grabbing/G = I
+		if(G.grabbee != user || !isliving(G.grabbed))
+			return TRUE
+		var/mob/living/target = G.grabbed
+		if(user.pulling != target || G.grab_state < GRAB_AGGRESSIVE)
+			to_chat(user, span_warning("I need a stronger grip on [target]."))
+			return TRUE
+		if(!can_store_mob(target, user))
+			return TRUE
+		load_occupant(user, target)
+		return TRUE
+	return ..()
 
 /obj/item/flashlight/flare/torch/lantern/relaymove(mob/living/user, direction)
 	if(open)
@@ -469,17 +506,35 @@
 		return
 
 /obj/item/flashlight/flare/torch/lantern/container_resist(mob/living/user)
+	if(!(user in occupants))
+		return ..()
+	if(open)
+		to_chat(user, span_notice("The door is open; I can move to climb out."))
+		return
 	user.changeNext_move(CLICK_CD_BREAKOUT)
 	user.last_special = world.time + CLICK_CD_BREAKOUT
 	loc.visible_message(span_warning("[src] starts rattling as something pushes against the door!"), ignored_mobs = user)
-	to_chat(user, span_notice("I start pushing against the door of the [src]..."))
-	if(do_after(user, 20 SECONDS, target = src) && !open && (user in occupants))
-		loc.visible_message(span_warning("[user] shoves out of [src]!"), ignored_mobs = user)
-		to_chat(user, span_notice("I force open the [src]'s door and fall out!"))
+	to_chat(user, span_notice("I start pushing against the door of the [src], trying to force it open... (This will take [DisplayTimeText(breakout_time)].)"))
+	var/turf/start_turf = get_turf(src)
+	var/datum/callback/continue_checks = CALLBACK(src, PROC_REF(can_continue_breakout), user, start_turf)
+	if(do_after(user, breakout_time, needhand = FALSE, target = user, extra_checks = continue_checks) && !open && (user in occupants))
+		loc.visible_message(span_warning("[src]'s door is forced open from the inside!"), ignored_mobs = user)
+		to_chat(user, span_notice("I force open the [src]'s door. I can move to climb out now."))
 		open = TRUE
-		remove_occupant(user)
 	else
 		to_chat(user, span_notice("I fail to break out of [src]..."))
+
+/obj/item/flashlight/flare/torch/lantern/proc/can_continue_breakout(mob/living/user, turf/start_turf)
+	if(QDELETED(src) || QDELETED(user))
+		return FALSE
+	if(!(user in occupants))
+		return FALSE
+	if(open)
+		return FALSE
+	// Moving the lamptern interrupts breakout progress.
+	if(get_turf(src) != start_turf)
+		return FALSE
+	return TRUE
 
 /obj/item/flashlight/flare/torch/lantern/MouseDrop_T(atom/movable/O, mob/living/user)
 	if(isliving(O) && HAS_TRAIT(O, TRAIT_TINY) && O == user && can_store_mob(user, user))
@@ -503,11 +558,16 @@
 		return
 	if(target in occupants)
 		return
+	if(user.pulling != target || user.grab_state < GRAB_AGGRESSIVE)
+		to_chat(user, span_warning("I lose my grip on [target]."))
+		return
 	if(!can_store_mob(target, user))
 		return
 	user.visible_message(span_notice("[user] loads [target] into [src]!"), span_notice("I load [target] into [src]."), ignored_mobs = target)
 	to_chat(target, span_danger("[user] loads you into [user.p_their()] [name]!"))
 	add_occupant(target)
+	open = FALSE
+	user.stop_pulling()
 
 /obj/item/flashlight/flare/torch/lantern/proc/add_occupant(mob/living/occupant)
 	if((occupant in occupants) || !istype(occupant))
