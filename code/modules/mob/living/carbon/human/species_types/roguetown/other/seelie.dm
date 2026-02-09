@@ -1,3 +1,12 @@
+/************************************************************
+ * Seelie tuning
+ ************************************************************/
+#define SEELIE_GLOW_OUTER_RANGE 3
+#define SEELIE_GLOW_INNER_RANGE 1
+#define SEELIE_GLOW_POWER 1
+#define SEELIE_GLOW_COLOR "#d4fcac"
+#define SEELIE_AURA_UPDATE_INTERVAL (1 SECONDS)
+
 /mob/living/carbon/human/species/seelie
 	race = /datum/species/seelie
 	gender = FEMALE
@@ -144,8 +153,17 @@
 	RegisterSignal(C, COMSIG_MOB_SAY, PROC_REF(handle_speech))
 	passtable_on(C, SPECIES_TRAIT)
 	C.pass_flags |= PASSMOB
+	// This fork doesn't support default_scale_x/y, so apply scale through resize+update_transform.
+	if(!istype(old_species, /datum/species/seelie))
+		C.resize = 0.5
+		C.update_transform()
 	C.set_mob_offsets("pixie_hover", _x = 0, _y = 10)
-	C.set_light(3, 1, "#d4fcac")
+	C.aura = TRUE
+	C.seelie_next_aura_tick = 0
+	C.seelie_glow_enabled = TRUE
+	C.update_seelie_glow()
+	if(ishuman(C))
+		apply_luck_aura(C)
 
 /datum/species/seelie/after_creation(mob/living/carbon/C)
 	..()
@@ -153,11 +171,17 @@
 	C.verbs |= /mob/living/carbon/human/proc/Turnlight
 	C.verbs |= /mob/living/carbon/proc/switchaura
 
-/datum/species/seelie/on_species_loss(mob/living/carbon/C)
+/datum/species/seelie/on_species_loss(mob/living/carbon/C, datum/species/new_species)
 	. = ..()
 	UnregisterSignal(C, COMSIG_MOB_SAY)
 	passtable_off(C, SPECIES_TRAIT)
 	C.pass_flags &= ~PASSMOB
+	// Revert Seelie scaling when species is removed.
+	if(!istype(new_species, /datum/species/seelie))
+		C.resize = 2
+		C.update_transform()
+	C.seelie_next_aura_tick = 0
+	C.seelie_glow_enabled = TRUE
 	C.reset_offsets("pixie_hover")
 	C.set_light(0, 0, null)
 	C.verbs -= /mob/living/carbon/human/proc/Turnlight
@@ -277,16 +301,22 @@
 		fairy_hover(owner)
 	else
 		owner.reset_offsets("pixie_hover")
-	if(!owner.IsSleeping())
-		for(var/mob/living/carbon/human/victim in view(1, owner))
-			if(victim == owner || isseelie(victim))
-				continue
-			if(owner.aura)
-				victim.apply_status_effect(/datum/status_effect/buff/seelie/happy)
-				victim.remove_status_effect(/datum/status_effect/buff/seelie/sad)
-			else
-				victim.apply_status_effect(/datum/status_effect/buff/seelie/sad)
-				victim.remove_status_effect(/datum/status_effect/buff/seelie/happy)
+	if(owner.seelie_glow_enabled && (!owner.light_power || owner.light_color != SEELIE_GLOW_COLOR))
+		owner.update_seelie_glow()
+	if(!owner.IsSleeping() && world.time >= owner.seelie_next_aura_tick)
+		owner.seelie_next_aura_tick = world.time + SEELIE_AURA_UPDATE_INTERVAL
+		apply_luck_aura(owner)
+
+/datum/species/seelie/proc/apply_luck_aura(mob/living/carbon/human/owner)
+	var/desired_effect = owner.aura ? /datum/status_effect/buff/seelie/happy : /datum/status_effect/buff/seelie/sad
+	var/undesired_effect = owner.aura ? /datum/status_effect/buff/seelie/sad : /datum/status_effect/buff/seelie/happy
+	owner.remove_status_effect(undesired_effect)
+	owner.apply_status_effect(desired_effect)
+	for(var/mob/living/carbon/human/victim in range(1, owner))
+		if(victim == owner || isseelie(victim))
+			continue
+		victim.remove_status_effect(undesired_effect)
+		victim.apply_status_effect(desired_effect)
 
 /datum/species/seelie/proc/is_seelie_floating(mob/living/carbon/human/owner)
 	return !owner.incapacitated(ignore_restraints = TRUE) && (owner.mobility_flags & MOBILITY_STAND) && has_wings(owner) && !owner.buckled
@@ -297,20 +327,42 @@
 /mob/living/carbon/human/proc/Turnlight()
 	set name = "Seelie Glow"
 	set category = "Seelie"
-	if(light_power)
-		set_light(0, 0, null)
+	if(!isseelie(src))
+		return
+	seelie_glow_enabled = !seelie_glow_enabled
+	update_seelie_glow()
+	if(!seelie_glow_enabled)
 		to_chat(src, span_notice("I stop glowing."))
 	else
 		to_chat(src, span_notice("I begin to glow once more."))
-		set_light(3, 1, "#d4fcac")
+
+/mob/living/carbon/proc/update_seelie_glow()
+	if(seelie_glow_enabled)
+		set_light(l_outer_range = SEELIE_GLOW_OUTER_RANGE, l_inner_range = SEELIE_GLOW_INNER_RANGE, l_power = SEELIE_GLOW_POWER, l_color = SEELIE_GLOW_COLOR)
+	else
+		set_light(0, 0, null)
 
 /mob/living/carbon/proc/switchaura()
 	set name = "Luck Aura"
 	set category = "Seelie"
+	if(!isseelie(src))
+		return
 	aura = !aura
+	seelie_next_aura_tick = 0
 	if(aura)
 		to_chat(src, span_warning("My aura is now one of blessing."))
 		log_message("[key_name(src)] has switched their aura to apply good luck.", LOG_GAME)
 	else
 		to_chat(src, span_warning("My aura is now one of misery."))
 		log_message("[key_name(src)] has switched their aura to apply bad luck.", LOG_GAME)
+	if(ishuman(src))
+		var/mob/living/carbon/human/H = src
+		var/datum/species/seelie/seelie_species = H.dna?.species
+		if(istype(seelie_species))
+			seelie_species.apply_luck_aura(H)
+
+#undef SEELIE_AURA_UPDATE_INTERVAL
+#undef SEELIE_GLOW_COLOR
+#undef SEELIE_GLOW_POWER
+#undef SEELIE_GLOW_INNER_RANGE
+#undef SEELIE_GLOW_OUTER_RANGE

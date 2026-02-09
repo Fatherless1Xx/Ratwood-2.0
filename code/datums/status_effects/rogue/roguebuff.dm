@@ -1350,6 +1350,7 @@
 
 /datum/status_effect/buff/seelie/happy
 	id = "Seelie Blessing"
+	status_type = STATUS_EFFECT_REFRESH
 	alert_type = /atom/movable/screen/alert/status_effect/buff/seelie/happy
 	effectedstats = list(STATKEY_LCK = 2)
 	duration = 60 SECONDS

@@ -329,6 +329,7 @@
 
 /datum/status_effect/buff/seelie/sad
 	id = "Seelie Curse"
+	status_type = STATUS_EFFECT_REFRESH
 	alert_type = /atom/movable/screen/alert/status_effect/buff/seelie/sad
 	effectedstats = list(STATKEY_LCK = -2)
 	duration = 60 SECONDS

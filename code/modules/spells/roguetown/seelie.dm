@@ -1,5 +1,8 @@
+#define SEELIE_ACTION_ICON 'icons/mob/actions/seeliespells_keep.dmi'
+
 /obj/effect/proc_holder/spell/invoked/seelie_dust
 	name = "Seelie Dust"
+	action_icon = SEELIE_ACTION_ICON
 	overlay_state = "createlight"
 	releasedrain = 50
 	recharge_time = 150 SECONDS
@@ -22,6 +25,7 @@
 
 /obj/effect/proc_holder/spell/invoked/summon_rat
 	name = "Call Beast"
+	action_icon = SEELIE_ACTION_ICON
 	overlay_state = "dendor"
 	releasedrain = 30
 	recharge_time = 90 SECONDS
@@ -44,6 +48,7 @@
 
 /obj/effect/proc_holder/spell/targeted/roustame
 	name = "Tame Rous"
+	action_icon = SEELIE_ACTION_ICON
 	range = 5
 	overlay_state = "tamebeast"
 	releasedrain = 30
@@ -72,6 +77,7 @@
 
 /obj/effect/proc_holder/spell/targeted/seelie_kiss
 	name = "Regenerative Kiss"
+	action_icon = SEELIE_ACTION_ICON
 	overlay_state = "heal"
 	releasedrain = 0
 	recharge_time = 90 SECONDS
@@ -93,3 +99,42 @@
 	target.log_message("has been blessed by [key_name(user)] with a kiss spell, healing them a little", LOG_ATTACK)
 	user.emote("kiss")
 	return TRUE
+
+/obj/effect/proc_holder/spell/invoked/projectile/splash
+	name = "Water Splash"
+	action_icon = SEELIE_ACTION_ICON
+	overlay_state = "bloodlightning"
+	range = 8
+	projectile_type = /obj/projectile/bullet/bolt/water
+	releasedrain = 50
+	chargedrain = 1
+	chargetime = 5
+	recharge_time = 35 SECONDS
+	warnie = "spellwarning"
+	no_early_release = TRUE
+	movement_interrupt = FALSE
+	charging_slowdown = 3
+	chargedloop = /datum/looping_sound/invokegen
+
+/obj/effect/proc_holder/spell/invoked/projectile/animate_object
+	name = "Animate Object"
+	action_icon = SEELIE_ACTION_ICON
+	overlay_state = "bigpsy"
+	sound = 'sound/magic/lightning.ogg'
+	range = 8
+	projectile_type = /obj/projectile/magic/animate
+	releasedrain = 55
+	chargedrain = 1
+	chargetime = 15
+	recharge_time = 5 MINUTES
+	warnie = "spellwarning"
+	no_early_release = TRUE
+	movement_interrupt = FALSE
+	charging_slowdown = 3
+	chargedloop = /datum/looping_sound/invokegen
+	associated_skill = /datum/skill/magic/arcane
+
+/obj/effect/proc_holder/spell/invoked/projectile/repel/seelie
+	action_icon = SEELIE_ACTION_ICON
+
+#undef SEELIE_ACTION_ICON

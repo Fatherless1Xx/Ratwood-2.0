@@ -8,6 +8,8 @@
 		return FALSE
 	if(!get_dildo_in_either_hand(user))
 		return FALSE
+	if(HAS_TRAIT(target, TRAIT_TINY) && !HAS_TRAIT(user, TRAIT_TINY))
+		return FALSE
 	return TRUE
 
 /datum/sex_action/toy_other_oral/can_perform(mob/living/carbon/human/user, mob/living/carbon/human/target)
