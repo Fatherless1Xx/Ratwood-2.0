@@ -184,6 +184,7 @@
 #define COURTAGENT	    (1<<4)
 #define WRETCH          (1<<5)
 #define TRADER			(1<<6)
+#define OGRE			(1<<0)
 
 #define TRIBAL		(1<<8)
 
@@ -307,6 +308,7 @@
 #define JDO_BANDIT 31.3
 #define JDO_COURTAGENT 30.3
 #define JDO_WRETCH 30.4
+#define JDO_OGRE 30.45
 #define JDO_ASSASSIN 30.5
 #define JDO_TRADER 30.5
 
@@ -400,7 +402,8 @@
 	/datum/job/roguetown/mercenary/desert_rider,\
 	/datum/job/roguetown/mercenary/grenzelhoft,\
 	/datum/job/roguetown/bandit,\
-	/datum/job/roguetown/wretch
+	/datum/job/roguetown/wretch,\
+	/datum/job/roguetown/ogre
 
 #define GARRISON_ROLES \
 	/datum/job/roguetown/bogguardsman,\

@@ -246,20 +246,26 @@
 			var/list/class_cat_list = list()
 
 			for(var/datum/advclass/class_categories in rolled_classes)
+				if(!class_categories.class_select_category)
+					continue
 				if(!(class_cat_list.Find(class_categories.class_select_category)))
 					class_cat_list += class_categories.class_select_category
 
-			for(var/rolled_categories in class_cat_list)
-				data += "<details class='class_dropdown'>"
-				data += "<summary class='class_category'>[rolled_categories]</summary>\n"
+			if(class_cat_list.len)
+				for(var/rolled_categories in class_cat_list)
+					data += "<details class='class_dropdown'>"
+					data += "<summary class='class_category'>[rolled_categories]</summary>\n"
+					for(var/datum/advclass/datums in rolled_classes)
+						if(datums.class_select_category == rolled_categories)
+							var/plus_str = ""
+							data += "<div class='class_bar_div'><a class='vagrant' href='?src=\ref[src];class_selected=1;selected_class=\ref[datums];'>"
+							data += "<img class='ninetysskull' src='gragstar.gif' width=32 height=32>[datums.name]<span id='green_plussa'>[plus_str]</span><img class='ninetysskull' src='gragstar.gif' width=32 height=32>"
+							data += "</a></div>\n"
+					data += "</details>"
+			else
 				for(var/datum/advclass/datums in rolled_classes)
-					if(datums.class_select_category == rolled_categories)
-						var/plus_str = ""
-						data += "<div class='class_bar_div'><a class='vagrant' href='?src=\ref[src];class_selected=1;selected_class=\ref[datums];'>"
-						data += "<img class='ninetysskull' src='gragstar.gif' width=32 height=32>[datums.name]<span id='green_plussa'>[plus_str]</span><img class='ninetysskull' src='gragstar.gif' width=32 height=32>"
-						data += "</a></div>\n"
-				data += "</details>"
-
+					var/plus_str = ""
+					data += "<div class='class_bar_div'><a class='vagrant' href='?src=\ref[src];class_selected=1;selected_class=\ref[datums];'><img class='ninetysskull' src='gragstar.gif' width=32 height=32>[datums.name]<span id='green_plussa'>[plus_str]</span><img class='ninetysskull' src='gragstar.gif' width=32 height=32></a></div>\n"
 		else
 			for(var/datum/advclass/datums in rolled_classes)
 				var/plus_str = ""

@@ -237,6 +237,13 @@
 	affected_bodyparts = CHEST
 	default_color = "555555"
 
+/datum/body_marking/bigtonage // for 32x64 mobs
+	icon = 'icons/mob/body_markings/other_markings.dmi'
+	name = "Big tonage"
+	icon_state = "bigtonage"
+	affected_bodyparts = CHEST
+	default_color = "555555"
+
 /datum/body_marking/drake_eyes
 	icon = 'icons/mob/body_markings/other_markings.dmi'
 	name = "Drake Eyes"

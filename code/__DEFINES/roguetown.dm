@@ -59,7 +59,8 @@ Balloon Alert / Floating Text defines
 	/datum/species/dullahan,\
 	/datum/species/lamia,\
 	/datum/species/dwarf/gnome,\
-	/datum/species/harpy\
+	/datum/species/harpy,\
+	/datum/species/ogre\
 )
 
 #define RACES_RESPECTED \
@@ -160,6 +161,11 @@ Balloon Alert / Floating Text defines
 	/datum/species/dullahan,\
 	/datum/species/lamia,\
 	/datum/species/dwarf/gnome\
+)
+
+// Used for large (32x64) clothing sprites.
+#define OGRE_RACE_TYPES list(\
+	/datum/species/ogre,\
 )
 // Non-dwarf non-kobold non-goblin mostly
 #define NON_DWARVEN_RACE_TYPES list(\
@@ -334,6 +340,7 @@ GLOBAL_LIST_EMPTY(round_join_times)
 #define CTAG_GUILDSMEN 		"CAT_GUILDSMEN"		// Guildsmen class - Handles Guildsmen class selector
 #define CTAG_NIGHTMAIDEN	"CAT_NIGHTMAIDEN"	// Bathhouse Attendant's aesthetic choices.
 #define CTAG_PRISONER 		"CAT_PRISONER"
+#define CTAG_OGRE			"CAT_OGRE"			// Ogre class selector
 
 
 // List of mono-class categories. Only here for standardisation sake, but can be added on if desired.
@@ -403,6 +410,7 @@ GLOBAL_LIST_EMPTY(round_join_times)
 #define CLASS_CAT_OTAVA "Otava"
 #define CLASS_CAT_KAZENGUN "Kazengun"
 #define CLASS_CAT_RACIAL "Race Exclusive" //Used for black oaks, grudgebearer dwarves, etc.
+#define CLASS_CAT_OGRE "Ogre"
 
 // Social rank defines
 #define SOCIAL_RANK_DIRT 1

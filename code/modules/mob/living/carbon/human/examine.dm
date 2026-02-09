@@ -158,6 +158,9 @@
 			else
 				. += span_notice("Something about them seems... different.")
 
+		if(HAS_TRAIT(src, TRAIT_AVATAR_GRAGGAR))
+			. += "<span class='big' style='color: #8B4513;'>A MARAUDING OGRE!</span>"
+
 		if(GLOB.lord_titles[name])
 			. += span_notice("[m3] been granted the title of \"[GLOB.lord_titles[name]]\".")
 

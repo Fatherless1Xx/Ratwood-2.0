@@ -158,6 +158,7 @@ GLOBAL_LIST_INIT(wanderer_positions, list(
 	"Court Agent",
 	"Bandit",
 	"Wretch",
+	"Ogre",
 ))
 
 GLOBAL_LIST_INIT(roguewar_positions, list(
@@ -181,6 +182,7 @@ GLOBAL_LIST_INIT(foreign_positions, list(
 	"Mercenary",
 	"Bandit",
 	"Wretch",
+	"Ogre",
 	"Inquisitor",
 	"Suitor",
 	"Orthodoxist",
@@ -273,5 +275,4 @@ GLOBAL_PROTECT(exp_specialmap)
 	job = chef_expand.Replace(job, "cook")
 	job = borg_expand.Replace(job, "cyborg")
 	return job
-
 
