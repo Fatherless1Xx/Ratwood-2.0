@@ -154,6 +154,7 @@ GLOBAL_LIST_INIT(youngfolk_positions, list(
 
 GLOBAL_LIST_INIT(wanderer_positions, list(
 	"Mercenary",
+	"Town Seelie",
 	"Adventurer",
 	"Court Agent",
 	"Bandit",
@@ -273,5 +274,4 @@ GLOBAL_PROTECT(exp_specialmap)
 	job = chef_expand.Replace(job, "cook")
 	job = borg_expand.Replace(job, "cyborg")
 	return job
-
 

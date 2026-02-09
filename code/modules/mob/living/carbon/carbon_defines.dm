@@ -86,6 +86,8 @@
 	var/stam_regen_start_time = 0
 	///knocks you down
 	var/stam_paralyzed = FALSE
+	/// Seelie luck aura toggle.
+	var/aura = TRUE
 
 	var/next_smell = 0
 
