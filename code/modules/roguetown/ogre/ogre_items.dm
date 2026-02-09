@@ -26,6 +26,7 @@
 	force = 25
 	icon = 'icons/roguetown/weapons/ogre_64.dmi'
 	icon_state = "ogre_cudgel"
+	slot_flags = ITEM_SLOT_HIP | ITEM_SLOT_BACK
 	minstr = 13
 	pixel_y = -16
 	pixel_x = -16
@@ -38,6 +39,7 @@
 	desc = "Any good cook needs to prep their meat. Chop it, slice it, maybe even kill it before you do all that. Meant for the hands of a giant."
 	icon = 'icons/roguetown/weapons/ogre_64.dmi'
 	icon_state = "ogre_cleaver"
+	slot_flags = ITEM_SLOT_HIP
 	force = 25
 	wdefense = 4
 	minstr = 13
@@ -52,6 +54,7 @@
 	desc = "The mind of an ogre does not see trash in a field of discarded swords and corpses. He sees material to make a new weapon, with a light snack."
 	icon = 'icons/roguetown/weapons/ogre_64.dmi'
 	icon_state = "ogre_sword"
+	slot_flags = ITEM_SLOT_BACK
 	minstr = 15
 	smelt_bar_num = 2
 	force = 20
@@ -65,6 +68,7 @@
 	desc = "Sometimes an ogre comes across an abandoned blacksmith's forge, and finds an intact anvil. Few minds but an ogre's can think to use a tool of pure creation to beat people to paste."
 	icon = 'icons/roguetown/weapons/ogre_64.dmi'
 	icon_state = "ogre_anvil"
+	slot_flags = ITEM_SLOT_HIP | ITEM_SLOT_BACK
 	force = 20
 	force_wielded = 40
 	possible_item_intents = list(/datum/intent/mace/strike)
@@ -81,6 +85,7 @@
 	name = "Ogre's Mace"
 	desc = "Only a giant can effectively make use of this weapon. It has fed one at the expense of many lives."
 	icon_state = "ogre_mace"
+	slot_flags = ITEM_SLOT_HIP | ITEM_SLOT_BACK
 	force = 25
 	force_wielded = 45
 	gripped_intents = list(/datum/intent/mace/strike, /datum/intent/mace/smash, /datum/intent/effect/daze)

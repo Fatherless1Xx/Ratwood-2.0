@@ -56,11 +56,10 @@
 			"Choppa",
 			"None"
 		)
-		var/weaponchoice = input(H,"Choose your weapon.", "WEAPON SELECTION") as null|anything in weapons
+		backl = /obj/item/rogueweapon/mace/goden/steel/ogre
+		var/weaponchoice = input(H,"Choose your weapon.", "WEAPON SELECTION") as anything in weapons
 		switch(weaponchoice)
 			if("Choppa")
 				backl = /obj/item/rogueweapon/greatsword/zwei/ogre
 			if("None")
 				backl = null
-			else
-				backl = /obj/item/rogueweapon/mace/goden/steel/ogre

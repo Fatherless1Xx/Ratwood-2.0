@@ -56,9 +56,12 @@
 			"EXECUTIONER",
 			"None"
 		)
-		var/weaponchoice = input(H,"Choose your weapon.", "WEAPON SELECTION") as null|anything in weapons
+		r_hand = /obj/item/rogueweapon/mace/goden/steel/ogre/graggar
+		var/weaponchoice = input(H,"Choose your weapon.", "WEAPON SELECTION") as anything in weapons
 		switch(weaponchoice)
 			if("CRUSHER")
 				r_hand = /obj/item/rogueweapon/mace/goden/steel/ogre/graggar
 			if("EXECUTIONER")
 				r_hand = /obj/item/rogueweapon/greataxe/steel/doublehead/graggar/ogre
+			if("None")
+				r_hand = null
