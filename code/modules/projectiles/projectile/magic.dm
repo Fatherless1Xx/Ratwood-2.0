@@ -125,12 +125,23 @@
 	var/mob/living/carbon/human/caster = firer
 	if(caster)
 		caster.energy_add(-120)
-	var/atom/target_to_animate = target
-	// Low-layer items are often not directly "hit" by projectiles; fall back to the clicked atom.
-	if((!target_to_animate || isturf(target_to_animate)) && original)
-		target_to_animate = original
-	if(target_to_animate && !target_to_animate.animate_atom_living(firer) && original && original != target_to_animate)
-		original.animate_atom_living(firer)
+	var/list/atom/candidates = list()
+	if(target)
+		candidates += target
+	if(original && original != target)
+		candidates += original
+	// Some objects are too low-layer to be direct collision targets; scan both impacted and clicked turfs.
+	var/turf/impact_turf = get_turf(target)
+	var/turf/click_turf = get_turf(original)
+	if(impact_turf)
+		for(var/obj/O in impact_turf)
+			candidates += O
+	if(click_turf && click_turf != impact_turf)
+		for(var/obj/O in click_turf)
+			candidates += O
+	for(var/atom/candidate in candidates)
+		if(candidate?.animate_atom_living(firer))
+			break
 	return ..()
 
 /atom/proc/animate_atom_living(mob/living/owner = null)
@@ -175,15 +186,21 @@
 	var/mob/living/creator = null
 	var/destroy_objects = 0
 	var/knockdown_people = 0
-	var/static/mutable_appearance/googly_eyes = mutable_appearance('icons/mob/mob.dmi', "googly_eyes")
+	var/static/icon/googly_eyes_icon = 'icons/mob/mob.dmi'
+	var/static/googly_eyes_state = "googly_eyes"
+	var/mutable_appearance/active_googly_eyes = null
 	var/overlay_googly_eyes = TRUE
 	var/idledamage = TRUE
+	var/active_animation_until = 0
 
 /mob/living/simple_animal/hostile/mimic/copy/Initialize(mapload, obj/copy, mob/living/creator, destroy_original = 0, no_googlies = FALSE)
 	. = ..()
 	if(no_googlies)
 		overlay_googly_eyes = FALSE
 	CopyObject(copy, creator, destroy_original)
+	toggle_ai(AI_ON)
+	active_animation_until = world.time + 30 SECONDS
+	addtimer(CALLBACK(src, PROC_REF(ProcessActiveAnimation)), 1)
 
 /mob/living/simple_animal/hostile/mimic/copy/Life()
 	..()
@@ -200,6 +217,36 @@
 /mob/living/simple_animal/hostile/mimic/copy/ListTargets()
 	. = ..()
 	return . - creator
+
+/mob/living/simple_animal/hostile/mimic/copy/setDir(newdir, ismousemovement)
+	var/olddir = dir
+	. = ..()
+	if(dir != olddir)
+		UpdateGooglyEyes()
+
+/mob/living/simple_animal/hostile/mimic/copy/proc/ProcessActiveAnimation()
+	if(QDELETED(src) || stat == DEAD || AIStatus == NPC_AI_OFF)
+		return
+	if(world.time > active_animation_until)
+		return
+	toggle_ai(AI_ON)
+	var/list/possible_targets = ListTargets()
+	if(FindTarget(possible_targets, TRUE))
+		MoveToTarget(possible_targets)
+	else if(isturf(loc) && !stop_automated_movement && (mobility_flags & MOBILITY_MOVE))
+		step_rand(src)
+	addtimer(CALLBACK(src, PROC_REF(ProcessActiveAnimation)), 5)
+
+/mob/living/simple_animal/hostile/mimic/copy/proc/UpdateGooglyEyes(force = FALSE)
+	if(!overlay_googly_eyes)
+		return
+	if(!force && active_googly_eyes?.dir == dir)
+		return
+	if(active_googly_eyes)
+		cut_overlay(active_googly_eyes)
+	active_googly_eyes = mutable_appearance(googly_eyes_icon, googly_eyes_state)
+	active_googly_eyes.dir = dir
+	add_overlay(active_googly_eyes)
 
 /mob/living/simple_animal/hostile/mimic/copy/proc/ChangeOwner(mob/owner)
 	if(owner != creator)
@@ -222,7 +269,7 @@
 		icon_living = icon_state
 		copy_overlays(O)
 		if(overlay_googly_eyes)
-			add_overlay(googly_eyes)
+			UpdateGooglyEyes(TRUE)
 		if(isstructure(O) || ismachinery(O))
 			health = (O.anchored * 50) + 50
 			destroy_objects = TRUE

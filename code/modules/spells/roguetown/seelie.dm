@@ -62,17 +62,28 @@
 /obj/effect/proc_holder/spell/targeted/roustame/cast(list/targets, mob/user = usr)
 	. = ..()
 	visible_message(span_green("[usr] soothes the beast with Seelie dust."))
-	if(!targets.len || !istype(targets[1], /mob/living/simple_animal/hostile/retaliate/rogue/bigrat))
+	var/list/tamed_rouses = list()
+	for(var/mob/living/simple_animal/hostile/retaliate/rogue/bigrat/B in targets)
+		tamed_rouses += B
+	// Fallback: keep close-range behavior for clickless casts when no explicit target is selected.
+	if(!tamed_rouses.len)
+		for(var/mob/living/simple_animal/hostile/retaliate/rogue/bigrat/B in oview(2, user))
+			tamed_rouses += B
+	if(!tamed_rouses.len)
 		to_chat(user, span_warning("You must target a valid rous!"))
 		return FALSE
-	for(var/mob/living/simple_animal/hostile/retaliate/rogue/bigrat/B in oview(2, user))
+	for(var/mob/living/simple_animal/hostile/retaliate/rogue/bigrat/B in tamed_rouses)
 		if(!B.tame)
 			B.tamed(user)
 			B.faction += list("neutral")
 		B.enemies = list()
 		B.aggressive = FALSE
 		B.LoseTarget()
-	user.log_message("has tamed a rous via the spell", LOG_GAME)
+		if(B.ai_controller)
+			B.ai_controller.clear_blackboard_key(BB_BASIC_MOB_CURRENT_TARGET)
+			B.ai_controller.clear_blackboard_key(BB_BASIC_MOB_RETALIATE_LIST)
+			B.ai_controller.set_blackboard_key(BB_BASIC_MOB_TAMED, TRUE)
+	user.log_message("has tamed [length(tamed_rouses)] rous via the spell", LOG_GAME)
 	return TRUE
 
 /obj/effect/proc_holder/spell/targeted/seelie_kiss
