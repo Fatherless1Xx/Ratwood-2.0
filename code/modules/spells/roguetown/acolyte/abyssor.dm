@@ -162,6 +162,7 @@
 			var/atom/movable/AF = new A(T)
 			if(istype(AF, /obj/item/reagent_containers/food/snacks/fish))
 				var/obj/item/reagent_containers/food/snacks/fish/F = AF
+				F.set_alive()
 				F.sinkable = FALSE
 				F.throw_at(get_turf(user), 5, 1, null)
 			else

@@ -9,6 +9,7 @@
 	var/dead = TRUE
 	var/no_rarity_sprite = FALSE // Whether this fish has rarity based sprites. If not, don't change icon states
 	var/sinkable = TRUE
+	var/is_flopping = FALSE
 	max_integrity = 50
 	sellprice = 10
 	dropshrink = 0.6
@@ -48,6 +49,9 @@
 		START_PROCESSING(SSobj, src)
 
 /obj/item/reagent_containers/food/snacks/fish/attack_hand(mob/user)
+	if(!dead && user?.used_intent?.type == INTENT_HARM)
+		set_dead(user)
+		return TRUE
 	if(isliving(user))
 		var/mob/living/L = user
 		if(!(L.mobility_flags & MOBILITY_PICKUP))
@@ -61,22 +65,80 @@
 		to_chat(user, span_warning("Too slippery!"))
 		return
 
+/obj/item/reagent_containers/food/snacks/fish/attack_animal(mob/user)
+	if(!dead)
+		set_dead(user)
+		return TRUE
+	return ..()
+
+/obj/item/reagent_containers/food/snacks/fish/attacked_by(obj/item/I, mob/living/user)
+	. = ..()
+	if(. && !dead)
+		set_dead(user)
+
 /obj/item/reagent_containers/food/snacks/fish/process()
-	if(!isturf(loc)) //no floating out of bags
+	if(dead)
+		stop_flopping()
 		return
-	if(prob(50) && !dead)
-		dir = pick(NORTH, SOUTH, EAST, WEST, NORTHEAST, NORTHWEST, SOUTHEAST, SOUTHWEST)
-		step(src, dir)
+	if(!isturf(loc)) //no flopping out of bags
+		stop_flopping()
+		return
+	start_flopping()
+
+/obj/item/reagent_containers/food/snacks/fish/proc/flop_animation()
+	var/pause_between = 15 + rand(1, 5)
+	animate(src, time = pause_between, loop = -1)
+	var/up_time = 2
+	var/hop_height = 5
+	var/jumping_right = FALSE
+	for(var/_ in 1 to 2)
+		jumping_right = !jumping_right
+		var/x_step = jumping_right ? 2 : -2
+		animate(time = up_time, pixel_y = hop_height, pixel_x = x_step, loop = -1, flags = ANIMATION_RELATIVE, easing = BOUNCE_EASING | EASE_IN)
+		animate(time = up_time, pixel_y = -hop_height, pixel_x = -x_step, loop = -1, flags = ANIMATION_RELATIVE, easing = BOUNCE_EASING | EASE_OUT)
+		animate(time = 2, loop = -1)
+	animate(time = pause_between, loop = -1)
+
+/obj/item/reagent_containers/food/snacks/fish/proc/start_flopping()
+	if(is_flopping)
+		return
+	is_flopping = TRUE
+	flop_animation()
+
+/obj/item/reagent_containers/food/snacks/fish/proc/stop_flopping()
+	if(is_flopping)
+		animate(src)
+	is_flopping = FALSE
+	pixel_x = 0
+	pixel_y = 0
+	update_transform()
+
+/obj/item/reagent_containers/food/snacks/fish/proc/set_alive()
+	if(dead)
+		dead = FALSE
+	START_PROCESSING(SSobj, src)
+	if(isturf(loc))
+		start_flopping()
+
+/obj/item/reagent_containers/food/snacks/fish/proc/set_dead(mob/living/killer = null)
+	if(dead)
+		return
+	dead = TRUE
+	STOP_PROCESSING(SSobj, src)
+	stop_flopping()
+	update_transform()
+	if(killer)
+		to_chat(killer, span_notice("I kill [src]."))
 
 /obj/item/reagent_containers/food/snacks/fish/Destroy()
 	STOP_PROCESSING(SSobj, src)
+	stop_flopping()
 	. = ..()
 
 /obj/item/reagent_containers/food/snacks/fish/deconstruct()
 	if(!dead)
-		dead = TRUE
+		set_dead()
 //		icon_state = "[icon_state]"
-		STOP_PROCESSING(SSobj, src)
 		return 1
 
 /obj/item/reagent_containers/food/snacks/fish/after_throw(datum/callback/callback)

@@ -370,7 +370,10 @@
 										new M(user.loc)
 									user.mind.add_sleep_experience(/datum/skill/labor/fishing, fisherman.STAINT*2)
 								else
-									new A(user.loc)
+									var/obj/item/caught_item = new A(user.loc)
+									if(istype(caught_item, /obj/item/reagent_containers/food/snacks/fish))
+										var/obj/item/reagent_containers/food/snacks/fish/F = caught_item
+										F.set_alive()
 									teleport_to_dream(user, 10000, 1)
 									to_chat(user, "<span class='warning'>Pull 'em in!</span>")
 									user.mind.add_sleep_experience(/datum/skill/labor/fishing, round(fisherman.STAINT, 2), FALSE)
@@ -646,7 +649,10 @@
 										user.playsound_local(src, pick('sound/misc/jumpscare (1).ogg','sound/misc/jumpscare (2).ogg','sound/misc/jumpscare (3).ogg','sound/misc/jumpscare (4).ogg'), 100)
 									user.mind.add_sleep_experience(/datum/skill/labor/fishing, fisherman.STAINT*2) // High risk high reward
 								else
-									new A(user.loc)
+									var/obj/item/caught_item = new A(user.loc)
+									if(istype(caught_item, /obj/item/reagent_containers/food/snacks/fish))
+										var/obj/item/reagent_containers/food/snacks/fish/F = caught_item
+										F.set_alive()
 									teleport_to_dream(user, 10000, 1)
 									to_chat(user, "<span class='warning'>Pull 'em in!</span>")
 									user.mind.add_sleep_experience(/datum/skill/labor/fishing, round(fisherman.STAINT, 2), FALSE) // Level up!

@@ -138,7 +138,10 @@
 											user.playsound_local(src, pick('sound/misc/jumpscare (1).ogg','sound/misc/jumpscare (2).ogg','sound/misc/jumpscare (3).ogg','sound/misc/jumpscare (4).ogg'), 100)
 										user.mind.add_sleep_experience(/datum/skill/labor/fishing, fisherman.STAINT*2) // High risk high reward
 									else
-										new A(user.loc)
+										var/obj/item/caught_item = new A(user.loc)
+										if(istype(caught_item, /obj/item/reagent_containers/food/snacks/fish))
+											var/obj/item/reagent_containers/food/snacks/fish/F = caught_item
+											F.set_alive()
 										to_chat(user, "<span class='warning'>Reel 'em in!</span>")
 										teleport_to_dream(user, 10000, 1)
 										user.mind.add_sleep_experience(/datum/skill/labor/fishing, round(fisherman.STAINT, 2), FALSE) // Level up!
@@ -166,11 +169,15 @@
 
 /obj/item/fishingrod/update_icon()
 	cut_overlays()
-	if(baited)
+	if(baited && !QDELETED(baited))
 		var/obj/item/I = baited
-		I.pixel_x = 6
-		I.pixel_y = -6
-		add_overlay(new /mutable_appearance(I))
+		var/mutable_appearance/bait_overlay = new /mutable_appearance(I)
+		bait_overlay.pixel_x = 6
+		bait_overlay.pixel_y = -6
+		if(istype(I, /obj/item/natural/worms))
+			bait_overlay.dir = SOUTH
+		bait_overlay.layer = src.layer + 0.01
+		add_overlay(bait_overlay)
 	if(ismob(loc))
 		var/mob/M = loc
 		M.update_inv_hands()

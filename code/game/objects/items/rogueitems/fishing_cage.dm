@@ -50,7 +50,10 @@
 				add_sleep_experience(user, /datum/skill/labor/fishing, 20)
 				record_featured_stat(FEATURED_STATS_FISHERS, user)
 				record_round_statistic(STATS_FISH_CAUGHT)
-				new caught(user.loc)
+				var/obj/item/caught_item = new caught(user.loc)
+				if(istype(caught_item, /obj/item/reagent_containers/food/snacks/fish))
+					var/obj/item/reagent_containers/food/snacks/fish/F = caught_item
+					F.set_alive()
 				caught = null
 				desc = initial(desc)
 		else
