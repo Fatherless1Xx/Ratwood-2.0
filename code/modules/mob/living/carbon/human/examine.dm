@@ -166,6 +166,13 @@
 				. += span_notice("A fellow noble.")
 			else
 				. += span_notice("A noble!")
+
+		if(HAS_TRAIT(src, TRAIT_INDENTURED) && HAS_TRAIT(user, TRAIT_INDENTURE_MASTER))
+			. += span_notice("A slave who knows their place.")
+
+		if(user != src && HAS_TRAIT(user, TRAIT_INDENTURED) && HAS_TRAIT(src, TRAIT_INDENTURE_MASTER))
+			. += span_notice("My master, [src.real_name].")
+
 		// Leashed pet status effect message
 		if(has_status_effect(/datum/status_effect/leash_pet))
 			. += span_warning("A leash is hooked to their collar. They are being led like a pet.")

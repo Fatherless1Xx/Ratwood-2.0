@@ -1,6 +1,6 @@
 /mob/proc/collar_master_control_menu()
-	set name = "Collar Control"
-	set category = "Collar Tab"
+	set name = "Domination Control"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind?.GetComponent(/datum/component/collar_master)
 	if(!CM)
@@ -40,7 +40,7 @@
 		"Free Pet" = /mob/proc/collar_master_release_pet,
 	)
 
-	var/choice = input(src, "Choose a command:", "Collar Control") as null|anything in options
+	var/choice = input(src, "Choose a command:", "Domination Control") as null|anything in options
 	if(!choice || !CM || !length(CM.temp_selected_pets))
 		return
 
@@ -49,14 +49,16 @@
 
 /mob/proc/collar_master_listen()
 	set name = "Listen to Pets"
-	set category = "Collar Tab"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind?.GetComponent(/datum/component/collar_master)
 	if(!CM || !length(CM.temp_selected_pets))
 		return
 
 	if(world.time < CM.last_command_time + CM.command_cooldown)
-		to_chat(src, span_warning("The collar is still cooling down!"))
+		var/source = CM.get_pets_command_source(CM.temp_selected_pets)
+		var/verb = CM.is_command_source_plural(source) ? "are" : "is"
+		to_chat(src, span_warning("The [source] [verb] still cooling down!"))
 		return
 
 	var/mob/living/carbon/human/pet = CM.temp_selected_pets[1]  // Use first selected pet
@@ -68,22 +70,24 @@
 		to_chat(src, span_warning("[pet] must be conscious to establish a listening link!"))
 		return
 
-	to_chat(src, span_notice("You establish a listening link through [pet]'s collar..."))
-	to_chat(pet, span_warning("Your collar tingles as your master listens through your ears!"))
+	var/pet_source = CM.get_pet_command_source(pet)
+	to_chat(src, span_notice("You establish a listening link through [pet]'s [pet_source]..."))
+	to_chat(pet, span_warning("Your [pet_source] tingles as [src.real_name] listens through your ears!"))
 
 	CM.toggle_listening(pet)
 	CM.last_command_time = world.time
 
 /mob/proc/collar_master_shock()
 	set name = "Shock Pet"
-	set category = "Collar Tab"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind?.GetComponent(/datum/component/collar_master)
 	if(!CM || !length(CM.temp_selected_pets))
 		return
 
 	if(world.time < CM.last_command_time + CM.command_cooldown)
-		to_chat(src, span_warning("The collar's power cell is still recharging!"))
+		var/source = CM.get_pets_command_source(CM.temp_selected_pets)
+		to_chat(src, span_warning("The [source]'s power cell is still recharging!"))
 		return
 
 	var/intensity = 15  // Fixed intensity like the scepter
@@ -108,14 +112,15 @@
 
 /mob/proc/collar_master_send_message()
 	set name = "Send Message"
-	set category = "Collar Tab"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind?.GetComponent(/datum/component/collar_master)
 	if(!CM || !length(CM.temp_selected_pets))
 		return
 
 	if(world.time < CM.last_command_time + CM.command_cooldown)
-		to_chat(src, span_warning("The collar's neural link is still recharging!"))
+		var/source = CM.get_pets_command_source(CM.temp_selected_pets)
+		to_chat(src, span_warning("The [source]'s neural link is still recharging!"))
 		return
 
 	var/message = input(src, "What message should echo in your pet's mind?", "Mental Command") as text|null
@@ -129,7 +134,8 @@
 		if(!pet || !pet.mind || !pet.client || !(pet in CM.my_pets))
 			continue
 
-		to_chat(pet, span_userdanger("<i>Your collar resonates with your master's voice:</i> [message]"))
+		var/pet_source = CM.get_pet_command_source(pet)
+		to_chat(pet, span_userdanger("<i>Your [pet_source] resonates with [src.real_name]'s voice:</i> [message]"))
 		playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
 		pet.do_jitter_animation(15)
 		message_count++
@@ -141,14 +147,16 @@
 
 /mob/proc/collar_master_force_surrender()
 	set name = "Force Surrender"
-	set category = "Collar Tab"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind?.GetComponent(/datum/component/collar_master)
 	if(!CM || !length(CM.temp_selected_pets))
 		return
 
 	if(world.time < CM.last_command_time + CM.command_cooldown)
-		to_chat(src, span_warning("The collar is still cooling down!"))
+		var/source = CM.get_pets_command_source(CM.temp_selected_pets)
+		var/verb = CM.is_command_source_plural(source) ? "are" : "is"
+		to_chat(src, span_warning("The [source] [verb] still cooling down!"))
 		return
 
 	CM.last_command_time = world.time
@@ -169,14 +177,15 @@
 
 /mob/proc/collar_master_force_strip()
 	set name = "Force Strip"
-	set category = "Collar Tab"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind?.GetComponent(/datum/component/collar_master)
 	if(!CM || !length(CM.temp_selected_pets))
 		return
 
 	if(world.time < CM.last_command_time + CM.command_cooldown)
-		to_chat(src, span_warning("The collar's command circuits are still cooling down!"))
+		var/source = CM.get_pets_command_source(CM.temp_selected_pets)
+		to_chat(src, span_warning("The [source]'s command circuits are still cooling down!"))
 		return
 
 	CM.last_command_time = world.time
@@ -194,8 +203,9 @@
 			if(!(I.slot_flags & ITEM_SLOT_NECK))  // Don't remove collar
 				pet.dropItemToGround(I, TRUE)
 
-		to_chat(pet, span_userdanger("Your collar tingles as it forces you to remove your clothing!"))
-		pet.visible_message(span_warning("[pet]'s collar pulses with light as they frantically strip their clothing!"))
+		var/pet_source = CM.get_pet_command_source(pet)
+		to_chat(pet, span_userdanger("Your [pet_source] tingles as it forces you to remove your clothing!"))
+		pet.visible_message(span_warning("[pet]'s [pet_source] pulses with light as they frantically strip their clothing!"))
 		playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
 		stripped_count++
 
@@ -206,14 +216,15 @@
 
 /mob/proc/collar_master_clothing()
 	set name = "Clothing Permission"
-	set category = "Collar Tab"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind?.GetComponent(/datum/component/collar_master)
 	if(!CM || !length(CM.temp_selected_pets))
 		return
 
 	if(world.time < CM.last_command_time + CM.command_cooldown)
-		to_chat(src, span_warning("The collar's behavioral circuits need time to recalibrate!"))
+		var/source = CM.get_pets_command_source(CM.temp_selected_pets)
+		to_chat(src, span_warning("The [source]'s behavioral circuits need time to recalibrate!"))
 		return
 
 	CM.last_command_time = world.time
@@ -221,30 +232,32 @@
 	for(var/mob/living/carbon/human/pet in CM.temp_selected_pets)
 		if(!pet || !pet.mind || !pet.client || !(pet in CM.my_pets))
 			continue
+		var/pet_source = CM.get_pet_command_source(pet)
 
 		if(HAS_TRAIT_FROM(pet, TRAIT_NUDIST, COLLAR_TRAIT))
 			REMOVE_TRAIT(pet, TRAIT_NUDIST, COLLAR_TRAIT)
-			to_chat(pet, span_notice("Your collar hums softly as your master grants you permission to wear clothing."))
-			pet.visible_message(span_notice("[pet]'s collar glows briefly as they are permitted to dress."))
+			to_chat(pet, span_notice("Your [pet_source] hums softly as [src.real_name] grants you permission to wear clothing."))
+			pet.visible_message(span_notice("[pet]'s [pet_source] glows briefly as they are permitted to dress."))
 			playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
 			to_chat(src, span_notice("You grant [pet.real_name] permission to wear clothing."))
 		else
 			ADD_TRAIT(pet, TRAIT_NUDIST, COLLAR_TRAIT)
-			to_chat(pet, span_notice("Your collar hums softly as your master denies you permission to put clothing on."))
-			pet.visible_message(span_notice("[pet]'s collar glows briefly as they are forbidden to dress."))
+			to_chat(pet, span_notice("Your [pet_source] hums softly as [src.real_name] denies you permission to put clothing on."))
+			pet.visible_message(span_notice("[pet]'s [pet_source] glows briefly as they are forbidden to dress."))
 			playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
 			to_chat(src, span_notice("You deny [pet.real_name] permission to wear clothing."))
 
 /mob/proc/collar_master_toggle_speech()
 	set name = "Toggle Speech"
-	set category = "Collar Tab"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind?.GetComponent(/datum/component/collar_master)
 	if(!CM || !length(CM.temp_selected_pets))
 		return
 
 	if(world.time < CM.last_command_time + CM.command_cooldown)
-		to_chat(src, span_warning("The collar's vocal inhibitors need time to cycle!"))
+		var/source = CM.get_pets_command_source(CM.temp_selected_pets)
+		to_chat(src, span_warning("The [source]'s vocal inhibitors need time to cycle!"))
 		return
 
 	CM.last_command_time = world.time
@@ -261,7 +274,7 @@
 
 /mob/proc/collar_master_force_action()
 	set name = "Force Action"
-	set category = "Collar Tab"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind?.GetComponent(/datum/component/collar_master)
 	if(!CM || !length(CM.temp_selected_pets))
@@ -272,7 +285,8 @@
 		return
 
 	if(world.time < CM.last_command_time + CM.command_cooldown)
-		to_chat(src, span_warning("The collar's control matrix is still recharging!"))
+		var/source = CM.get_pets_command_source(CM.temp_selected_pets)
+		to_chat(src, span_warning("The [source]'s control matrix is still recharging!"))
 		return
 
 	CM.last_command_time = world.time
@@ -282,8 +296,9 @@
 		if(!pet || !pet.mind || !pet.client || !(pet in CM.my_pets))
 			continue
 
-		to_chat(pet, span_userdanger("Your collar compels you to perform an action!"))
-		pet.visible_message(span_warning("[pet]'s collar pulses as they are forced to act!"))
+		var/pet_source = CM.get_pet_command_source(pet)
+		to_chat(pet, span_userdanger("Your [pet_source] compels you to perform an action!"))
+		pet.visible_message(span_warning("[pet]'s [pet_source] pulses as they are forced to act!"))
 		pet.say(message) // The game will automatically handle * for emotes
 		pet.do_jitter_animation(15)
 		playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
@@ -296,14 +311,16 @@
 
 /mob/proc/collar_master_force_love()
 	set name = "Force Love"
-	set category = "Collar Tab"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind?.GetComponent(/datum/component/collar_master)
 	if(!CM || !length(CM.temp_selected_pets))
 		return
 
 	if(world.time < CM.last_command_time + CM.command_cooldown)
-		to_chat(src, span_warning("The collar is still cooling down!"))
+		var/source = CM.get_pets_command_source(CM.temp_selected_pets)
+		var/verb = CM.is_command_source_plural(source) ? "are" : "is"
+		to_chat(src, span_warning("The [source] [verb] still cooling down!"))
 		return
 
 	CM.last_command_time = world.time
@@ -320,21 +337,23 @@
 		else
 			pet.apply_status_effect(/datum/status_effect/in_love, src)
 			ADD_TRAIT(pet, TRAIT_LOVESTRUCK, COLLAR_TRAIT)
-			to_chat(pet, span_love("You feel an overwhelming attraction to [src]!"))
+			to_chat(pet, span_love("You feel an overwhelming attraction to [src.real_name]!"))
 		playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
 
 	to_chat(src, span_notice("You toggle love status for [length(CM.temp_selected_pets)] pets."))
 
 /mob/proc/collar_master_force_arousal()
 	set name = "Toggle Arousal"
-	set category = "Collar Tab"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind?.GetComponent(/datum/component/collar_master)
 	if(!CM || !length(CM.temp_selected_pets))
 		return
 
 	if(world.time < CM.last_command_time + CM.command_cooldown)
-		to_chat(src, span_warning("The collar is still cooling down!"))
+		var/source = CM.get_pets_command_source(CM.temp_selected_pets)
+		var/verb = CM.is_command_source_plural(source) ? "are" : "is"
+		to_chat(src, span_warning("The [source] [verb] still cooling down!"))
 		return
 
 	CM.last_command_time = world.time
@@ -351,14 +370,16 @@
 
 /mob/proc/collar_master_toggle_denial()
 	set name = "Toggle Orgasm Denial"
-	set category = "Collar Tab"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind?.GetComponent(/datum/component/collar_master)
 	if(!CM || !length(CM.temp_selected_pets))
 		return
 
 	if(world.time < CM.last_command_time + CM.command_cooldown)
-		to_chat(src, span_warning("The collar is still cooling down!"))
+		var/source = CM.get_pets_command_source(CM.temp_selected_pets)
+		var/verb = CM.is_command_source_plural(source) ? "are" : "is"
+		to_chat(src, span_warning("The [source] [verb] still cooling down!"))
 		return
 
 	CM.last_command_time = world.time
@@ -376,14 +397,16 @@
 
 /mob/proc/collar_master_toggle_hallucinate()
 	set name = "Toggle Pet Hallucinations"
-	set category = "Collar Tab"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind?.GetComponent(/datum/component/collar_master)
 	if(!CM || !length(CM.temp_selected_pets))
 		return
 
 	if(world.time < CM.last_command_time + CM.command_cooldown)
-		to_chat(src, span_warning("The collar is still cooling down!"))
+		var/source = CM.get_pets_command_source(CM.temp_selected_pets)
+		var/verb = CM.is_command_source_plural(source) ? "are" : "is"
+		to_chat(src, span_warning("The [source] [verb] still cooling down!"))
 		return
 
 	CM.last_command_time = world.time
@@ -394,17 +417,17 @@
 
 		if(pet.has_trauma_type(/datum/brain_trauma/mild/hallucinations))
 			pet.cure_trauma_type(/datum/brain_trauma/mild/hallucinations, TRAUMA_RESILIENCE_BASIC)
-			to_chat(pet, span_notice("Your collar pulses and the world becomes clearer."))
+			to_chat(pet, span_notice("Your [CM.get_pet_command_source(pet)] pulses and the world becomes clearer."))
 		else
 			pet.gain_trauma(/datum/brain_trauma/mild/hallucinations, TRAUMA_RESILIENCE_BASIC)
-			to_chat(pet, span_warning("Your collar pulses and the world begins to shift and warp!"))
+			to_chat(pet, span_warning("Your [CM.get_pet_command_source(pet)] pulses and the world begins to shift and warp!"))
 		playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
 
 	to_chat(src, span_notice("You toggle hallucinations for [length(CM.temp_selected_pets)] pets."))
 
 /mob/proc/collar_master_illusion()
 	set name = "Create Illusion"
-	set category = "Collar Tab"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind?.GetComponent(/datum/component/collar_master)
 	if(!CM || !length(CM.temp_selected_pets))
@@ -415,7 +438,9 @@
 		return
 
 	if(world.time < CM.last_command_time + CM.command_cooldown)
-		to_chat(src, span_warning("The collar is still cooling down!"))
+		var/source = CM.get_pets_command_source(CM.temp_selected_pets)
+		var/verb = CM.is_command_source_plural(source) ? "are" : "is"
+		to_chat(src, span_warning("The [source] [verb] still cooling down!"))
 		return
 
 	CM.last_command_time = world.time
@@ -432,7 +457,7 @@
 
 /mob/proc/collar_master_select_pets()
 	set name = "Select Pets"
-	set category = "Collar Tab"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind?.GetComponent(/datum/component/collar_master)
 	if(!CM)
@@ -467,14 +492,16 @@
 
 /mob/proc/collar_master_toggle_orgasm()
 	set name = "Toggle Orgasm Denial"
-	set category = "Collar Tab"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind?.GetComponent(/datum/component/collar_master)
 	if(!CM || !length(CM.temp_selected_pets))
 		return
 
 	if(world.time < CM.last_command_time + CM.command_cooldown)
-		to_chat(src, span_warning("The collar is still cooling down!"))
+		var/source = CM.get_pets_command_source(CM.temp_selected_pets)
+		var/verb = CM.is_command_source_plural(source) ? "are" : "is"
+		to_chat(src, span_warning("The [source] [verb] still cooling down!"))
 		return
 
 	CM.last_command_time = world.time
@@ -492,14 +519,29 @@
 
 /mob/proc/collar_master_release_pet()
 	set name = "Release Pet"
-	set category = "Collar Tab"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind.GetComponent(/datum/component/collar_master)
 	if(!CM || !length(CM.temp_selected_pets))
 		return
 
 	if(world.time < CM.last_command_time + CM.command_cooldown)
-		to_chat(src, span_warning("The collar is still cooling down!"))
+		var/source = CM.get_pets_command_source(CM.temp_selected_pets)
+		var/verb = CM.is_command_source_plural(source) ? "are" : "is"
+		to_chat(src, span_warning("The [source] [verb] still cooling down!"))
+		return
+
+	var/list/releasing = list()
+	var/list/releasable = list()
+	for(var/mob/living/carbon/human/pet in CM.temp_selected_pets)
+		if(!pet || !(pet in CM.my_pets))
+			continue
+		releasing += pet
+		if(!HAS_TRAIT(pet, TRAIT_INDENTURED))
+			releasable += pet
+
+	if(!length(releasable))
+		to_chat(src, span_warning("This one can never be freed."))
 		return
 
 	var/confirm = alert("Are you sure you want to release the selected pets?", "Release Confirmation", "Yes", "No")
@@ -508,40 +550,44 @@
 
 	CM.last_command_time = world.time
 	var/released_count = 0
+	var/blocked_any = (length(releasing) != length(releasable))
 
-	for(var/mob/living/carbon/human/pet in CM.temp_selected_pets)
-		if(!pet || !pet.mind || !(pet in CM.my_pets))
+	for(var/mob/living/carbon/human/pet in releasable)
+		if(!pet || !(pet in CM.my_pets))
 			continue
 
-		// Handle collar removal properly
 		var/obj/item/clothing/neck/roguetown/cursed_collar/collar = pet.get_item_by_slot(SLOT_NECK)
 		if(istype(collar))
-			REMOVE_TRAIT(collar, TRAIT_NODROP, CURSED_ITEM_TRAIT)
-			pet.dropItemToGround(collar, force = TRUE)
+			if(!collar.release_by_master(src, pet))
+				to_chat(src, span_warning("The [CM.get_pet_command_source(pet)] on [pet] rejects your authority."))
+				continue
+		else
+			CM.cleanup_pet(pet)
 
-		// Let cleanup_pet handle trait removal and slavebourne stats
-		CM.cleanup_pet(pet)
-		CM.temp_selected_pets -= pet
-
-		to_chat(pet, span_notice("You have been released from your collar's control!"))
+		to_chat(pet, span_notice("You have been released from [CM.get_pet_command_source(pet)] control!"))
 		released_count++
+
+	CM.temp_selected_pets.Cut()
 
 	if(released_count > 0)
 		to_chat(src, span_notice("Released [released_count] pets from your control."))
 	else
 		to_chat(src, span_warning("Failed to release any pets!"))
 
+	if(blocked_any)
+		to_chat(src, span_warning("This one can never be freed."))
+
 /mob/proc/collar_master_help()
-	set name = "Collar Help"
-	set category = "Collar Tab"
+	set name = "Domination Help"
+	set category = "Domination Tab"
 
 	var/datum/component/collar_master/CM = mind.GetComponent(/datum/component/collar_master)
 	if(!CM)
 		return
 
-	var/help_text = {"<span class='notice'><b>Collar Master Commands:</b>
+	var/help_text = {"<span class='notice'><b>Domination Commands:</b>
 	- Select Pets: Choose which pets to affect with commands
-	- Send Message: Send a message through the collar
+	- Send Message: Send a message through their collar or brand
 	- Force Surrender: Force pets to submit
 	- Shock Pet: Punish pets with varying intensity
 	- Release Pet: Free pets from your control
@@ -556,19 +602,9 @@
 	- Toggle Orgasm Denial: Deny orgasms
 	- Toggle Pet Hallucinations: They will hear things that are not there
 	- Impose Will: Send an unfiltered message to your pet, this could be something they see, feel, etc
-	- Free Pet: Collar will fall to the ground
+	- Free Pet: Break control and release them
 
 	Note: Most commands have a [CM.command_cooldown/10] second cooldown.
 	Currently controlling [length(CM.my_pets)] pets with [length(CM.temp_selected_pets)] selected.</span>"}
 
 	to_chat(src, help_text)
-
-
-/mob/proc/collar_master_releaseall()
-	set name = "Release All Pets"
-	set category = "Collar Tab"
-
-	var/datum/component/collar_master/CM = mind.GetComponent(/datum/component/collar_master)
-	if(!CM)
-		return
-	qdel(CM)

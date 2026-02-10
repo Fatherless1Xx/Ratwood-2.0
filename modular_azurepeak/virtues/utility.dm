@@ -9,6 +9,11 @@
 /datum/virtue/utility/noble/apply_to_human(mob/living/carbon/human/recipient)
 	SStreasury.noble_incomes[recipient] += 15
 
+/datum/virtue/utility/indenture_master
+	name = "Indentured Master"
+	desc = "I bear the rite that binds indentured servants to my will."
+	added_traits = list(TRAIT_INDENTURE_MASTER)
+
 /datum/virtue/utility/socialite
 	name = "Socialite"
 	desc = "I thrive in social settings, easily reading the emotions of others and charming those around me. My presence is always felt at any gathering."
@@ -424,4 +429,3 @@
 		list(/datum/skill/craft/cooking, 1, 2),
 		list(/datum/skill/combat/knives, 1, 2)
 	)
-

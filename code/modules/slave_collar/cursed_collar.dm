@@ -11,6 +11,7 @@
 	slot_flags = ITEM_SLOT_NECK
 	body_parts_covered = NECK
 	resistance_flags = INDESTRUCTIBLE
+	leashable = TRUE
 	var/mob/living/carbon/human/victim = null
 	var/datum/mind/collar_master = null
 	var/silenced = FALSE
@@ -79,7 +80,7 @@
 	if(!collar_master)
 		return
 	
-	CALLBACK(src, PROC_REF(handle_equip), user)
+	addtimer(CALLBACK(src, PROC_REF(handle_equip), user), 0.1 SECONDS)
 
 /obj/item/clothing/neck/roguetown/cursed_collar/proc/handle_equip(mob/living/carbon/human/user)
 	if(istype(user, /mob/living/carbon/human/dummy))
@@ -99,6 +100,7 @@
 	// Now send the collar gain signal
 	SEND_SIGNAL(user, COMSIG_CARBON_GAIN_COLLAR, src)
 	ADD_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
+	ADD_TRAIT(src, TRAIT_NO_SELF_UNEQUIP, CURSED_ITEM_TRAIT)
 
 	user.visible_message(span_warning("Cursed collar around [user]'s neck clicks shut!"), \
 							span_userdanger("Cursed collar around your neck clicks shut!"))
@@ -121,23 +123,27 @@
 			break
 
 	REMOVE_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
+	REMOVE_TRAIT(src, TRAIT_NO_SELF_UNEQUIP, CURSED_ITEM_TRAIT)
 
 /obj/item/clothing/neck/roguetown/cursed_collar/canStrip(mob/living/carbon/human/stripper, mob/living/carbon/human/owner)
-	if(!stripper.mind)
-		return
-	if(stripper.mind == collar_master)
-		REMOVE_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
-		SEND_SIGNAL(owner, COMSIG_CARBON_LOSE_COLLAR)
-		return TRUE
-	. = ..()
+	return FALSE
+
+/obj/item/clothing/neck/roguetown/cursed_collar/doStrip(mob/living/carbon/human/stripper, mob/living/carbon/human/owner)
+	if(stripper)
+		to_chat(stripper, span_warning("[src] refuses to come loose."))
+	return FALSE
+
+/obj/item/clothing/neck/roguetown/cursed_collar/proc/release_by_master(mob/living/carbon/human/master, mob/living/carbon/human/wearer)
+	if(!master?.mind || !wearer || wearer.get_item_by_slot(SLOT_NECK) != src)
+		return FALSE
+	if(collar_master && collar_master != master.mind)
+		return FALSE
+	REMOVE_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
+	REMOVE_TRAIT(src, TRAIT_NO_SELF_UNEQUIP, CURSED_ITEM_TRAIT)
+	return wearer.dropItemToGround(src, force = TRUE)
 
 /obj/item/clothing/neck/roguetown/cursed_collar/proc/send_collar_signal(mob/living/carbon/human/user)
-    if(!collar_master) // Don't send signal if no master
-        SEND_SIGNAL(user, COMSIG_CARBON_LOSE_COLLAR)
-        return
-    SEND_SIGNAL(user, COMSIG_CARBON_GAIN_COLLAR, src)
-
-/obj/item/clothing/neck/roguetown/cursed_collar/dropped(mob/living/carbon/human/user)
-    . = ..()
-    if(istype(user))
-        SEND_SIGNAL(user, COMSIG_CARBON_LOSE_COLLAR)
+	if(!collar_master) // Don't send signal if no master
+		SEND_SIGNAL(user, COMSIG_CARBON_LOSE_COLLAR)
+		return
+	SEND_SIGNAL(user, COMSIG_CARBON_GAIN_COLLAR, src)

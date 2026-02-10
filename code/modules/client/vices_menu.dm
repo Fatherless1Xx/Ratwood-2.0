@@ -1664,6 +1664,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 					if(new_vice.desc)
 						to_chat(usr, "<span class='info'>[new_vice.desc]</span>")
 					open_vices_menu(usr)
+					update_preview_icon()
 			
 			if("clear")
 				if(slot == 1)
@@ -1681,6 +1682,7 @@ GLOBAL_LIST_EMPTY(cached_loadout_icons)
 						to_chat(usr, span_notice("Vice changes saved. They will apply next time you spawn."))
 				
 				open_vices_menu(usr)
+				update_preview_icon()
 	
 	if(href_list["loadout_action"])
 		// Save state before any loadout change

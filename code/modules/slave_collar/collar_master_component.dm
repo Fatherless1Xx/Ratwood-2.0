@@ -18,7 +18,7 @@ GLOBAL_LIST_EMPTY(collar_masters)
 
 /atom/movable/screen/alert/status_effect/collar_surrender
     name = "Forced Surrender"
-    desc = "Your collar forces you to submit!"
+    desc = "Your binding forces you to submit!"
     icon_state = "surrender"
 
 /datum/component/collar_master
@@ -61,6 +61,40 @@ GLOBAL_LIST_EMPTY(collar_masters)
 		cleanup_pet(pet)
 	GLOB.collar_masters -= mindparent
 
+/datum/component/collar_master/proc/get_master_true_name()
+	return mindparent?.current?.real_name || mindparent?.current?.name || "their master"
+
+/datum/component/collar_master/proc/get_pet_command_source(mob/living/carbon/human/pet, use_cursed = FALSE)
+	var/has_collar = istype(pet?.get_item_by_slot(SLOT_NECK), /obj/item/clothing/neck/roguetown/cursed_collar)
+	var/has_brand = HAS_TRAIT(pet, TRAIT_INDENTURED)
+	if(has_collar && has_brand)
+		return use_cursed ? "cursed collar and brand" : "collar and brand"
+	if(has_brand)
+		return "brand"
+	if(has_collar && use_cursed)
+		return "cursed collar"
+	return "collar"
+
+/datum/component/collar_master/proc/get_pets_command_source(list/pets)
+	var/has_collar = FALSE
+	var/has_brand = FALSE
+	if(islist(pets))
+		for(var/mob/living/carbon/human/pet as anything in pets)
+			if(!pet)
+				continue
+			if(istype(pet.get_item_by_slot(SLOT_NECK), /obj/item/clothing/neck/roguetown/cursed_collar))
+				has_collar = TRUE
+			if(HAS_TRAIT(pet, TRAIT_INDENTURED))
+				has_brand = TRUE
+	if(has_collar && has_brand)
+		return "collar and brand"
+	if(has_brand)
+		return "brand"
+	return "collar"
+
+/datum/component/collar_master/proc/is_command_source_plural(source)
+	return source == "collar and brand" || source == "cursed collar and brand"
+
 /datum/component/collar_master/proc/add_pet(mob/living/carbon/human/pet)
     if(!pet || (pet in my_pets))
         return FALSE
@@ -101,8 +135,10 @@ GLOBAL_LIST_EMPTY(collar_masters)
 /datum/component/collar_master/proc/give_collar_feedback(mob/living/carbon/human/pet)
     if(!pet || !(pet in my_pets))
         return
-    to_chat(pet, span_notice("The collar tightens as it recognizes its master!"))
-    to_chat(parent, span_notice("You feel the collar bind to [pet]'s will."))
+    var/source = get_pet_command_source(pet)
+    to_chat(pet, span_notice("The [source] tightens as it recognizes [get_master_true_name()]!"))
+    if(mindparent?.current)
+        to_chat(mindparent.current, span_notice("You feel [pet]'s [source] bind to your will."))
 
 /datum/component/collar_master/proc/verify_collar_binding(mob/living/carbon/human/pet, obj/item/clothing/neck/roguetown/cursed_collar/collar)
 	if(!pet || !collar || !collar.collar_master)
@@ -110,11 +146,12 @@ GLOBAL_LIST_EMPTY(collar_masters)
 
 	// Prevent self-collaring
 	if(pet == collar.collar_master)
-		to_chat(pet, span_warning("The collar refuses to clasp shut."))
+		to_chat(pet, span_warning("The [get_pet_command_source(pet)] refuses to clasp shut."))
 		pet.dropItemToGround(collar, force = TRUE)
 		return FALSE
 
-	to_chat(pet, span_notice("Your collar pulses, reinforcing your master's control..."))
+	var/source = get_pet_command_source(pet)
+	to_chat(pet, span_notice("Your [source] pulses, reinforcing [get_master_true_name()]'s control..."))
 	SEND_SIGNAL(pet, COMSIG_CARBON_GAIN_COLLAR, collar)
 	addtimer(CALLBACK(src, PROC_REF(final_verify_binding), pet, collar), 0.2 SECONDS)
 
@@ -174,7 +211,8 @@ GLOBAL_LIST_EMPTY(collar_masters)
 
 	// Block attacks against the master only if on harm intent
 	if(target == mindparent?.current && pet.used_intent.type == INTENT_HARM)
-		to_chat(pet, span_warning("Your collar shocks you as you try to attack your master!"))
+		var/source_name = get_pet_command_source(pet)
+		to_chat(pet, span_warning("A shock from your [source_name] strikes you for attacking [get_master_true_name()]!"))
 		INVOKE_ASYNC(src, PROC_REF(shock_pet), pet, 10)
 		return COMPONENT_CANCEL_ATTACK
 
@@ -194,8 +232,9 @@ GLOBAL_LIST_EMPTY(collar_masters)
     pet.do_jitter_animation(intensity)
 
     // Visual effects
-    pet.visible_message(span_danger("[pet]'s collar crackles with electricity!"), \
-                       span_userdanger("Your collar sends searing pain through your body!"))
+    var/source_name = get_pet_command_source(pet)
+    pet.visible_message(span_danger("Electricity crackles from [pet]'s [source_name]!"), \
+                       span_userdanger("A shock sears you from your [source_name]!"))
 
     var/turf/T = get_turf(pet)
     if(T)
@@ -237,14 +276,14 @@ GLOBAL_LIST_EMPTY(collar_masters)
         // Add master to pet's message viewers
         RegisterSignal(pet, COMSIG_MOVABLE_HEAR, PROC_REF(relay_heard))
         RegisterSignal(pet, COMSIG_MOB_EMOTE, PROC_REF(relay_emote))
-        to_chat(mindparent.current, span_notice("You start listening through [pet]'s collar."))
-        to_chat(pet, span_warning("Your collar tingles as your master listens through your ears!"))
+        to_chat(mindparent.current, span_notice("You start listening through [pet]'s [get_pet_command_source(pet)]."))
+        to_chat(pet, span_warning("Your [get_pet_command_source(pet)] tingles as [get_master_true_name()] listens through your ears!"))
     else
         // Remove master from pet's message viewers
         UnregisterSignal(pet, list(COMSIG_MOVABLE_HEAR, COMSIG_MOB_EMOTE))
         listening_pet = null
-        to_chat(mindparent.current, span_notice("You stop listening through [pet]'s collar."))
-        to_chat(pet, span_notice("Your collar relaxes as your master stops listening."))
+        to_chat(mindparent.current, span_notice("You stop listening through [pet]'s [get_pet_command_source(pet)]."))
+        to_chat(pet, span_notice("Your [get_pet_command_source(pet)] relaxes as [get_master_true_name()] stops listening."))
 
     return TRUE
 
@@ -256,7 +295,7 @@ GLOBAL_LIST_EMPTY(collar_masters)
 
     var/message = hearing_args[HEARING_MESSAGE]
     if(message)
-        to_chat(mindparent.current, span_notice("<i>Through [pet]'s collar: [message]</i>"))
+        to_chat(mindparent.current, span_notice("<i>Through [pet]'s [get_pet_command_source(pet)]: [message]</i>"))
 
 /datum/component/collar_master/proc/relay_emote(datum/source, emote_key, emote_message)
     SIGNAL_HANDLER
@@ -265,7 +304,7 @@ GLOBAL_LIST_EMPTY(collar_masters)
         return
 
     if(emote_message)
-        to_chat(mindparent.current, span_notice("<i>Through [pet]'s collar: [pet] [emote_message]</i>"))
+        to_chat(mindparent.current, span_notice("<i>Through [pet]'s [get_pet_command_source(pet)]: [pet] [emote_message]</i>"))
 
 /datum/component/collar_master/proc/force_strip(mob/living/carbon/human/pet)
     if(!pet || !(pet in my_pets))
@@ -281,10 +320,10 @@ GLOBAL_LIST_EMPTY(collar_masters)
 
     if(pet.has_trauma_type(/datum/brain_trauma/mild/hallucinations))
         pet.cure_trauma_type(/datum/brain_trauma/mild/hallucinations, TRAUMA_RESILIENCE_BASIC)
-        to_chat(pet, span_notice("Your collar pulses and the world becomes clearer."))
+        to_chat(pet, span_notice("Your [get_pet_command_source(pet)] pulses and the world becomes clearer."))
     else
         pet.gain_trauma(/datum/brain_trauma/mild/hallucinations, TRAUMA_RESILIENCE_BASIC)
-        to_chat(pet, span_warning("Your collar pulses and the world begins to shift and warp!"))
+        to_chat(pet, span_warning("Your [get_pet_command_source(pet)] pulses and the world begins to shift and warp!"))
         pet.do_jitter_animation(20)
     playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
     return TRUE
@@ -293,7 +332,7 @@ GLOBAL_LIST_EMPTY(collar_masters)
     if(!pet || !(pet in my_pets))
         return FALSE
 
-    to_chat(pet, span_warning("<b>Collar Illusion:</b> [message]"))
+    to_chat(pet, span_warning("<b>Domination Illusion:</b> [message]"))
     pet.do_jitter_animation(20)
     playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
     return TRUE
@@ -353,8 +392,9 @@ GLOBAL_LIST_EMPTY(collar_masters)
     pet.apply_status_effect(/datum/status_effect/debuff/submissive)
 
     // Visual and sound effects
-    pet.visible_message(span_warning("[pet] is forced to surrender by their collar!"), \
-                       span_userdanger("Your collar forces you to submit!"))
+    var/source_name = get_pet_command_source(pet)
+    pet.visible_message(span_warning("[pet] is forced to surrender by their [source_name]!"), \
+                       span_userdanger("Your [source_name] forces you to submit!"))
     playsound(pet, 'sound/misc/surrender.ogg', 100, FALSE, -1, ignore_walls=TRUE)
 
     pet.update_vision_cone()
@@ -372,7 +412,7 @@ GLOBAL_LIST_EMPTY(collar_masters)
     if(pet.active_timers?.Find(loop_id))
         deltimer(pet.active_timers[loop_id])
         pet.clear_fullscreen("love")
-        to_chat(pet, span_notice("The waves of arousal from your collar subside..."))
+        to_chat(pet, span_notice("The waves of arousal from your [get_pet_command_source(pet)] subside..."))
         return TRUE
 
     // Start arousal loop
@@ -381,7 +421,7 @@ GLOBAL_LIST_EMPTY(collar_masters)
     pet.flash_fullscreen("love", /atom/movable/screen/fullscreen/love)
 
     // Visual feedback
-    to_chat(pet, span_userdanger("Your collar sends waves of arousal through your body!"))
+    to_chat(pet, span_userdanger("Your [get_pet_command_source(pet)] sends waves of arousal through your body!"))
     pet.do_jitter_animation(20)
     playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
 
@@ -395,11 +435,12 @@ GLOBAL_LIST_EMPTY(collar_masters)
     pet.flash_fullscreen("love", /atom/movable/screen/fullscreen/love)
 
     // Visual feedback each tick
+    var/source_name = get_pet_command_source(pet)
     var/list/arousal_messages = list(
-        "Your collar tingles as pleasure courses through you...",
-        "Waves of heat spread from your collar...",
+        "Your [source_name] tingles as pleasure courses through you...",
+        "Waves of heat spread from your [source_name]...",
         "Your body quivers with building arousal...",
-        "The collar's influence makes you shudder with need..."
+        "The [source_name]'s influence makes you shudder with need..."
     )
 
     to_chat(pet, span_love(pick(arousal_messages)))
@@ -436,7 +477,7 @@ GLOBAL_LIST_EMPTY(collar_masters)
 
     // Apply love effects
     pet.emote("blush")
-    to_chat(pet, span_love("Your collar fills you with overwhelming affection!"))
+    to_chat(pet, span_love("Your [get_pet_command_source(pet)] fills you with overwhelming affection for [get_master_true_name()]!"))
     playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
     return TRUE
 
@@ -446,10 +487,10 @@ GLOBAL_LIST_EMPTY(collar_masters)
 
     if(permitted)
         REMOVE_TRAIT(pet, TRAIT_NUDIST, COLLAR_TRAIT)
-        to_chat(pet, span_notice("Your collar allows you to wear clothing again."))
+        to_chat(pet, span_notice("Your [get_pet_command_source(pet)] allows you to wear clothing again."))
     else
         ADD_TRAIT(pet, TRAIT_NUDIST, COLLAR_TRAIT)
-        to_chat(pet, span_warning("Your collar prevents you from wearing clothing!"))
+        to_chat(pet, span_warning("Your [get_pet_command_source(pet)] prevents you from wearing clothing!"))
     playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
     return TRUE
 
@@ -511,7 +552,7 @@ GLOBAL_LIST_EMPTY(collar_masters)
     if(user == mindparent?.current)
         to_chat(user, span_notice("\n[check_pet_status(pet)]"))
     else if(user != pet)
-        to_chat(user, span_warning("\nThey wear a strange collar around their neck."))
+        to_chat(user, span_warning("\nThey are marked by a [get_pet_command_source(pet)] bond."))
 
 /datum/component/collar_master/proc/cleanup_pet(mob/living/carbon/human/pet)
 	if(!pet || !(pet in my_pets))
@@ -519,6 +560,9 @@ GLOBAL_LIST_EMPTY(collar_masters)
 
 	// Remove all collar-related traits
 	REMOVE_TRAIT(pet, TRAIT_NUDIST, COLLAR_TRAIT)
+	if(HAS_TRAIT_FROM(pet, TRAIT_LOVESTRUCK, COLLAR_TRAIT))
+		REMOVE_TRAIT(pet, TRAIT_LOVESTRUCK, COLLAR_TRAIT)
+		pet.remove_status_effect(/datum/status_effect/in_love)
 
 	// Remove from lists
 	my_pets -= pet
@@ -530,9 +574,10 @@ GLOBAL_LIST_EMPTY(collar_masters)
 		SEND_SIGNAL(pet, COMSIG_CARBON_LOSE_COLLAR)
 		pet.dropItemToGround(collar, force = TRUE)
 		REMOVE_TRAIT(collar, TRAIT_NODROP, CURSED_ITEM_TRAIT)
+		REMOVE_TRAIT(collar, TRAIT_NO_SELF_UNEQUIP, CURSED_ITEM_TRAIT)
 
 	// Feedback
-	to_chat(pet, span_notice("Your mind clears as the collar's control fades!"))
+	to_chat(pet, span_notice("Your mind clears as [get_master_true_name()]'s control fades from your [get_pet_command_source(pet)]."))
 	if(mindparent.current)
 		to_chat(mindparent.current, span_warning("[pet] is no longer under your control!"))
 
@@ -543,16 +588,14 @@ GLOBAL_LIST_EMPTY(collar_masters)
     if(mindparent?.current)
         mindparent.current.verbs += list(
             /mob/proc/collar_master_control_menu,
-            /mob/proc/collar_master_help,
-			/mob/proc/collar_master_releaseall
+            /mob/proc/collar_master_help
         )
 
 /datum/component/collar_master/_RemoveFromParent()
     if(mindparent?.current)
         mindparent.current.verbs -= list(
             /mob/proc/collar_master_control_menu,
-            /mob/proc/collar_master_help,
-			/mob/proc/collar_master_releaseall
+            /mob/proc/collar_master_help
         )
     . = ..()
 
@@ -581,8 +624,8 @@ GLOBAL_LIST_EMPTY(collar_masters)
 
     pet.updatehealth()
     playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
-    to_chat(pet, span_userdanger("Your collar burns as your master's suffering flows into you!"))
-    pet.visible_message(span_warning("[pet] shudders as [master]'s wounds manifest on their body!"))
+    to_chat(pet, span_userdanger("Your [get_pet_command_source(pet)] burns as [get_master_true_name()]'s suffering flows into you!"))
+    pet.visible_message(span_warning("[pet] shudders as [get_master_true_name()]'s wounds manifest on their body!"))
     pet.do_jitter_animation(20)
 
     // Heal the master slightly
@@ -601,11 +644,11 @@ GLOBAL_LIST_EMPTY(collar_masters)
     if(speech_altered)
         RegisterSignal(pet, COMSIG_MOB_SAY, PROC_REF(on_pet_say))
         to_chat(mindparent.current, span_notice("You alter [pet]'s speech to animal sounds."))
-        to_chat(pet, span_warning("Your collar tingles - you find yourself only able to make animal noises!"))
+        to_chat(pet, span_warning("Your [get_pet_command_source(pet)] tingles - you find yourself only able to make animal noises!"))
     else
         UnregisterSignal(pet, COMSIG_MOB_SAY)
         to_chat(mindparent.current, span_notice("You return [pet]'s speech to normal."))
-        to_chat(pet, span_notice("Your collar relaxes - you can speak normally again."))
+        to_chat(pet, span_notice("Your [get_pet_command_source(pet)] relaxes - you can speak normally again."))
 
     playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
     return TRUE
@@ -632,13 +675,13 @@ GLOBAL_LIST_EMPTY(collar_masters)
         // Start a loop to monitor and cap arousal
         var/loop_id = "deny_orgasm_[REF(pet)]"
         pet.active_timers[loop_id] = addtimer(CALLBACK(src, PROC_REF(cap_arousal), pet, loop_id), 1 SECONDS, TIMER_STOPPABLE | TIMER_LOOP)
-        to_chat(pet, span_warning("Your collar tightens - you feel like you won't be able to finish!"))
+        to_chat(pet, span_warning("Your [get_pet_command_source(pet)] tightens - you feel like you won't be able to finish!"))
     else
         // Stop the denial loop
         var/loop_id = "deny_orgasm_[REF(pet)]"
         if(pet.active_timers?.Find(loop_id))
             deltimer(pet.active_timers[loop_id])
-        to_chat(pet, span_notice("Your collar loosens - you feel like you can finish again!"))
+        to_chat(pet, span_notice("Your [get_pet_command_source(pet)] loosens - you feel like you can finish again!"))
     return TRUE
 
 /datum/component/collar_master/proc/cap_arousal(mob/living/carbon/human/pet, loop_id)
@@ -647,4 +690,4 @@ GLOBAL_LIST_EMPTY(collar_masters)
 
     if(pet.sexcon.arousal > 90)
         pet.sexcon.arousal = 90
-        to_chat(pet, span_warning("Your collar prevents you from reaching climax!"))
+        to_chat(pet, span_warning("Your [get_pet_command_source(pet)] prevents you from reaching climax!"))

@@ -38,6 +38,7 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	"Wood Arm (L) (+1 TRI)"=/datum/charflaw/limbloss/arm_l,
 	"Wood Arm (R) (+1 TRI)"=/datum/charflaw/limbloss/arm_r,
 	"Hemophage (+1 TRI)"=/datum/charflaw/hemophage,
+	"Indentured"=/datum/charflaw/indentured,
 	))
 
 /datum/charflaw
@@ -753,3 +754,46 @@ GLOBAL_LIST_INIT(character_flaws, list(
 	ADD_TRAIT(vamp_wannabe, TRAIT_HEMOPHAGE, TRAIT_GENERIC)
 	ADD_TRAIT(vamp_wannabe, TRAIT_VAMPBITE, TRAIT_GENERIC)
 	vamp_wannabe.adjust_triumphs(1)
+
+/datum/charflaw/indentured
+	name = "Indentured"
+	desc = "Branded in service to a better."
+
+/datum/charflaw/indentured/on_mob_creation(mob/user)
+	..()
+	if(!ishuman(user))
+		return
+	var/mob/living/carbon/human/H = user
+	ADD_TRAIT(H, TRAIT_INDENTURED, ROUNDSTART_TRAIT)
+	ensure_indentured_brand(H)
+
+/datum/charflaw/indentured/on_removal(mob/user)
+	..()
+	if(!ishuman(user))
+		return
+	var/mob/living/carbon/human/H = user
+	REMOVE_TRAIT(H, TRAIT_INDENTURED, ROUNDSTART_TRAIT)
+	remove_indentured_brand(H)
+
+/datum/charflaw/indentured/proc/ensure_indentured_brand(mob/living/carbon/human/H)
+	if(!H)
+		return
+	var/obj/item/bodypart/chest = H.get_bodypart(BODY_ZONE_CHEST)
+	if(!chest)
+		return
+	if(chest.bodypart_features)
+		for(var/datum/bodypart_feature/feature as anything in chest.bodypart_features)
+			if(istype(feature, /datum/bodypart_feature/indentured_brand))
+				return
+	chest.add_bodypart_feature(new /datum/bodypart_feature/indentured_brand)
+
+/datum/charflaw/indentured/proc/remove_indentured_brand(mob/living/carbon/human/H)
+	if(!H)
+		return
+	var/obj/item/bodypart/chest = H.get_bodypart(BODY_ZONE_CHEST)
+	if(!chest || !chest.bodypart_features)
+		return
+	for(var/datum/bodypart_feature/feature as anything in chest.bodypart_features.Copy())
+		if(istype(feature, /datum/bodypart_feature/indentured_brand))
+			chest.remove_bodypart_feature(feature)
+			return
