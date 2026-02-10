@@ -8,6 +8,16 @@
 // HEAD //
 //////////
 
+/datum/supply_pack/rogue/Knight/wildmask
+	name = "Wildguard Mask"
+	cost = 10
+	contains = list(/obj/item/clothing/mask/rogue/wildguard)
+
+/datum/supply_pack/rogue/Knight/steelmask
+	name = "Steel Mask"
+	cost = 10
+	contains = list(/obj/item/clothing/mask/rogue/facemask/steel)
+
 /datum/supply_pack/rogue/Knight/wolfhelm
 	name = "Volf Plate Helm"
 	cost = 30

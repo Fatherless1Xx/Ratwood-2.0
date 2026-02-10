@@ -277,17 +277,3 @@
 	name = "Heater Shield"
 	cost = 20
 	contains = list(/obj/item/rogueweapon/shield/heater)
-
-/////////////
-// UTILITY //
-/////////////
-
-/datum/supply_pack/rogue/Sellsword/garrote
-	name = "Garrote"
-	cost = 15
-	contains = list(/obj/item/inqarticles/garrote/nonpsy)
-
-/datum/supply_pack/rogue/Sellsword/blackbag
-	name = "Blackbag"
-	cost = 20
-	contains = list(/obj/item/clothing/head/inqarticles/blackbag/nonpsy)

@@ -53,11 +53,6 @@
 	cost = 10
 	contains = list(/obj/item/clothing/mask/rogue/facemask/steel)
 
-/datum/supply_pack/rogue/Brigand/steelmask/anthro
-	name = "Steel Hound Mask"
-	cost = 10
-	contains = list(/obj/item/clothing/mask/rogue/facemask/steel/hound)
-
 //////////
 // NECK //
 //////////
