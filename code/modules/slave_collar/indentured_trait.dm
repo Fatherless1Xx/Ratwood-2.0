@@ -29,6 +29,7 @@ SUBSYSTEM_DEF(indentured_trait)
 	var/mob/living/carbon/human/H = target
 	if(trait == TRAIT_INDENTURED)
 		apply_indentured(H)
+		log_indentured_change(H, TRUE)
 	else if(trait == TRAIT_INDENTURE_MASTER)
 		ensure_master_ready(H)
 
@@ -42,9 +43,18 @@ SUBSYSTEM_DEF(indentured_trait)
 		return
 	var/mob/living/carbon/human/H = target
 	if(trait == TRAIT_INDENTURED)
+		log_indentured_change(H, FALSE)
 		clear_indentured(H)
 	else if(trait == TRAIT_INDENTURE_MASTER)
 		remove_pets_from_master(H)
+
+/datum/controller/subsystem/indentured_trait/proc/log_indentured_change(mob/living/carbon/human/pet, added)
+	if(!pet)
+		return
+	var/msg = "[key_name(pet, TRUE)] [added ? "gained" : "lost"] TRAIT_INDENTURED."
+	log_admin(msg)
+	message_admins(span_adminnotice(msg))
+	log_game(msg)
 
 /datum/controller/subsystem/indentured_trait/proc/on_job_after_spawn(datum/source, datum/job/job, mob/living/carbon/human/spawned, client/player_client)
 	if(!ishuman(spawned))

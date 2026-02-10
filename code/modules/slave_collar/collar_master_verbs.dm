@@ -45,6 +45,7 @@
 		return
 
 	var/proc_path = options[choice]
+	CM.log_collar_action(src, "Control Menu", CM.temp_selected_pets, "Selected command: [choice]")
 	call(src, proc_path)()
 
 /mob/proc/collar_master_listen()
@@ -76,6 +77,7 @@
 
 	CM.toggle_listening(pet)
 	CM.last_command_time = world.time
+	CM.log_collar_action(src, "Listen to Pets", list(pet), "Listening is now [CM.listening ? "enabled" : "disabled"].")
 
 /mob/proc/collar_master_shock()
 	set name = "Shock Pet"
@@ -109,6 +111,7 @@
 		to_chat(src, span_notice("You discipline [shocked_count > 1 ? "[shocked_count] pets" : "your pet"] with a shock."))
 	else
 		to_chat(src, span_warning("Failed to discipline any pets!"))
+	CM.log_collar_action(src, "Shock Pet", CM.temp_selected_pets, "Intensity: [intensity]. Successfully shocked: [shocked_count].")
 
 /mob/proc/collar_master_send_message()
 	set name = "Send Message"
@@ -144,6 +147,7 @@
 		to_chat(src, span_notice("You project your will into [message_count > 1 ? "[message_count] pets" : "your pet's"] mind."))
 	else
 		to_chat(src, span_warning("Failed to reach any pets!"))
+	CM.log_collar_action(src, "Send Message", CM.temp_selected_pets, "Reached: [message_count]. Message: [message]")
 
 /mob/proc/collar_master_force_surrender()
 	set name = "Force Surrender"
@@ -174,6 +178,7 @@
 			surrendered_count++
 
 	to_chat(src, span_notice("Forced [surrendered_count] pets to surrender."))
+	CM.log_collar_action(src, "Force Surrender", CM.temp_selected_pets, "Forced surrender on [surrendered_count] pets.")
 
 /mob/proc/collar_master_force_strip()
 	set name = "Force Strip"
@@ -213,6 +218,7 @@
 		to_chat(src, span_notice("You command [stripped_count > 1 ? "[stripped_count] pets" : "your pet"] to strip."))
 	else
 		to_chat(src, span_warning("Failed to make any pets strip!"))
+	CM.log_collar_action(src, "Force Strip", CM.temp_selected_pets, "Successfully stripped: [stripped_count].")
 
 /mob/proc/collar_master_clothing()
 	set name = "Clothing Permission"
@@ -228,6 +234,8 @@
 		return
 
 	CM.last_command_time = world.time
+	var/granted_count = 0
+	var/denied_count = 0
 
 	for(var/mob/living/carbon/human/pet in CM.temp_selected_pets)
 		if(!pet || !pet.mind || !pet.client || !(pet in CM.my_pets))
@@ -240,12 +248,15 @@
 			pet.visible_message(span_notice("[pet]'s [pet_source] glows briefly as they are permitted to dress."))
 			playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
 			to_chat(src, span_notice("You grant [pet.real_name] permission to wear clothing."))
+			granted_count++
 		else
 			ADD_TRAIT(pet, TRAIT_NUDIST, COLLAR_TRAIT)
 			to_chat(pet, span_notice("Your [pet_source] hums softly as [src.real_name] denies you permission to put clothing on."))
 			pet.visible_message(span_notice("[pet]'s [pet_source] glows briefly as they are forbidden to dress."))
 			playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
 			to_chat(src, span_notice("You deny [pet.real_name] permission to wear clothing."))
+			denied_count++
+	CM.log_collar_action(src, "Clothing Permission", CM.temp_selected_pets, "Granted: [granted_count]. Denied: [denied_count].")
 
 /mob/proc/collar_master_toggle_speech()
 	set name = "Toggle Speech"
@@ -271,6 +282,7 @@
 			toggled_count++
 
 	to_chat(src, span_notice("Toggled speech for [toggled_count] pets."))
+	CM.log_collar_action(src, "Toggle Speech", CM.temp_selected_pets, "Speech toggled for [toggled_count] pets.")
 
 /mob/proc/collar_master_force_action()
 	set name = "Force Action"
@@ -308,6 +320,7 @@
 		to_chat(src, span_notice("You compel [action_count > 1 ? "[action_count] pets" : "your pet"] to perform your commanded action."))
 	else
 		to_chat(src, span_warning("Failed to make any pets perform the action!"))
+	CM.log_collar_action(src, "Force Action", CM.temp_selected_pets, "Affected: [action_count]. Action text: [message]")
 
 /mob/proc/collar_master_force_love()
 	set name = "Force Love"
@@ -341,6 +354,7 @@
 		playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
 
 	to_chat(src, span_notice("You toggle love status for [length(CM.temp_selected_pets)] pets."))
+	CM.log_collar_action(src, "Force Love", CM.temp_selected_pets, "Processed [length(CM.temp_selected_pets)] selected pets.")
 
 /mob/proc/collar_master_force_arousal()
 	set name = "Toggle Arousal"
@@ -367,6 +381,7 @@
 			affected_pets++
 
 	to_chat(src, span_notice("Toggled arousal for [affected_pets] pets."))
+	CM.log_collar_action(src, "Toggle Arousal", CM.temp_selected_pets, "Arousal toggled for [affected_pets] pets.")
 
 /mob/proc/collar_master_toggle_denial()
 	set name = "Toggle Orgasm Denial"
@@ -394,6 +409,7 @@
 			toggle_count++
 
 	to_chat(src, span_notice("Toggled orgasm restriction for [toggle_count] pets."))
+	CM.log_collar_action(src, "Toggle Orgasm Denial", CM.temp_selected_pets, "Denial state: [CM.deny_orgasm ? "enabled" : "disabled"]. Affected: [toggle_count].")
 
 /mob/proc/collar_master_toggle_hallucinate()
 	set name = "Toggle Pet Hallucinations"
@@ -410,6 +426,7 @@
 		return
 
 	CM.last_command_time = world.time
+	var/toggled_count = 0
 
 	for(var/mob/living/carbon/human/pet in CM.temp_selected_pets)
 		if(!pet || !pet.mind || !pet.client || !(pet in CM.my_pets))
@@ -422,8 +439,10 @@
 			pet.gain_trauma(/datum/brain_trauma/mild/hallucinations, TRAUMA_RESILIENCE_BASIC)
 			to_chat(pet, span_warning("Your [CM.get_pet_command_source(pet)] pulses and the world begins to shift and warp!"))
 		playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
+		toggled_count++
 
 	to_chat(src, span_notice("You toggle hallucinations for [length(CM.temp_selected_pets)] pets."))
+	CM.log_collar_action(src, "Toggle Pet Hallucinations", CM.temp_selected_pets, "Hallucinations toggled for [toggled_count] pets.")
 
 /mob/proc/collar_master_illusion()
 	set name = "Create Illusion"
@@ -444,6 +463,7 @@
 		return
 
 	CM.last_command_time = world.time
+	var/illusion_count = 0
 
 	for(var/mob/living/carbon/human/pet in CM.temp_selected_pets)
 		if(!pet || !pet.mind || !pet.client || !(pet in CM.my_pets))
@@ -452,8 +472,10 @@
 		// Send message directly to pet's chat
 		to_chat(pet, message)
 		playsound(pet, 'sound/misc/vampirespell.ogg', 50, TRUE)
+		illusion_count++
 
 	to_chat(src, span_notice("You create an illusion for [length(CM.temp_selected_pets)] pets."))
+	CM.log_collar_action(src, "Impose Will", CM.temp_selected_pets, "Affected: [illusion_count]. Illusion text: [message]")
 
 /mob/proc/collar_master_select_pets()
 	set name = "Select Pets"
@@ -489,6 +511,7 @@
 		CM.temp_selected_pets += pet_options[selected]
 
 	to_chat(src, span_notice("Selected [length(CM.temp_selected_pets)] pets."))
+	CM.log_collar_action(src, "Select Pets", CM.temp_selected_pets, "Selected [length(CM.temp_selected_pets)] pets.")
 
 /mob/proc/collar_master_toggle_orgasm()
 	set name = "Toggle Orgasm Denial"
@@ -516,6 +539,7 @@
 			toggle_count++
 
 	to_chat(src, span_notice("Toggled orgasm restriction for [toggle_count] pets."))
+	CM.log_collar_action(src, "Toggle Orgasm Denial (Alias)", CM.temp_selected_pets, "Denial state: [CM.deny_orgasm ? "enabled" : "disabled"]. Affected: [toggle_count].")
 
 /mob/proc/collar_master_release_pet()
 	set name = "Release Pet"
@@ -537,7 +561,10 @@
 		if(!pet || !(pet in CM.my_pets))
 			continue
 		releasing += pet
-		if(!HAS_TRAIT(pet, TRAIT_INDENTURED))
+		var/has_indentured_brand = HAS_TRAIT(pet, TRAIT_INDENTURED)
+		var/has_cursed_collar = istype(pet.get_item_by_slot(SLOT_NECK), /obj/item/clothing/neck/roguetown/cursed_collar)
+		// Brand-only pets cannot be freed. If they still wear a cursed collar, release that collar only.
+		if(has_cursed_collar || !has_indentured_brand)
 			releasable += pet
 
 	if(!length(releasable))
@@ -550,6 +577,7 @@
 
 	CM.last_command_time = world.time
 	var/released_count = 0
+	var/released_collar_only_count = 0
 	var/blocked_any = (length(releasing) != length(releasable))
 
 	for(var/mob/living/carbon/human/pet in releasable)
@@ -561,10 +589,14 @@
 			if(!collar.release_by_master(src, pet))
 				to_chat(src, span_warning("The [CM.get_pet_command_source(pet)] on [pet] rejects your authority."))
 				continue
+			if(HAS_TRAIT(pet, TRAIT_INDENTURED))
+				to_chat(pet, span_warning("The cursed collar falls away, but your brand still binds you."))
+				released_collar_only_count++
+			else
+				to_chat(pet, span_notice("You have been released from collar control!"))
 		else
 			CM.cleanup_pet(pet)
-
-		to_chat(pet, span_notice("You have been released from [CM.get_pet_command_source(pet)] control!"))
+			to_chat(pet, span_notice("You have been released from [CM.get_pet_command_source(pet)] control!"))
 		released_count++
 
 	CM.temp_selected_pets.Cut()
@@ -574,8 +606,12 @@
 	else
 		to_chat(src, span_warning("Failed to release any pets!"))
 
+	if(released_collar_only_count > 0)
+		to_chat(src, span_notice("Removed cursed collars from [released_collar_only_count] indentured [released_collar_only_count == 1 ? "pet" : "pets"]; their brands remain bound."))
+
 	if(blocked_any)
-		to_chat(src, span_warning("This one can never be freed."))
+		to_chat(src, span_warning("Brand-only indentured pets cannot be freed."))
+	CM.log_collar_action(src, "Release Pet", releasing, "Released: [released_count]. Collar-only releases: [released_collar_only_count]. Brand-only blocked present: [blocked_any ? "yes" : "no"].")
 
 /mob/proc/collar_master_help()
 	set name = "Domination Help"
@@ -608,3 +644,4 @@
 	Currently controlling [length(CM.my_pets)] pets with [length(CM.temp_selected_pets)] selected.</span>"}
 
 	to_chat(src, help_text)
+	CM.log_collar_action(src, "Domination Help", null, "Viewed domination help.")

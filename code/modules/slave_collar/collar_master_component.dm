@@ -64,6 +64,31 @@ GLOBAL_LIST_EMPTY(collar_masters)
 /datum/component/collar_master/proc/get_master_true_name()
 	return mindparent?.current?.real_name || mindparent?.current?.name || "their master"
 
+/datum/component/collar_master/proc/log_collar_action(mob/living/actor, action, list/pets, extra_text)
+	if(!actor || !action)
+		return
+
+	var/msg = "[key_name(actor, TRUE)] used Domination command '[action]'"
+
+	var/list/pet_names = list()
+	if(islist(pets))
+		for(var/mob/living/carbon/human/pet as anything in pets)
+			if(!pet)
+				continue
+			pet_names += key_name(pet, TRUE)
+
+	if(length(pet_names))
+		msg += " on [jointext(pet_names, ", ")]"
+
+	if(extra_text)
+		msg += ". [html_encode("[extra_text]")]"
+	else
+		msg += "."
+
+	log_admin(msg)
+	message_admins(span_adminnotice(msg))
+	log_game(msg)
+
 /datum/component/collar_master/proc/get_pet_command_source(mob/living/carbon/human/pet, use_cursed = FALSE)
 	var/has_collar = istype(pet?.get_item_by_slot(SLOT_NECK), /obj/item/clothing/neck/roguetown/cursed_collar)
 	var/has_brand = HAS_TRAIT(pet, TRAIT_INDENTURED)

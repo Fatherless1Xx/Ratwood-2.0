@@ -57,6 +57,10 @@
 		// Add pet to the master's list before sending collar signals
 		CM.add_pet(C)
 		log_combat(user, C, "tried to collar", addition="with [src]")
+		var/msg = "[key_name(user, TRUE)] collared [key_name(C, TRUE)] with [src]."
+		log_admin(msg)
+		message_admins(span_adminnotice(msg))
+		log_game(msg)
 	applying = FALSE
 
 /obj/item/clothing/neck/roguetown/cursed_collar/attack_self(mob/user)
@@ -70,6 +74,10 @@
 		user.mind.AddComponent(/datum/component/collar_master)
 	collar_master = user.mind
 	to_chat(user, span_userdanger("You feel the collar being imprinted with your will."))
+	var/msg = "[key_name(user, TRUE)] imprinted [src] to themselves as collar master."
+	log_admin(msg)
+	message_admins(span_adminnotice(msg))
+	log_game(msg)
 
 
 /obj/item/clothing/neck/roguetown/cursed_collar/equipped(mob/living/carbon/human/user, slot)
@@ -115,12 +123,14 @@
 		return
 	SEND_SIGNAL(user, COMSIG_CARBON_LOSE_COLLAR)
 
-	// Find and remove from any collar master's pet list
-	for(var/datum/mind/M in GLOB.collar_masters)
-		var/datum/component/collar_master/CM = M.GetComponent(/datum/component/collar_master)
-		if(CM && (user in CM.my_pets))
-			CM.remove_pet(user)
-			break
+	// Keep indentured pets bound through their brand when collar is removed.
+	if(!HAS_TRAIT(user, TRAIT_INDENTURED))
+		// Find and remove from any collar master's pet list
+		for(var/datum/mind/M in GLOB.collar_masters)
+			var/datum/component/collar_master/CM = M.GetComponent(/datum/component/collar_master)
+			if(CM && (user in CM.my_pets))
+				CM.remove_pet(user)
+				break
 
 	REMOVE_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
 	REMOVE_TRAIT(src, TRAIT_NO_SELF_UNEQUIP, CURSED_ITEM_TRAIT)
@@ -140,7 +150,15 @@
 		return FALSE
 	REMOVE_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
 	REMOVE_TRAIT(src, TRAIT_NO_SELF_UNEQUIP, CURSED_ITEM_TRAIT)
-	return wearer.dropItemToGround(src, force = TRUE)
+	var/released = wearer.dropItemToGround(src, force = TRUE)
+	if(released)
+		var/msg = "[key_name(master, TRUE)] released [src] from [key_name(wearer, TRUE)]."
+		if(HAS_TRAIT(wearer, TRAIT_INDENTURED))
+			msg += " Indentured brand remains."
+		log_admin(msg)
+		message_admins(span_adminnotice(msg))
+		log_game(msg)
+	return released
 
 /obj/item/clothing/neck/roguetown/cursed_collar/proc/send_collar_signal(mob/living/carbon/human/user)
 	if(!collar_master) // Don't send signal if no master
