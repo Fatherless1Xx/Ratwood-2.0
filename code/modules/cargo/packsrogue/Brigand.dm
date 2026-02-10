@@ -253,6 +253,11 @@
 	cost = 20
 	contains = list(/obj/item/rogueweapon/mace/steel)
 
+/datum/supply_pack/rogue/Brigand/silvermace
+	name = "Silver Mace"
+	cost = 60
+	contains = list(/obj/item/rogueweapon/mace/steel/silver)
+
 /datum/supply_pack/rogue/Brigand/cudgel
 	name = "Cudgel"
 	cost = 10
@@ -275,7 +280,7 @@
 
 /datum/supply_pack/rogue/Brigand/silverwarhammer
 	name = "Silver Warhammer"
-	cost = 80
+	cost = 60
 	contains = list(/obj/item/rogueweapon/mace/warhammer/steel/silver)
 
 /datum/supply_pack/rogue/Brigand/flail
@@ -288,6 +293,11 @@
 	cost = 20
 	contains =  list(/obj/item/rogueweapon/flail/sflail)
 
+/datum/supply_pack/rogue/Brigand/silverflail
+	name = "Silver Flail"
+	cost = 60
+	contains =  list(/obj/item/rogueweapon/flail/sflail/silver)
+
 /datum/supply_pack/rogue/Brigand/axe
 	name = "Iron Axe"
 	cost = 10
@@ -297,6 +307,11 @@
 	name = "Steel Battleaxe"
 	cost = 20
 	contains = list(/obj/item/rogueweapon/stoneaxe/battle)
+
+/datum/supply_pack/rogue/Brigand/silveraxe
+	name = "Silver War Axe"
+	cost = 80
+	contains = list(/obj/item/rogueweapon/stoneaxe/woodcut/silver)
 
 /datum/supply_pack/rogue/Brigand/Gaxe
 	name = "Iron Greataxe"
@@ -312,6 +327,11 @@
 	name = "Steel Double-Headed Greataxe"
 	cost = 30
 	contains = list(/obj/item/rogueweapon/greataxe/steel/doublehead)
+
+/datum/supply_pack/rogue/Brigand/silverpoleaxe
+	name = "Silver Poleaxe"
+	cost = 80
+	contains = list(/obj/item/rogueweapon/greataxe/silver)
 
 /datum/supply_pack/rogue/Brigand/maul
 	name = "Maul"

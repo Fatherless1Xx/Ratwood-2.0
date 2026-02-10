@@ -153,25 +153,55 @@
 // WEAPONS - MELEE //
 /////////////////////
 
-/datum/supply_pack/rogue/Sellsword/lsword
-	name = "Longsword"
-	cost = 40
-	contains = list(/obj/item/rogueweapon/sword/long)
-
-/datum/supply_pack/rogue/Sellsword/krieg
-	name = "kriegmesser"
-	cost = 40
-	contains = list(/obj/item/rogueweapon/sword/long/kriegmesser)
+/datum/supply_pack/rogue/Sellsword/flail
+	name = "Iron Flail"
+	cost = 10
+	contains = list(/obj/item/rogueweapon/flail)
 
 /datum/supply_pack/rogue/Sellsword/sflail
 	name = "Steel Flail"
 	cost = 20
 	contains = list(/obj/item/rogueweapon/flail/sflail)
 
+/datum/supply_pack/rogue/Sellsword/mace
+	name = "Iron Mace"
+	cost = 10
+	contains = list(/obj/item/rogueweapon/mace)
+
 /datum/supply_pack/rogue/Sellsword/steelmace
 	name = "Steel Mace"
 	cost = 20
 	contains = list(/obj/item/rogueweapon/mace/steel)
+
+/datum/supply_pack/rogue/Sellsword/axe
+	name = "Iron Axe"
+	cost = 10
+	contains = list(/obj/item/rogueweapon/stoneaxe/woodcut)
+
+/datum/supply_pack/rogue/Sellsword/Staxe
+	name = "Steel Battle Axe"
+	cost = 20
+	contains = list(/obj/item/rogueweapon/stoneaxe/battle)
+
+/datum/supply_pack/rogue/Sellsword/militiasword
+	name = "Maciejowski"
+	cost = 25
+	contains = list(/obj/item/rogueweapon/sword/falchion/militia)
+
+/datum/supply_pack/rogue/Sellsword/militiapick
+	name = "Steel Warpick"
+	cost = 25
+	contains = list(/obj/item/rogueweapon/pick/militia/steel)
+
+/datum/supply_pack/rogue/Sellsword/militiaaxe
+	name = "Militia Axe"
+	cost = 25
+	contains = list(/obj/item/rogueweapon/greataxe/militia)
+
+/datum/supply_pack/rogue/Sellsword/militiaspear
+	name = "Militia Spear"
+	cost = 35
+	contains = list(/obj/item/rogueweapon/spear/militia)
 
 /datum/supply_pack/rogue/Sellsword/steelspear
 	name = "Steel Spear"
@@ -198,6 +228,26 @@
 	cost = 40
 	contains = list(/obj/item/rogueweapon/spear/boar)
 
+/datum/supply_pack/rogue/Sellsword/ssword
+	name = "Short Sword"
+	cost = 10
+	contains = list(/obj/item/rogueweapon/sword/short)
+
+/datum/supply_pack/rogue/Sellsword/asword
+	name = "Arming Sword"
+	cost = 20
+	contains = list(/obj/item/rogueweapon/sword)
+
+/datum/supply_pack/rogue/Sellsword/lsword
+	name = "Longsword"
+	cost = 40
+	contains = list(/obj/item/rogueweapon/sword/long)
+
+/datum/supply_pack/rogue/Sellsword/krieg
+	name = "kriegmesser"
+	cost = 40
+	contains = list(/obj/item/rogueweapon/sword/long/kriegmesser)
+
 /datum/supply_pack/rogue/Sellsword/estoc
 	name = "Estoc"
 	cost = 50
@@ -209,10 +259,30 @@
 	cost = 20
 	contains = list(/obj/item/rogueweapon/sword/falx)
 
+/datum/supply_pack/rogue/Sellsword/falchion
+	name = "Falchion"
+	cost = 20
+	contains = list(/obj/item/rogueweapon/sword/short/falchion)
+
+/datum/supply_pack/rogue/Sellsword/sabre
+	name = "Sabre"
+	cost = 20
+	contains = list(/obj/item/rogueweapon/sword/sabre)
+
 /datum/supply_pack/rogue/Sellsword/rhomphaia
 	name = "Rhomphaia"
 	cost = 40
 	contains = list(/obj/item/rogueweapon/sword/long/rhomphaia)
+
+/datum/supply_pack/rogue/Sellsword/silverasword
+	name = "Silver Arming Sword"
+	cost = 60
+	contains = list(/obj/item/rogueweapon/sword/silver)
+
+/datum/supply_pack/rogue/Sellsword/silverlsword
+	name = "Silver Long Sword"
+	cost = 80
+	contains = list(/obj/item/rogueweapon/sword/long/silver)
 
 //////////////////////
 // WEAPONS - RANGED //

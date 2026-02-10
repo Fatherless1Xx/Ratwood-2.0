@@ -177,6 +177,11 @@
 	cost = 20
 	contains = list(/obj/item/storage/belt/rogue/leather/knifebelt/black/steel)
 
+/datum/supply_pack/rogue/Knave/silvertossblade
+	name = "Silver Tossblade"
+	cost = 10
+	contains = list(/obj/item/rogueweapon/huntingknife/throwingknife/silver)
+
 /////////////////////////////
 // WEAPONS - RANGED - AMMO //
 /////////////////////////////

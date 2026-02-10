@@ -73,6 +73,11 @@
 	cost = 20
 	contains = list(/obj/item/rogueweapon/huntingknife/idagger/steel)
 
+/datum/supply_pack/rogue/Things/daggersil
+	name = "Silver Dagger"
+	cost = 40
+	contains = list(/obj/item/rogueweapon/huntingknife/idagger/silver)
+
 /datum/supply_pack/rogue/Things/Waterskin
 	name = "Waterskin"
 	cost = 10
