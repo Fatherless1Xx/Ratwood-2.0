@@ -1806,6 +1806,7 @@
 /mob/living/proc/swap_rmb_intent(type, num)
 	if(!possible_rmb_intents?.len)
 		return
+	var/old_rmb_intent_type = rmb_intent?.type
 	if(type)
 		if(type in possible_rmb_intents)
 			rmb_intent = new type()
@@ -1821,6 +1822,9 @@
 			if(hud_used?.rmb_intent)
 				hud_used.rmb_intent.update_icon()
 				hud_used.rmb_intent.collapse_intents()
+	if(mind && rmb_intent && old_rmb_intent_type && old_rmb_intent_type != rmb_intent.type && !HAS_TRAIT(src, TRAIT_DECEIVING_MEEKNESS))
+		var/text = "Stance <br><font color = '#d4d36c'>[capitalize(rmb_intent.name)]</font>"
+		filtered_balloon_alert(TRAIT_COMBAT_AWARE, text, y_offset = 32)
 
 /mob/living/proc/cycle_rmb_intent()
 	if(!possible_rmb_intents?.len)
