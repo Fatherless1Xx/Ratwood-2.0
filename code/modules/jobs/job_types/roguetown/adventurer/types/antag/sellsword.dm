@@ -15,6 +15,7 @@
 		STATKEY_WIL = 2,
 		STATKEY_SPD = 2,
 		STATKEY_CON = 2,	//-LCK +CON
+		STATKEY_PER = 1,
 	)
 	subclass_skills = list(
 		/datum/skill/combat/polearms = SKILL_LEVEL_JOURNEYMAN,
@@ -55,43 +56,41 @@
 	neck = /obj/item/clothing/neck/roguetown/chaincoif
 	id = /obj/item/mattcoin
 	H.adjust_blindness(-3)
-	var/weapons = list("The Disgraced Watchman (Swords, Maces & Polearms)","The Mercenary (Maces & Shields)", "The Wayward Warden (Knives, Archery, Climbing & Athletics)")
+	var/weapons = list("The Disgraced Watchman (Maces, Shields & Crossbows)","The Mercenary (Swords, Shields & Polearms)", "The Wayward Warden (Axes, Archery, Sneaking, Climbing & Athletics)")
 	if(H.mind)
 		var/weapon_choice = input(H, "Choose your expert-level proficiencies.", "HOW DOTH THOU WALK THROUGH LYFE, SELLSWORD?") as anything in weapons
 		H.set_blindness(0)
 		switch(weapon_choice)
-			if("The Disgraced Watchman (Maces, Shields & Polearms)") 
-				backl = /obj/item/rogueweapon/scabbard/gwstrap
-				beltr = /obj/item/rogueweapon/mace/cudgel
-				r_hand = /obj/item/rogueweapon/halberd
-				armor = /obj/item/clothing/suit/roguetown/armor/chainmail
+			if("The Disgraced Watchman (Maces, Shields & Crossbows)") 
+				backl = /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow
+				beltl = /obj/item/rogueweapon/mace/steel
+				beltr = /obj/item/quiver/bolts
+				armor = /obj/item/clothing/suit/roguetown/armor/brigandine
 				head = /obj/item/clothing/head/roguetown/helmet/kettle
 				H.adjust_skillrank_up_to(/datum/skill/combat/maces, SKILL_LEVEL_EXPERT, TRUE)
 				H.adjust_skillrank_up_to(/datum/skill/combat/shields, SKILL_LEVEL_EXPERT, TRUE)
-				H.adjust_skillrank_up_to(/datum/skill/combat/polearms, SKILL_LEVEL_EXPERT, TRUE)
-			if("The Mercenary (Swords, Crossbows & Shields)") 
-				backl = /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow
+				H.adjust_skillrank_up_to(/datum/skill/combat/crossbows, SKILL_LEVEL_MASTER, TRUE)
+				H.adjust_skillrank_up_to(/datum/skill/combat/bows, SKILL_LEVEL_EXPERT, TRUE)
+			if("The Mercenary (Swords, Shields & Polearms)") 
+				backl = /obj/item/rogueweapon/shield/heater
 				beltl = /obj/item/rogueweapon/scabbard/sword
-				beltr = /obj/item/quiver/bolts
-				r_hand = /obj/item/rogueweapon/sword/long/kriegmesser
+				beltr = /obj/item/rogueweapon/sword/short/falchion
 				armor = /obj/item/clothing/suit/roguetown/armor/chainmail
 				head = /obj/item/clothing/head/roguetown/helmet/sallet
 				H.adjust_skillrank_up_to(/datum/skill/combat/swords, SKILL_LEVEL_EXPERT, TRUE)
 				H.adjust_skillrank_up_to(/datum/skill/combat/shields, SKILL_LEVEL_EXPERT, TRUE)
-				H.adjust_skillrank_up_to(/datum/skill/combat/crossbows, SKILL_LEVEL_MASTER, TRUE)
-				H.adjust_skillrank_up_to(/datum/skill/combat/bows, SKILL_LEVEL_EXPERT, TRUE)
+				H.adjust_skillrank_up_to(/datum/skill/combat/polearms, SKILL_LEVEL_EXPERT, TRUE)
 			if("The Wayward Warden (Axes, Archery, Sneaking, Climbing & Athletics)")
 				backl = /obj/item/gun/ballistic/revolver/grenadelauncher/bow/recurve
 				beltl = /obj/item/quiver/arrows
 				beltr = /obj/item/rogueweapon/stoneaxe/battle
-				armor = /obj/item/clothing/suit/roguetown/armor/chainmail
+				armor = /obj/item/clothing/suit/roguetown/armor/leather/hide
 				head = /obj/item/clothing/head/roguetown/roguehood/warden
 				cloak = /obj/item/clothing/cloak/wardencloak
-				H.adjust_skillrank_up_to(/datum/skill/combat/knives, SKILL_LEVEL_JOURNEYMAN, TRUE)
 				H.adjust_skillrank_up_to(/datum/skill/combat/axes, SKILL_LEVEL_EXPERT, TRUE)
 				H.adjust_skillrank_up_to(/datum/skill/combat/crossbows, SKILL_LEVEL_EXPERT, TRUE)
 				H.adjust_skillrank_up_to(/datum/skill/combat/bows, SKILL_LEVEL_MASTER, TRUE)
 				H.adjust_skillrank_up_to(/datum/skill/combat/slings, SKILL_LEVEL_JOURNEYMAN, TRUE)
 				H.adjust_skillrank_up_to(/datum/skill/misc/climbing, SKILL_LEVEL_EXPERT, TRUE)
 				H.adjust_skillrank_up_to(/datum/skill/misc/athletics, SKILL_LEVEL_EXPERT, TRUE)
-				H.adjust_skillrank_up_to(/datum/skill/misc/sneaking, SKILL_LEVEL_EXPERT, TRUE)
+				H.adjust_skillrank_up_to(/datum/skill/misc/sneaking, SKILL_LEVEL_JOURNEYMAN, TRUE)
