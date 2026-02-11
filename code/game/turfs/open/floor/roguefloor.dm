@@ -1001,6 +1001,7 @@
 						/turf/open/floor/rogue/snowpatchy,
 						/turf/open/floor/rogue/snow,
 						/turf/open/floor/rogue/snowrough,)
+	reflection_type = REFLECTION_SHINY
 
 /turf/open/floor/rogue/churchmarble/cardinal_smooth(adjacencies)
 	roguesmooth(adjacencies)
@@ -1036,6 +1037,7 @@
 						/turf/open/floor/rogue/snowpatchy,
 						/turf/open/floor/rogue/snow,
 						/turf/open/floor/rogue/snowrough,)
+	reflection_type = REFLECTION_REFLECTIVE
 
 /turf/open/floor/rogue/church/cardinal_smooth(adjacencies)
 	roguesmooth(adjacencies)
@@ -1069,6 +1071,7 @@
 						/turf/open/floor/rogue/snowpatchy,
 						/turf/open/floor/rogue/snow,
 						/turf/open/floor/rogue/snowrough,)
+	reflection_type = REFLECTION_SHINY
 
 /turf/open/floor/rogue/churchbrick/cardinal_smooth(adjacencies)
 	roguesmooth(adjacencies)
@@ -1102,6 +1105,7 @@
 						/turf/open/floor/rogue/snowpatchy,
 						/turf/open/floor/rogue/snow,
 						/turf/open/floor/rogue/snowrough,)
+	reflection_type = REFLECTION_MATTE
 
 /turf/open/floor/rogue/churchrough/cardinal_smooth(adjacencies)
 	roguesmooth(adjacencies)
@@ -1378,6 +1382,7 @@
 						/turf/open/floor/rogue/snowpatchy,
 						/turf/open/floor/rogue/snow,
 						/turf/open/floor/rogue/snowrough,)
+	reflection_type = REFLECTION_REFLECTIVE
 
 /turf/open/floor/rogue/tile/masonic
 	icon_state = "masonic"

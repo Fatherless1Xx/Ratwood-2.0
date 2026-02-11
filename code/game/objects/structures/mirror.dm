@@ -11,6 +11,9 @@
 	break_sound = "glassbreak"
 	attacked_sound = 'sound/combat/hits/onglass/glasshit.ogg'
 	pixel_y = 32
+	var/static/next_reflection_mask_id = 0
+	var/reflection_mask_target = null
+	var/obj/effect/reflection_capture/reflection_mask_capture = null
 
 /obj/structure/mirror/fancy
 	icon_state = "fancymirror"
@@ -18,8 +21,29 @@
 
 /obj/structure/mirror/Initialize(mapload)
 	. = ..()
+	if(!reflection_mask_target)
+		// Keep render target names simple and stable for alpha filters.
+		reflection_mask_target = "*mirror_mask_[++next_reflection_mask_id]"
+	if(!reflection_mask_capture)
+		reflection_mask_capture = new(null)
+	reflection_mask_capture.render_target = reflection_mask_target
+	reflection_mask_capture.vis_contents += src
+	var/turf/current_turf = get_turf(src)
+	if(current_turf)
+		reflection_mask_capture.forceMove(current_turf)
+	reflection_mask_capture.layer = layer
+	reflection_mask_capture.plane = plane
+	reflection_mask_capture.pixel_x = pixel_x
+	reflection_mask_capture.pixel_y = pixel_y
 	if(icon_state == "mirror_broke" && !obj_broken)
 		obj_break(null, mapload)
+
+/obj/structure/mirror/Destroy()
+	if(reflection_mask_capture)
+		reflection_mask_capture.vis_contents -= src
+		qdel(reflection_mask_capture)
+		reflection_mask_capture = null
+	return ..()
 
 /obj/structure/mirror/attack_hand(mob/user)
 	. = ..()
