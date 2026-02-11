@@ -71,6 +71,9 @@
 	blocksound = SOFTHIT
 	salvage_result = /obj/item/natural/hide/cured
 
+/obj/item/clothing/head/roguetown/helmet/leather/armorhood/advanced
+	parent_type = /obj/item/clothing/head/roguetown/helmet/leather/advanced
+
 /obj/item/clothing/head/roguetown/spellcasterhat
 	name = "spellsinger hat"
 	desc = "An oddly shaped hat made of tightly-sewn leather, commonly worn by spellswords."

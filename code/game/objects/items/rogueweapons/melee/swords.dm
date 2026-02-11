@@ -954,6 +954,15 @@
 	icon_state = "agladius"
 	smeltresult = /obj/item/ingot/aaslag
 
+/obj/item/rogueweapon/sword/iron/short/gladius
+	parent_type = /obj/item/rogueweapon/sword/short/gladius
+
+/obj/item/rogueweapon/sword/iron/short/gladius/agladius
+	parent_type = /obj/item/rogueweapon/sword/short/gladius/agladius
+
+/obj/item/rogueweapon/sword/iron/short/gladius/pagladius
+	parent_type = /obj/item/rogueweapon/sword/short/gladius/pagladius
+
 /obj/item/rogueweapon/sword/short/iron/chipped
 	name = "chipped iron shortsword"
 	desc = "A damaged and ancient iron shortsword. It looks duller, and seems less effective."

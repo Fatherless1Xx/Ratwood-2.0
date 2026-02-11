@@ -234,6 +234,13 @@
 			H.update_inv_neck()
 			H.update_inv_head()
 
+/obj/item/clothing/neck/roguetown/chaincoif/full/iron
+	name = "iron full chain coif"
+	icon_state = "fchaincoif"
+	max_integrity = ARMOR_INT_SIDE_IRON + 50
+	smeltresult = /obj/item/ingot/iron
+	smelt_bar_num = 2
+
 /obj/item/clothing/neck/roguetown/chaincoif/full/black
 	color = "#323232"
 

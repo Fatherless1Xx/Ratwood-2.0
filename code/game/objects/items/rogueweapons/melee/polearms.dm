@@ -1029,6 +1029,19 @@
 	force = 14
 	force_wielded = 35
 
+/obj/item/rogueweapon/greatsword/miaodao
+	name = "steel miaodao"
+	desc = "An unusually long saber of Lingyunese origin. The lighter blade lends itself to one-handed use better than a zweihander, but maintaining edge alignment is tricky and requires experience."
+	icon = 'icons/roguetown/weapons/64.dmi'
+	icon_state = "odachi"
+	force = 24
+	force_wielded = 30
+	minstr = 8
+	wdefense = 6
+	wdefense_wbonus = 1
+	max_blade_int = 150
+	wbalance = WBALANCE_SWIFT
+
 /obj/item/rogueweapon/greatsword/grenz/flamberge
 	name = "steel flamberge"
 	desc = "A close relative of the Grenzelhoftian \"zweihander\", favored by Otavan nobility. The name comes from its unique, flame-shaped blade; a labor only surmountable by Psydonia's finest weaponsmiths."
@@ -1424,6 +1437,13 @@
 	wdefense = 6 // A little bit extra
 	max_blade_int = 200
 	smeltresult = /obj/item/ingot/steel
+
+/obj/item/rogueweapon/spear/boar/kazengun
+	name = "jumonji yari"
+	icon = 'icons/roguetown/weapons/polearms64.dmi'
+	icon_state = "jumonjiyari"
+	desc = "A spear with a long, straight head and a pair of curved blades pointing upward. A Lingyunese design, the side-blades parallel an Aavnic partizan. Its function is certainly similar, tearing the flesh of any unfortunate enough to be pierced by it."
+	gripped_intents = list(SPEAR_THRUST, /datum/intent/spear/cut/naginata, PARTIZAN_REND)
 
 /obj/item/rogueweapon/spear/otava
 	name = "banner of Otava"

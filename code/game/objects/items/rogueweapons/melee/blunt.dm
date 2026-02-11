@@ -450,6 +450,19 @@
 	gripped_intents = list(/datum/intent/mace/strike, /datum/intent/mace/smash, /datum/intent/stab, /datum/intent/effect/daze)
 	max_integrity = 225 // it's strong wood, but it's still wood.
 
+/obj/item/rogueweapon/mace/goden/steel/tetsubo
+	name = "tetsubo"
+	desc = "A heavier variant of the kanabo, fitted with a steel sleeve bearing menacing spikes and favored by Ogrun Warlords. Requires immense strength to use, but hits like a raging bull."
+	icon = 'icons/roguetown/weapons/64.dmi'
+	icon_state = "tetsubo"
+	force = 20
+	force_wielded = 40
+	possible_item_intents = list(/datum/intent/mace/strike)
+	gripped_intents = list(/datum/intent/mace/strike, /datum/intent/mace/smash, /datum/intent/effect/daze)
+	sharpness = IS_SHARP
+	minstr = 15
+	slot_flags = ITEM_SLOT_BACK
+
 /obj/item/rogueweapon/mace/goden/psymace
 	name = "psydonic mace"
 	desc = "An ornate mace, plated in a ceremonial veneer of silver. Even the unholy aren't immune to discombobulation."
@@ -771,4 +784,3 @@
 	blade_class = BCLASS_PIERCE//TEAR CHUNKS OFF OF THEM. THROW IT ACROSS THE ROOM.
 	hitsound = list('sound/combat/hits/bladed/genthrust (1).ogg', 'sound/combat/hits/bladed/genthrust (2).ogg')
 	icon_state = "intear"
-
