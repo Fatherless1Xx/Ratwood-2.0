@@ -7773,6 +7773,7 @@
 "Rx" = (
 /obj/item/ingot/gold,
 /obj/item/roguecoin/gold/pile,
+/obj/item/gun/ballistic/firearm/arquebus,
 /turf/open/water/cleanshallow,
 /area/rogue/indoors/banditcamp/hoardmaster)
 "RA" = (
