@@ -65,7 +65,7 @@
 	maximum_possible_slots = 1
 	cmode_music = 'sound/music/combat_swordhunter.ogg'
 	subclass_languages = list(/datum/language/kazengunese)
-	traits_applied = list(TRAIT_DODGEEXPERT)
+	traits_applied = list(TRAIT_DODGEEXPERT, TRAIT_DECEIVING_MEEKNESS)
 	subclass_stats = list(
 		STATKEY_SPD = 2,
 		STATKEY_INT = 1,
@@ -148,7 +148,7 @@
 	maximum_possible_slots = 1
 	cmode_music = 'sound/music/combat_sohei.ogg'
 	subclass_languages = list(/datum/language/kazengunese)
-	traits_applied = list(TRAIT_NOPAINSTUN)
+	traits_applied = list(TRAIT_NOPAINSTUN, TRAIT_DECEIVING_MEEKNESS)
 	subclass_stats = list(
 		STATKEY_END = 2,
 		STATKEY_PER = 1,
