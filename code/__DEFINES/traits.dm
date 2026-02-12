@@ -97,6 +97,7 @@
 #define TRAIT_WAGES_SUSPENDED "Wages Suspended" //Stops nerve master daily pay for this guy
 #define TRAIT_SCALEARMOR "Weathered Scales"//Mage armor, refluffed to scales.
 #define TRAIT_HEMOPHAGE "Hemophage"//You can drink blood for heals, but normal food and water makes you ill. Shitty vampire.
+#define TRAIT_BAOTHA_FERTILITY_BOON "Marked and shaped by Baotha" //Able to be impregnated, has permanent womb tattoo and stronger version of nympho vice
 
 //Hearthstone port (Tracking)
 #define TRAIT_PERFECT_TRACKER "Huntmaster" //Will always find any tracks and analyzes them perfectly.
@@ -242,7 +243,6 @@
 #define TRAIT_OVERTHERETIC "Overt Heretic"//Applied on someone who has rites buffs. Armour, rituos, etc.
 #define TRAIT_SPELL_DISPERSION "Barrier Dispersion"
 #define TRAIT_CONVICTION "Conviction" //Can hear Tennite prayers. Praying heals and provides nutrition.
-#define TRAIT_BAOTHA_FERTILITY_BOON "Marked and shaped by Baotha"
 #define TRAIT_STANDARD_BEARER "Standard Bearer"//Can use the keep's standard to provide buffs and rally the retinue.
 
 // Economic Roles Traits

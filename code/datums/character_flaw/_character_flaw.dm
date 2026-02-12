@@ -748,17 +748,30 @@ GLOBAL_LIST_INIT(character_flaws, list(
 
 /datum/charflaw/marked_by_baotha
 	name = "Marked by Baotha"
-	desc = "Whether through intentionally seeking out heretical ritualists or against my will, I have been marked by Baotha. I am branded visibly on my groin and am able to be impregnated regardless of physical states that would usually prevent this"
+	desc = "Whether through intentionally seeking out heretical ritualists or against my will, I have been marked by Baotha. I am branded visibly on my groin and am able to be impregnated regardless of physical states that would usually prevent this. I will need to sate my new urges often to avoid stress..."
 
 /datum/charflaw/marked_by_baotha/on_mob_creation(mob/user)
+
 	var/mutable_appearance/marking_overlay = mutable_appearance('icons/roguetown/misc/baotha_marking.dmi', "marking_[user.gender == "male" ? "m" : "f"]", -BODY_LAYER)
 	user.add_overlay(marking_overlay)
+
 	spawn(40)
 
 	ADD_TRAIT(user, TRAIT_BAOTHA_FERTILITY_BOON, TRAIT_GENERIC)
+
 	var/obj/item/organ/vagina/vagina = user.getorganslot(ORGAN_SLOT_VAGINA)
 	if(vagina && !vagina.fertility)
 		vagina.fertility = TRUE
+
+	if(ishuman(user))
+		var/mob/living/carbon/human/H = user
+
+		// Add the adjusted Nymphomaniac addiction flaw
+		if(!H.has_flaw(/datum/charflaw/addiction/lovefiend))
+			var/datum/charflaw/addiction/lovefiend/L = new
+			L.time = 45
+			H.vices += L
+			L.on_mob_creation(H)
 
 /datum/charflaw/hemophage
 	name = "Hemophage (+1 TRI)"
