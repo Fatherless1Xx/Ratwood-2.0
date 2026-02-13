@@ -112,6 +112,9 @@
 	/// Has the limb been marked as having suffered a two-stage death flag?
 	var/grievously_wounded = FALSE
 
+	/// Branded writing on body part
+	var/branded_writing = ""
+
 	grid_width = 32
 	grid_height = 64
 
@@ -757,6 +760,9 @@
 	offset = OFFSET_ARMOR
 	offset_f = OFFSET_ARMOR_F
 	dismemberable = FALSE
+
+	/// Branded writing unique for chest so it can be applied to buttocks
+	var/branded_writing_on_buttocks = ""
 
 	grid_width = 64
 	grid_height = 96

@@ -11,6 +11,7 @@
 	var/penis_type = PENIS_TYPE_PLAIN
 	var/penis_size = DEFAULT_PENIS_SIZE
 	var/functional = TRUE
+	var/branded_writing = ""
 
 /obj/item/organ/penis/Initialize()
 	. = ..()
@@ -113,6 +114,7 @@
 	var/pregnant = FALSE
 	var/fertility = TRUE
 	var/impregnation_probability = IMPREG_PROB_DEFAULT
+	var/branded_writing = ""
 
 /obj/item/organ/vagina/proc/be_impregnated(mob/living/carbon/human/father)
     if(!owner)
@@ -138,6 +140,7 @@
 	var/lactating = FALSE
 	var/milk_stored = 0
 	var/milk_max = 75
+	var/branded_writing = ""
 
 /obj/item/organ/breasts/New()
 	..()
@@ -153,6 +156,7 @@
 	accessory_type = /datum/sprite_accessory/testicles/pair
 	var/ball_size = DEFAULT_TESTICLES_SIZE
 	var/virility = TRUE
+	var/branded_writing = ""
 
 /obj/item/organ/testicles/internal
 	name = "internal testicles"

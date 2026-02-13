@@ -179,6 +179,122 @@
 		tool_behaviour = null
 	update_icon()
 
+/obj/item/rogueweapon/surgery/cautery/branding
+	name = "branding iron"
+	desc = "A symbol is well-writ on flesh. Heat it up before use."
+	icon_state = "cauteryiron"
+	possible_item_intents = list(/datum/intent/use)
+	var/setbranding = null
+
+/obj/item/rogueweapon/surgery/cautery/branding/examine(mob/user)
+	. = ..()
+	if(setbranding)
+		. += span_warning("It will imprint a branding mark of \"[setbranding]\".")
+	else
+		. += span_warning("There is no branding symbol set yet.")
+
+/obj/item/rogueweapon/surgery/cautery/branding/attack_self(mob/living/user)
+	. = ..()
+	if(!istype(user))
+		return
+	if(!user.cmode)
+		if(!user.is_literate())
+			to_chat(user, span_warning("I do not know how to write."))
+			return
+		if(heated)
+			to_chat(user, span_warning("It is too hot to change the symbols!"))
+			return
+		var/inputty = stripped_input(user, "What would you like to set the brand?", "", null, 32)
+		if(inputty)
+			setbranding = inputty
+			to_chat(user, span_warning("I swap out the lettering to brand the marking \"[setbranding]\"."))
+		else
+			setbranding = null
+	..()
+
+/obj/item/rogueweapon/surgery/cautery/branding/pre_attack(atom/A, mob/living/user, params)
+	if(!istype(user.a_intent, /datum/intent/use))
+		return ..()
+	if(!heated)
+		return ..()
+	if(!setbranding)
+		to_chat(user, span_warning("There is nothing to brand, add some symbols before using again."))
+		return TRUE
+	if(!A || !ishuman(A))
+		to_chat(user, span_warning("I cannot brand \the [A]."))
+		return TRUE
+	var/mob/living/carbon/target = A
+	if(!istype(target))
+		to_chat(user, span_warning("I cannot brand \the [A]."))
+		return TRUE
+	user.visible_message(span_warning("[user] slowly wields \the [src] towards [A]."))
+	if(!do_after(user, 5 SECONDS, target = A))
+		return TRUE
+	if(!user.Adjacent(target))
+		return TRUE
+	if(!get_location_accessible(target, user.zone_selected))
+		to_chat(user, span_warning("There is clothes obsecuring the [lowertext(parse_zone(user.zone_selected))]."))
+		return TRUE
+	var/obj/item/bodypart/branding_part = target.get_bodypart(check_zone(user.zone_selected))
+	if(!branding_part) //missing limb
+		to_chat(user, span_warning("Unfortunately, there's nothing there."))
+		return TRUE
+	if(user.zone_selected == BODY_ZONE_PRECISE_GROIN) // if targeting the groin, handle marking genitals and buttocks instead of a single chest zone
+		var/obj/item/organ/penis/penis = target.getorganslot(ORGAN_SLOT_PENIS)
+		var/obj/item/organ/vagina/vagina = target.getorganslot(ORGAN_SLOT_VAGINA)
+		var/obj/item/organ/testicles/testes = target.getorganslot(ORGAN_SLOT_TESTICLES)
+		if((penis && penis.visible_organ || vagina && vagina.visible_organ || testes && testes.visible_organ) && (alert("Brand their genitals?",, "Yes", "No") == "Yes"))
+			var/which_genitals = ""
+			if(penis && penis.visible_organ && alert("Brand their penis?",,"Yes", "No") == "Yes")
+				if(QDELETED(penis) || !user.Adjacent(target))
+					return TRUE
+				if(length(penis.branded_writing))
+					to_chat(user, span_warning("I reburn over the existing marking."))
+				penis.branded_writing = setbranding
+				which_genitals = "cock"
+			else if(vagina && vagina.visible_organ && alert("Brand their pussy?",,"Yes", "No") == "Yes")
+				if(QDELETED(vagina) || !user.Adjacent(target))
+					return TRUE
+				if(length(vagina.branded_writing))
+					to_chat(user, span_warning("I reburn over the existing marking."))
+				vagina.branded_writing = setbranding
+				which_genitals = "pussy"
+			else if(testes && testes.visible_organ && alert("Brand their balls?",,"Yes", "No") == "Yes")
+				if(QDELETED(testes) || !user.Adjacent(target))
+					return TRUE
+				if(length(testes.branded_writing))
+					to_chat(user, span_warning("I reburn over the existing marking."))
+				testes.branded_writing = setbranding
+				which_genitals = "balls"
+			else
+				to_chat(user, span_warning("I pull the iron away."))
+				return TRUE
+			user.visible_message(span_info("[target] writhes as \the [src] sears onto their [which_genitals]! The fresh brand reads \"[setbranding]\"."))
+		else // fallback to burning their buttocks instead
+			if(alert("Brand their buttocks?",,"Yes", "No") != "Yes")
+				to_chat(user, span_warning("I pull the iron away."))
+				return TRUE
+			var/obj/item/bodypart/chest/buttocks = branding_part
+			if(QDELETED(buttocks) || !user.Adjacent(target) || !istype(buttocks)) // something went very wrong, abort
+				return TRUE
+			if(length(buttocks.branded_writing_on_buttocks))
+				to_chat(user, span_warning("I reburn over the existing marking."))
+			user.visible_message(span_info("[target] writhes as \the [src] sears onto their hindquarters! The fresh brand reads \"[setbranding]\"."))
+			buttocks.branded_writing_on_buttocks = setbranding
+	else // generic body part
+		if(length(branding_part.branded_writing))
+			to_chat(user, span_warning("I reburn over the existing marking."))
+		user.visible_message(span_info("[target] writhes as \the [src] sears onto their [branding_part.name]! The fresh brand reads \"[setbranding]\"."))
+		branding_part.branded_writing = setbranding
+	to_chat(target, span_userdanger("You have been branded!"))
+	target.emote("painscream")
+	target.flash_fullscreen("redflash2")
+	playsound(src.loc, 'sound/misc/frying.ogg', 80, FALSE, extrarange = 5)
+	update_heated(FALSE)
+	if(cool_timer)
+		deltimer(cool_timer)
+	return TRUE
+
 /obj/item/rogueweapon/surgery/hammer
 	name = "examination hammer"
 	desc = "A small hammer used to check a patient's reactions and diagnose their condition."

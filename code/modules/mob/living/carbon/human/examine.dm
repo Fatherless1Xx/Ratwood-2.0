@@ -1008,6 +1008,15 @@
 			if(femgen)
 				. += span_info(femgen)
 
+	//Print out branding
+	for(var/obj/item/bodypart/branded_bodypart as anything in bodyparts)
+		if(length(branded_bodypart.branded_writing) && get_location_accessible(src, branded_bodypart.body_zone))
+			. += span_warning("[capitalize(m2)] [lowertext(branded_bodypart.name)] has been branded with the symbol \"[branded_bodypart.branded_writing]\".")
+		if(istype(branded_bodypart, /obj/item/bodypart/chest))
+			var/obj/item/bodypart/chest/buttocks = branded_bodypart
+			if(length(buttocks.branded_writing_on_buttocks))
+				. += span_warning("[capitalize(m2)] hindquarters has been branded with the symbol \"[buttocks.branded_writing_on_buttocks]\".")
+
 	// Characters with the hunted flaw will freak out if they can't see someone's face.
 	if(!appears_dead)
 		if(skipface && user.has_flaw(/datum/charflaw/hunted) && user != src)
