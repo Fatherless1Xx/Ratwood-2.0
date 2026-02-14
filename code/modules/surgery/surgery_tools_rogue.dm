@@ -227,8 +227,14 @@
 	if(!istype(target))
 		to_chat(user, span_warning("I cannot brand \the [A]."))
 		return TRUE
-	user.visible_message(span_warning("[user] slowly wields \the [src] towards [A]."))
+	if(user != target)
+		user.visible_message(span_warning("[user] slowly wields \the [src] towards [A]."))
+		to_chat(target, span_userdanger("[user] is trying to brand me with \the [src]!"))
+	else
+		user.visible_message(span_warning("[user] slowly wields \the [src] onto themselves."))
+	log_combat(user, target, "Attempts branding with writing: \"[setbranding]\"")
 	if(!do_after(user, 5 SECONDS, target = A))
+		log_combat(user, target, "Branding aborted with writing: \"[setbranding]\"")
 		return TRUE
 	if(!user.Adjacent(target))
 		return TRUE
@@ -295,12 +301,13 @@
 		user.visible_message(span_info("[target] writhes as \the [src] sears onto their [branding_part.name]! The fresh brand reads \"[setbranding]\"."))
 		branding_part.branded_writing = setbranding
 	to_chat(target, span_userdanger("You have been branded!"))
-	target.emote("painscream")
+	target.emote(prob(50) ? "painscream" : "scream", TRUE)
 	target.flash_fullscreen("redflash2")
 	playsound(src.loc, 'sound/misc/frying.ogg', 80, FALSE, extrarange = 5)
 	update_heated(FALSE)
 	if(cool_timer)
 		deltimer(cool_timer)
+	log_combat(user, target, "Branded with writing: \"[setbranding]\"")
 	return TRUE
 
 /obj/item/rogueweapon/surgery/hammer
