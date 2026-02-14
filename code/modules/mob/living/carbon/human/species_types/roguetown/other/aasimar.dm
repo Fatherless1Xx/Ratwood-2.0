@@ -104,6 +104,7 @@
 	return list(
 		"Cultor" = SKIN_COLOR_CULTOR,
 		"Spiritus" = SKIN_COLOR_SPIRITUS,
+		"Archon" = SKIN_COLOR_ARCHON,
 		"Planetar" = SKIN_COLOR_PLANETAR,
 		"Deva"	   = SKIN_COLOR_DEVA,
 		"Solar" = SKIN_COLOR_SOLAR,

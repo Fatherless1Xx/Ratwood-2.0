@@ -551,10 +551,13 @@ GLOBAL_LIST_EMPTY(chosen_names)
 			if(length(pref_species.custom_selection))
 				var/race_bonus_display
 				if(race_bonus)
-					for(var/bonus in pref_species.custom_selection)
-						if(pref_species.custom_selection[bonus] == race_bonus)
-							race_bonus_display = bonus
-							break
+					if(!isnull(pref_species.custom_selection[race_bonus]))
+						race_bonus_display = race_bonus
+					else
+						for(var/bonus in pref_species.custom_selection)
+							if(pref_species.custom_selection[bonus] == race_bonus)
+								race_bonus_display = bonus
+								break
 				dat += "<b>Race Bonus:</b> <a href='?_src_=prefs;preference=race_bonus_select;task=input'>[race_bonus_display ? "[race_bonus_display]" : "None"]</a><BR>"
 			else
 				race_bonus = null
@@ -2334,7 +2337,11 @@ Slots: [job.spawn_positions] [job.round_contrib_points ? "RCP: +[job.round_contr
 					if(length(pref_species.custom_selection))
 						var/choice = tgui_input_list(user, "What has fate blessed your race with?", "BONUS", pref_species.custom_selection)
 						if(choice)
-							race_bonus = pref_species.custom_selection[choice]
+							// Normalize choice in case the UI returns either an assoc key or value.
+							if(!isnull(pref_species.custom_selection[choice]))
+								race_bonus = pref_species.custom_selection[choice]
+							else
+								race_bonus = choice
 
 				if("body_size")
 					var/new_body_size = tgui_input_number(user, "Choose your desired sprite size:\n([BODY_SIZE_MIN*100]%-[BODY_SIZE_MAX*100]%), Warning: May make your character look distorted", "Character Preference", features["body_size"]*100)

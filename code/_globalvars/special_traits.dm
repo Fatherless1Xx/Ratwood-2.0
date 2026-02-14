@@ -120,6 +120,11 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 	if (!player.prefs.race_bonus || player.prefs.race_bonus == "None")
 		return
 	var/bonus = player.prefs.race_bonus
+	// Handle legacy or UI-returned display keys by mapping through species options.
+	if(!ispath(bonus) && !(bonus in MOBSTATS) && !(bonus in GLOB.roguetraits))
+		var/list/custom_selection = player.prefs.pref_species?.custom_selection
+		if(length(custom_selection) && !isnull(custom_selection[bonus]))
+			bonus = custom_selection[bonus]
 	if(ispath(bonus))	//The bonus is a real path
 		if(ispath(bonus, /datum/virtue))
 			var/datum/virtue/v = bonus
