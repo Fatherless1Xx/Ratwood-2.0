@@ -120,18 +120,23 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 	if (!player.prefs.race_bonus || player.prefs.race_bonus == "None")
 		return
 	var/bonus = player.prefs.race_bonus
+	var/is_stat_bonus = (bonus in MOBSTATS)
+	var/is_trait_bonus = !isnull(GLOB.roguetraits[bonus])
 	// Handle legacy or UI-returned display keys by mapping through species options.
-	if(!ispath(bonus) && !(bonus in MOBSTATS) && !(bonus in GLOB.roguetraits))
+	if(!ispath(bonus) && !is_stat_bonus && !is_trait_bonus)
 		var/list/custom_selection = player.prefs.pref_species?.custom_selection
 		if(length(custom_selection) && !isnull(custom_selection[bonus]))
 			bonus = custom_selection[bonus]
+			is_stat_bonus = (bonus in MOBSTATS)
+			is_trait_bonus = !isnull(GLOB.roguetraits[bonus])
 	if(ispath(bonus))	//The bonus is a real path
 		if(ispath(bonus, /datum/virtue))
 			var/datum/virtue/v = bonus
 			apply_virtue(character, new v)
-	if(bonus in MOBSTATS)
-		character.change_stat(bonus, 1) //atm it only supports one stat getting a +1
-	if(bonus in GLOB.roguetraits)
+	if(is_stat_bonus)
+		// Keep race bonus idempotent in case this proc is called more than once.
+		character.change_stat(bonus, 1, "prefs_race_bonus")
+	if(is_trait_bonus)
 		ADD_TRAIT(character, bonus, TRAIT_GENERIC)
 
 /proc/virtue_check(var/datum/virtue/V, heretic = FALSE)
