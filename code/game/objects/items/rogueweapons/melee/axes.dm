@@ -241,7 +241,7 @@
 	smeltresult = /obj/item/ingot/copper
 
 /obj/item/rogueweapon/stoneaxe/handaxe
-	force = 19
+	force = 18
 	possible_item_intents = list(/datum/intent/axe/cut,/datum/intent/axe/chop, /datum/intent/sword/peel)
 	name = "hatchet"
 	desc = "An iron hand axe."
