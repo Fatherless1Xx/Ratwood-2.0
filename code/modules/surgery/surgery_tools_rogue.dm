@@ -186,6 +186,10 @@
 	possible_item_intents = list(/datum/intent/use)
 	var/setbranding = null
 
+/obj/item/rogueweapon/surgery/cautery/branding/slave
+	name = "slaver branding iron"
+	desc = "Used to claim ownership on lost property. Heat it up before use."
+
 /obj/item/rogueweapon/surgery/cautery/branding/examine(mob/user)
 	. = ..()
 	if(setbranding)
