@@ -35,8 +35,8 @@
 	/// The bed (if) we're occupying, update on starting an action
 	var/obj/structure/bed/rogue/bed = null
 	var/target_on_bed = FALSE
-	/// The table (if) target is lying on, update on starting an action
-	var/obj/structure/table/wood/table = null
+	/// The table/pillory (if) target is lying on, update on starting an action
+	var/obj/structure/table_or_pillory = null
 	/// The bush (if) we're on top of, update on starting an action
 	var/obj/structure/flora/roguegrass/grassy_knoll = null
 	/// If this person has a collar that rings on
@@ -78,7 +78,7 @@
 	user = null
 	target = null
 	bed = null
-	table = null
+	table_or_pillory = null
 	grassy_knoll = null
 	collar_bell_user = FALSE
 	collar_bell_target = FALSE
@@ -127,17 +127,17 @@
 			animate(target, pixel_y = target_y, time = time)
 			animate(pixel_y = oldy, time = time)
 		bed.damage_bed(force > SEX_FORCE_HIGH ? 0.5 : 0.25)
-	else if(table && target && force > SEX_FORCE_MID)
-		oldy = table.pixel_y
+	else if(table_or_pillory && target && force > SEX_FORCE_MID)
+		oldy = table_or_pillory.pixel_y
 		target_y = oldy-1
 		time /= 2
-		animate(table, pixel_y = target_y, time = time)
+		animate(table_or_pillory, pixel_y = target_y, time = time)
 		animate(pixel_y = oldy, time = time)
 		oldy = target.pixel_y
 		target_y = oldy-1
 		animate(target, pixel_y = target_y, time = time)
 		animate(pixel_y = oldy, time = time)
-		playsound(table, pick(list('sound/misc/mat/table (1).ogg','sound/misc/mat/table (2).ogg','sound/misc/mat/table (3).ogg','sound/misc/mat/table (4).ogg')), 20, TRUE, ignore_walls = FALSE)
+		playsound(table_or_pillory, pick(list('sound/misc/mat/table (1).ogg','sound/misc/mat/table (2).ogg','sound/misc/mat/table (3).ogg','sound/misc/mat/table (4).ogg')), 30, TRUE, ignore_walls = FALSE)
 	else if(grassy_knoll)
 		if (!istype(grassy_knoll) || QDELETED(grassy_knoll))
 			grassy_knoll = null
@@ -846,7 +846,7 @@
 	current_action = null
 	bed = null
 	target_on_bed = FALSE
-	table = null
+	table_or_pillory = null
 	grassy_knoll = null
 	collar_bell_user = FALSE
 	collar_bell_target = FALSE
@@ -869,7 +869,7 @@
 	current_action = action_type
 	bed = null
 	target_on_bed = FALSE
-	table = null
+	table_or_pillory = null
 	grassy_knoll = null
 	collar_bell_user = FALSE
 	collar_bell_target = FALSE
@@ -922,11 +922,16 @@
 /datum/sex_controller/proc/find_occupying_furniture()
 	if(bed)
 		return
-	if(target && !(target.mobility_flags & MOBILITY_STAND) && isturf(target.loc)) // find target's bed/table
-		bed = locate() in target.loc
-		target_on_bed = TRUE
-		if(!bed)
-			table = locate() in target.loc
+	if(target && isturf(target.loc)) // find target's bed/table
+		if(!(target.mobility_flags & MOBILITY_STAND)) // if target is lying down
+			bed = locate() in target.loc
+			target_on_bed = TRUE
+			if(!bed) // bed not found, try finding a table
+				var/obj/structure/table/wood/table = locate() in target.loc
+				table_or_pillory = table
+		else // target standing up, check for pillory
+			var/obj/structure/pillory/pillory = locate() in target.loc
+			table_or_pillory = pillory
 	if(!bed && !(user.mobility_flags & MOBILITY_STAND) && isturf(user.loc)) // find our bed
 		bed = locate() in user.loc
 
