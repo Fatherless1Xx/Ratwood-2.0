@@ -26,7 +26,7 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 		apply_character_post_equipment(character, player)
 		return
 	if(length(job.advclass_cat_rolls))
-		// Dont apply the stuff, let adv class handler do it later
+		apply_prefs_race_bonus(character, player)
 		return
 	// Apply the stuff if we have a job that has no adv classes
 	apply_character_post_equipment(character, player)

@@ -114,6 +114,32 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 		if(client.prefs)
 			client.prefs.ShowChoices(src, 4)
 
+/mob/dead/new_player/proc/ensure_custom_race_bonus_selected()
+	if(!client?.prefs)
+		return TRUE
+	var/list/custom_selection = client.prefs.pref_species?.custom_selection
+	if(!length(custom_selection))
+		return TRUE
+
+	var/current_bonus = client.prefs.race_bonus
+	if(current_bonus && current_bonus != "None")
+		if(!isnull(custom_selection[current_bonus]))
+			return TRUE
+		for(var/bonus_key in custom_selection)
+			if(custom_selection[bonus_key] == current_bonus)
+				client.prefs.race_bonus = bonus_key
+				client.prefs.save_character()
+				return TRUE
+
+	var/choice = tgui_input_list(src, "What has fate blessed you with?", "BONUS", custom_selection)
+	if(!choice)
+		to_chat(src, span_warning("I must choose a race bonus before I can continue."))
+		return FALSE
+
+	client.prefs.race_bonus = choice
+	client.prefs.save_character()
+	return TRUE
+
 /mob/dead/new_player/Topic(href, href_list[])
 	if(src != usr)
 		return 0
@@ -158,16 +184,8 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 				if(length(client.prefs.ooc_notes) < MINIMUM_OOC_NOTES)
 					to_chat(src, span_boldwarning("You need at least a few words in your OOC notes in order to play."))
 					return
-				if(length(client.prefs.pref_species.custom_selection))
-					var/choice = tgui_input_list(src, "What has fate blessed you with?", "BONUS", client.prefs.pref_species.custom_selection)
-					if(!choice)
-						to_chat(src, span_warning("I must choose a race bonus before I can ready up."))
-						return
-					if(!isnull(client.prefs.pref_species.custom_selection[choice]))
-						client.prefs.race_bonus = client.prefs.pref_species.custom_selection[choice]
-					else
-						client.prefs.race_bonus = choice
-					client.prefs.save_character()
+				if(!ensure_custom_race_bonus_selected())
+					return
 
 			if(ready != tready)
 				ready = tready
@@ -267,6 +285,9 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 
 		if(length(client.prefs.ooc_notes) < MINIMUM_OOC_NOTES)
 			to_chat(src, span_boldwarning("You need at least a few words in your OOC notes in order to play."))
+			return
+
+		if(!ensure_custom_race_bonus_selected())
 			return
 
 		AttemptLateSpawn(href_list["SelectedJob"])
