@@ -42527,6 +42527,7 @@
 /area/rogue/outdoors/town/rockhill)
 "mWu" = (
 /obj/item/rope/chain,
+/obj/item/rogueweapon/surgery/cautery/branding,
 /turf/open/floor/rogue/cobble,
 /area/rogue/indoors/town/cell)
 "mWy" = (
@@ -58797,6 +58798,7 @@
 	dir = 1;
 	icon_state = "longtable"
 	},
+/obj/item/rogueweapon/surgery/cautery/branding,
 /turf/open/floor/rogue/blocks,
 /area/rogue/indoors/town/cell)
 "sbH" = (
