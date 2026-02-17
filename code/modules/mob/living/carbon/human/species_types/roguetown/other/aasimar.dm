@@ -79,7 +79,7 @@
 	)
 
 	custom_selection = list(
-		"+1 SPD" = list(STATKEY_SPD = 1),
+		"+1 STR" = list(STATKEY_STR = 1),
 		"+1 SPD" = list(STATKEY_SPD = 1),
 		"+1 WIL +1 CON" = list(STATKEY_WIL = 1, STATKEY_CON = 1),
 		"+1 INT +1 CON" = list(STATKEY_INT = 1, STATKEY_CON = 1),
