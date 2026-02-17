@@ -133,6 +133,18 @@ GLOBAL_LIST_INIT(special_traits, build_special_traits())
 		if(ispath(bonus, /datum/virtue))
 			var/datum/virtue/v = bonus
 			apply_virtue(character, new v)
+	if(islist(bonus))
+		var/list/list_bonus = bonus
+		for(var/entry in list_bonus)
+			if(entry in MOBSTATS)
+				var/amt = list_bonus[entry]
+				if(!isnum(amt))
+					amt = 1
+				character.change_stat(entry, amt, "prefs_race_bonus_[entry]")
+				continue
+			if(!isnull(GLOB.roguetraits[entry]))
+				ADD_TRAIT(character, entry, TRAIT_GENERIC)
+		return
 	if(is_stat_bonus)
 		// Keep race bonus idempotent in case this proc is called more than once.
 		character.change_stat(bonus, 1, "prefs_race_bonus")

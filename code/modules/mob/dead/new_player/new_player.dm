@@ -158,6 +158,16 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 				if(length(client.prefs.ooc_notes) < MINIMUM_OOC_NOTES)
 					to_chat(src, span_boldwarning("You need at least a few words in your OOC notes in order to play."))
 					return
+				if(length(client.prefs.pref_species.custom_selection))
+					var/choice = tgui_input_list(src, "What has fate blessed you with?", "BONUS", client.prefs.pref_species.custom_selection)
+					if(!choice)
+						to_chat(src, span_warning("I must choose a race bonus before I can ready up."))
+						return
+					if(!isnull(client.prefs.pref_species.custom_selection[choice]))
+						client.prefs.race_bonus = client.prefs.pref_species.custom_selection[choice]
+					else
+						client.prefs.race_bonus = choice
+					client.prefs.save_character()
 
 			if(ready != tready)
 				ready = tready
