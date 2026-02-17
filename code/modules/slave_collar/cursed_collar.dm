@@ -35,7 +35,7 @@
 		return
 
 	var/surrender_mod = 1
-	if(C.surrendering)
+	if(C.surrendering || C.compliance)
 		surrender_mod = 0.5
 
 	applying = TRUE
