@@ -1031,6 +1031,72 @@
 	to_chat(owner, span_warning("I feel my connection to the arcyne surround me once more."))
 	owner.visible_message("[owner]'s arcyne aura seems to return once more.")
 
+/atom/movable/screen/alert/status_effect/buff/ravox_vow_protection
+	name = "Vow of Protection"
+	desc = "I have sworn to shield one soul under Ravox's gaze."
+	icon_state = "call_to_arms"
+
+/datum/status_effect/buff/ravox_vow_protection
+	id = "ravox_vow_protection"
+	alert_type = /atom/movable/screen/alert/status_effect/buff/ravox_vow_protection
+	duration = -1
+	status_type = STATUS_EFFECT_UNIQUE
+	effectedstats = list(
+		STATKEY_STR = 1,
+		STATKEY_PER = 1,
+		STATKEY_INT = 1,
+		STATKEY_CON = 1,
+		STATKEY_WIL = 1,
+		STATKEY_SPD = 1,
+		STATKEY_LCK = 1
+	)
+	var/datum/weakref/protected_target_ref
+	var/protected_target_name
+
+/datum/status_effect/buff/ravox_vow_protection/on_creation(mob/living/new_owner, mob/living/carbon/human/protected_target)
+	if(istype(protected_target))
+		protected_target_ref = WEAKREF(protected_target)
+		protected_target_name = protected_target.real_name
+	return ..()
+
+/datum/status_effect/buff/ravox_vow_protection/on_apply()
+	var/mob/living/carbon/human/protected_target = protected_target_ref?.resolve()
+	if(!istype(protected_target) || protected_target.stat == DEAD)
+		to_chat(owner, span_warning("Ravox finds no living soul to bind this vow to."))
+		return FALSE
+
+	. = ..()
+	if(!.)
+		return FALSE
+
+	RegisterSignal(protected_target, COMSIG_LIVING_DEATH, PROC_REF(on_protected_target_death))
+	return TRUE
+
+/datum/status_effect/buff/ravox_vow_protection/on_remove()
+	var/mob/living/carbon/human/protected_target = protected_target_ref?.resolve()
+	if(istype(protected_target))
+		UnregisterSignal(protected_target, COMSIG_LIVING_DEATH)
+	return ..()
+
+/datum/status_effect/buff/ravox_vow_protection/proc/on_protected_target_death(mob/living/source)
+	SIGNAL_HANDLER
+
+	if(!owner || QDELETED(owner))
+		qdel(src)
+		return
+	if(owner.stat == DEAD)
+		qdel(src)
+		return
+
+	owner.visible_message(
+		span_danger("[owner] is smitten by Ravox for failing [protected_target_name || source] and is reduced to ash!"),
+		span_userdanger("Ravox judges my broken vow. I burn, and I am ash.")
+	)
+	playsound(owner, 'sound/magic/holyshield.ogg', 100, FALSE, -1)
+	record_round_statistic(STATS_PEOPLE_SMITTEN)
+	owner.dust(just_ash = TRUE, drop_items = TRUE, force = TRUE)
+	qdel(src)
+
 #define BLESSINGOFSUN_FILTER "sun_glow"
 /atom/movable/screen/alert/status_effect/buff/guidinglight
 	name = "Guiding Light"

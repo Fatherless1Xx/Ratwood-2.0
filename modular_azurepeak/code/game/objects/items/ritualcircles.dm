@@ -118,6 +118,73 @@
 	name = "Rune of Justice"
 	icon_state = "ravox_chalky"
 	desc = "A Holy Rune of Ravox. A blade to protect the weak with."
+	var/justicerites = list("Vow of Protection")
+
+/obj/structure/ritualcircle/ravox/attack_hand(mob/living/user)
+	if(!..())
+		return
+	if((user.patron?.type) != /datum/patron/divine/ravox)
+		to_chat(user,span_smallred("I don't know the proper rites for this..."))
+		return
+	if(!HAS_TRAIT(user, TRAIT_RITUALIST))
+		to_chat(user,span_smallred("I don't know the proper rites for this..."))
+		return
+	if(user.has_status_effect(/datum/status_effect/debuff/ritesexpended))
+		to_chat(user,span_smallred("I have performed enough rituals for the day... I must rest before communing more."))
+		return
+	if(user.mind?.ravox_vow_sworn)
+		to_chat(user, span_warning("I have already sworn Ravox's vow. It cannot be sworn twice."))
+		return
+
+	var/riteselection = input(user, "Rituals of Justice", src) as null|anything in justicerites
+	switch(riteselection)
+		if("Vow of Protection")
+			if(!user.mind || !user.mind.known_people?.len)
+				to_chat(user, span_warning("I cannot swear protection to one I do not know."))
+				return
+
+			var/list/known_people = list()
+			for(var/person in user.mind.known_people)
+				known_people += person
+			known_people = sortList(known_people)
+
+			var/chosen_name = input(user, "Who shall I swear to protect?", src) as null|anything in known_people
+			if(!chosen_name)
+				return
+
+			var/mob/living/carbon/human/protected_target
+			for(var/mob/living/carbon/human/human_target in GLOB.human_list)
+				if(human_target.real_name == chosen_name)
+					protected_target = human_target
+					break
+
+			if(!protected_target || QDELETED(protected_target) || protected_target.stat == DEAD)
+				to_chat(user, span_warning("I cannot find [chosen_name] among the living."))
+				return
+			if(protected_target == user)
+				to_chat(user, span_warning("Ravox does not accept vows sworn only to myself."))
+				return
+
+			if(do_after(user, 50))
+				user.say("Ravox, witness me and steel my hand!")
+				if(do_after(user, 50))
+					user.say("I bind my name to [protected_target.real_name], until blade and breath fail!")
+					if(do_after(user, 50))
+						icon_state = "ravox_active"
+						user.say("By Ravox, I swear this vow of protection!")
+						loc.visible_message(span_warning("[user] raises their hand over the rune and seals an oath to protect [protected_target]!"))
+						playsound(loc, 'sound/magic/holyshield.ogg', 100, FALSE, -1)
+
+						if(!user.apply_status_effect(/datum/status_effect/buff/ravox_vow_protection, protected_target))
+							to_chat(user, span_warning("My vow finds no hold."))
+							icon_state = "ravox_chalky"
+							return
+
+						user.mind.ravox_vow_sworn = TRUE
+						to_chat(user, span_cultsmall("Ravox judges my oath true. I will be stronger while [protected_target.real_name] yet stands."))
+						user.apply_status_effect(/datum/status_effect/debuff/ritesexpended)
+						spawn(120)
+							icon_state = "ravox_chalky"
 
 /obj/structure/ritualcircle/pestra
 	name = "Rune of Plague"

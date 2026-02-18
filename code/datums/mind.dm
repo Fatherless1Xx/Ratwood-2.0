@@ -116,6 +116,7 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 	var/list/personal_objectives = list() // List of personal objectives not tied to the antag roles
 	var/list/special_people = list() // For characters whose text will display in a different colour when seen by this Mind
 	var/list/curses = list()
+	var/ravox_vow_sworn = FALSE // has this mind already sworn Ravox's Vow of Protection?
 
 /datum/mind/New(key)
 	src.key = key
