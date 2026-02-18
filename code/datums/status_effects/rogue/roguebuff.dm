@@ -1094,7 +1094,7 @@
 	)
 	playsound(owner, 'sound/magic/holyshield.ogg', 100, FALSE, -1)
 	record_round_statistic(STATS_PEOPLE_SMITTEN)
-	owner.dust(just_ash = TRUE, drop_items = TRUE, force = TRUE)
+	addtimer(CALLBACK(owner, TYPE_PROC_REF(/mob/living, dust), TRUE, TRUE, TRUE), 0)
 	qdel(src)
 
 #define BLESSINGOFSUN_FILTER "sun_glow"
