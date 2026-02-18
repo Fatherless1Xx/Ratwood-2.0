@@ -1040,6 +1040,7 @@
 	id = "ravox_vow_protection"
 	alert_type = /atom/movable/screen/alert/status_effect/buff/ravox_vow_protection
 	duration = -1
+	needs_processing = FALSE
 	status_type = STATUS_EFFECT_UNIQUE
 	effectedstats = list(
 		STATKEY_STR = 1,
