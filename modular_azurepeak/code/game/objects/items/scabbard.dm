@@ -72,7 +72,7 @@
 	return TRUE
 
 
-/obj/item/rogueweapon/scabbard/proc/eat_sword(mob/living/user, obj/A, var/sheathing_from_belt = FALSE)
+/obj/item/rogueweapon/scabbard/proc/eat_sword(mob/living/user, obj/A, sheathing_from_belt = FALSE)
 	if(!weapon_check(user, A))
 		return FALSE
 	if(obj_broken)
