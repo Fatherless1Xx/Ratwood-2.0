@@ -192,10 +192,10 @@
 
 /obj/item/rogueweapon/surgery/cautery/branding/examine(mob/user)
 	. = ..()
-	if(setbranding)
-		. += span_warning("It will imprint [setbranding].")
-	else
+	if(!setbranding || !length(setbranding))
 		. += span_warning("There is no branding symbol set yet.")
+	else
+		. += span_warning("It will imprint [setbranding].")
 
 /obj/item/rogueweapon/surgery/cautery/branding/attack_self(mob/living/user)
 	. = ..()
