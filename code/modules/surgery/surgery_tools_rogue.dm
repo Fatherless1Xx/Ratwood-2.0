@@ -343,7 +343,7 @@
 			if("Head")
 				if(length(branding_part.branded_writing))
 					to_chat(user, span_warning("I reburn over the existing marking."))
-				user.visible_message(span_info("[target] writhes as \the [src] sears onto [branding_part.name]! The fresh brand shows [span_boldwarning(setbranding)]."))
+				user.visible_message(span_info("[target] writhes as \the [src] sears onto [target.p_their()] [branding_part.name]! The fresh brand shows [span_boldwarning(setbranding)]."))
 				branding_part.branded_writing = setbranding
 				target.apply_damage(20, BURN, branding_part)
 				to_chat(target, span_userdanger("You have been branded!"))
