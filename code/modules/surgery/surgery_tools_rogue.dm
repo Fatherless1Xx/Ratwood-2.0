@@ -256,7 +256,7 @@
 	if(!do_after(user, branding_delay, target = A))
 		log_combat(user, target, "Branding aborted: \"[setbranding]\"")
 		return TRUE
-	if(!user.Adjacent(target))
+	if(!user.Adjacent(target) || user.stat >= UNCONSCIOUS)
 		return TRUE
 	if(!get_location_accessible(target, user.zone_selected))
 		to_chat(user, span_warning("There is clothes obsecuring the [lowertext(parse_zone(user.zone_selected))]."))
