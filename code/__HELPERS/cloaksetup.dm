@@ -17,7 +17,8 @@
 			allowed_cloaks = list(
 			"Jupon" = 			/obj/item/clothing/cloak/stabard/surcoat/guard,
 			"Cape" = 			/obj/item/clothing/cloak/cape/guard,
-			"Tabard" = 			/obj/item/clothing/cloak/stabard/guard,
+			"Long tabard" =		/obj/item/clothing/cloak/tabard/retinue,
+			"Short tabard" = 	/obj/item/clothing/cloak/stabard/guard,
 			"Guard hood" = 		/obj/item/clothing/cloak/stabard/guardhood)
 		if("Man at Arms")
 			name_index = "man-at-arms"
