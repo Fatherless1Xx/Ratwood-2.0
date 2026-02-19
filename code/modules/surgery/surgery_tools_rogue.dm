@@ -185,6 +185,7 @@
 	icon_state = "brandingiron"
 	possible_item_intents = list(/datum/intent/use)
 	var/setbranding = null
+	var/branding_damage = 20
 	var/branding_low_quality = FALSE
 	var/branding_count = 0
 
@@ -196,6 +197,7 @@
 	name = "crude branding stick"
 	desc = "It's made of coal, string and a stick. Looks like I can brand myself with it at least two times before it snaps. Heat it up before use."
 	icon_state = "brandingiron_crude"
+	branding_damage = 10
 	branding_low_quality = TRUE
 	branding_count = 2
 
@@ -326,8 +328,8 @@
 					testes.branded_writing = setbranding
 		user.visible_message(span_info("[target] [description_recoil] as \the [src] sears [target.p_their()] [lowertext(answer)]! The fresh brand shows [span_boldwarning(setbranding)]."))
 		if(!QDELETED(branding_part) && istype(branding_part)) // if targeted body part still exists, apply damage
-			target.apply_damage(20, BURN, branding_part)
 		target.Knockdown(10)
+			target.apply_damage(branding_damage, BURN, branding_part)
 		to_chat(target, span_userdanger("You have been branded!"))
 	else if(check_zone == BODY_ZONE_HEAD) // targeting head
 		var/answer = tgui_alert(user, "What do you wish to brand?", "Please answer in [DisplayTimeText(100)]!", list("Head", "Mouth", "Neck", "Cancel"), 100)
@@ -342,8 +344,8 @@
 			if("Mouth")
 				user.visible_message(span_info("[target] [description_recoil] as \the [src] sears onto [target.p_their()] lips! The branding leaves an unrecognizable burn."))
 				target.apply_status_effect(/datum/status_effect/mouth_branded)
-				target.apply_damage(20, BURN, branding_part)
 				target.Knockdown(20)
+				target.apply_damage(branding_damage, BURN, branding_part)
 				to_chat(target, span_userdanger("Your mouth has been seared!"))
 			if("Neck")
 				var/obj/item/bodypart/head/neck = branding_part
@@ -353,15 +355,15 @@
 					to_chat(user, span_warning("I reburn over the existing marking."))
 				user.visible_message(span_info("[target] [description_recoil] as \the [src] sears onto [target.p_their()] neck! The fresh brand shows [span_boldwarning(setbranding)]."))
 				neck.branded_writing_on_neck = setbranding
-				target.apply_damage(20, BURN, neck)
 				target.Knockdown(10)
+				target.apply_damage(branding_damage, BURN, neck)
 				to_chat(target, span_userdanger("You have been branded!"))
 			if("Head")
 				if(length(branding_part.branded_writing))
 					to_chat(user, span_warning("I reburn over the existing marking."))
 				user.visible_message(span_info("[target] [description_recoil] as \the [src] sears onto [target.p_their()] [branding_part.name]! The fresh brand shows [span_boldwarning(setbranding)]."))
 				branding_part.branded_writing = setbranding
-				target.apply_damage(20, BURN, branding_part)
+				target.apply_damage(branding_damage, BURN, branding_part)
 				to_chat(target, span_userdanger("You have been branded!"))
 	else
 		var/obj/item/organ/breasts/tits = null
@@ -393,7 +395,7 @@
 				to_chat(user, span_warning("I reburn over the existing marking."))
 			user.visible_message(span_info("[target] [description_recoil] as \the [src] sears onto [target.p_their()] [branding_part.name]! The fresh brand shows [span_boldwarning(setbranding)]."))
 			branding_part.branded_writing = setbranding
-		target.apply_damage(20, BURN, branding_part)
+		target.apply_damage(branding_damage, BURN, branding_part)
 		to_chat(target, span_userdanger("You have been branded!"))
 
 	target.emote(prob(50) ? "painscream" : "scream", forced = TRUE)
