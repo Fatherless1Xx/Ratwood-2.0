@@ -755,6 +755,8 @@
 #include "code\datums\migrants\migrant_wave.dm"
 #include "code\datums\migrants\migrant_waves\117th_crusade_roles.dm"
 #include "code\datums\migrants\migrant_waves\117th_crusade_wave.dm"
+#include "code\datums\migrants\migrant_waves\czwarteki_noble_roles.dm"
+#include "code\datums\migrants\migrant_waves\czwarteki_noble_wave.dm"
 #include "code\datums\migrants\migrant_waves\fablefield roles.dm"
 #include "code\datums\migrants\migrant_waves\fablefield wave.dm"
 #include "code\datums\migrants\migrant_waves\goldcaravan_roles.dm"

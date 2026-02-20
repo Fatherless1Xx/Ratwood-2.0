@@ -566,3 +566,10 @@ GLOBAL_LIST_EMPTY(cmode_tracks_by_name)
 	shortname = "Zybantine"
 	credits = "Hakan Glante - Crusader Kings 3 Fate of Iberia OST - War \"Short\""
 	musicpath = list('sound/music/combat_zybantine.ogg')
+
+/datum/combat_music/czwarteki
+	name = "Czwarteki Hussars"
+	desc = "For God, Honor, Homeland."
+	shortname = "Czwarteki"
+	credits = " Andrius Klimka & Andrey Kulik - World of Tanks Original Soundtrack: Studzianki "
+	musicpath = list('sound/music/combat_czwarteki.ogg')
