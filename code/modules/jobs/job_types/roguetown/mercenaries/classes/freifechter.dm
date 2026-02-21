@@ -26,7 +26,6 @@
 /datum/outfit/job/roguetown/mercenary/freelancer/pre_equip(mob/living/carbon/human/H)
 	..()
 	to_chat(H, span_warning("You are a graduate of the Freifechters."))
-	l_hand = null
 	armor = /obj/item/clothing/suit/roguetown/armor/plate/half/fencer	//Experimental.
 	var/weapons = list("Modified Training Sword !!!CHALLENGE!!!", "Etruscan Longsword", "Kriegsmesser", "Field Longsword", "Frypan", "Peasant Scythe")
 	if(H.mind)
