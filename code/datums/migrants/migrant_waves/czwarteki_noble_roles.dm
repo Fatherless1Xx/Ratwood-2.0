@@ -23,6 +23,7 @@
 	beltr = /obj/item/rogueweapon/scabbard/sheath
 	gloves = /obj/item/clothing/gloves/roguetown/angle
 	backl = /obj/item/storage/backpack/rogue/satchel
+	wrists = /obj/item/clothing/wrists/roguetown/bracers
 	H.adjust_skillrank(/datum/skill/combat/crossbows, 3, TRUE)
 	H.adjust_skillrank(/datum/skill/combat/polearms, 3, TRUE)
 	H.adjust_skillrank(/datum/skill/combat/wrestling, 2, TRUE)
@@ -112,6 +113,7 @@
 	belt = /obj/item/storage/belt/rogue/leather/steel
 	backr = /obj/item/storage/backpack/rogue/satchel/black
 	backl = /obj/item/rogueweapon/scabbard/gwstrap
+	wrists = /obj/item/clothing/wrists/roguetown/bracers
 	l_hand = /obj/item/rogueweapon/sword/sabre
 	r_hand = /obj/item/rogueweapon/spear/lance
 	H.adjust_skillrank(/datum/skill/combat/polearms, 5, TRUE)
@@ -171,8 +173,9 @@
 /datum/outfit/job/roguetown/czwarteki/journeyman/pre_equip(mob/living/carbon/human/H)
 	..()
 	l_hand = /obj/item/rogueweapon/sword/sabre
-	armor = /obj/item/clothing/suit/roguetown/armor/chainmail
-	gloves = /obj/item/clothing/gloves/roguetown/leather
+	armor = /obj/item/clothing/suit/roguetown/armor/plate/half
+	shirt = /obj/item/clothing/suit/roguetown/armor/chainmail
+	gloves = /obj/item/clothing/gloves/roguetown/plate/iron
 	wrists = /obj/item/clothing/wrists/roguetown/bracers/leather
 	pants = /obj/item/clothing/under/roguetown/chainlegs/iron
 	cloak = /obj/item/clothing/cloak/stabard/surcoat
