@@ -239,6 +239,16 @@
 	if(holder)
 		SSblackbox.record_feedback("nested tally", "admin_toggle", 1, list("Toggle Deadchat Visibility", "[prefs.chat_toggles & CHAT_DSAY ? "Enabled" : "Disabled"]"))
 
+/client/verb/toggle_looc() // Whether the user can see LOOC or not.
+	set name = "Show/Hide LOOC"
+	set category = "Options"
+	set desc = "Toggles seeing local OOC"
+
+	if(prefs)
+		prefs.chat_toggles ^= CHAT_LOOC
+		prefs.save_preferences()
+	to_chat(src, "You will [(prefs.chat_toggles & CHAT_LOOC) ? "now" : "no longer"] see messages on the LOOC channel.")
+
 /*
 //toggles
 /datum/verbs/menu/Settings/Ghost/chatterbox
