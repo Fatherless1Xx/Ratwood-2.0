@@ -36,8 +36,10 @@
 
 	/// Validate the variables within customizer entries
 	for(var/datum/customizer_entry/entry as anything in customizer_entries)
-		var/datum/customizer_choice/customizer_choice = CUSTOMIZER_CHOICE(entry.customizer_choice_type)
-		customizer_choice.validate_entry(src, entry)
+		var/datum/customizer/customizer = CUSTOMIZER(entry.customizer_type)
+		if(!customizer)
+			continue
+		customizer.validate_entry(src, entry)
 
 /datum/preferences/proc/print_customizers_page()
 	var/list/dat = list()
@@ -64,10 +66,11 @@
 
 		var/customizer_link
 
+		var/can_disable = customizer.get_allows_disabling(src)
 		if(entry.disabled)
-			customizer_link = "href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=toggle_missing'"
+			customizer_link = can_disable ? "href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=toggle_missing'" : ""
 		else
-			if(customizer.allows_disabling)
+			if(can_disable)
 				customizer_link = "href='?_src_=prefs;task=change_customizer;customizer=[customizer_type];customizer_task=toggle_missing' class='linkOn'"
 			else
 				customizer_link = ""
@@ -150,7 +153,7 @@
 	var/datum/customizer/customizer = CUSTOMIZER(customizer_type)
 	switch(href_list["customizer_task"])
 		if("toggle_missing")
-			if(customizer.allows_disabling)
+			if(customizer.get_allows_disabling(src))
 				entry.disabled = !entry.disabled
 		if("change_choice")
 			var/list/choice_list = list()

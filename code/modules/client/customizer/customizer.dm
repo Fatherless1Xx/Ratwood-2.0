@@ -36,10 +36,13 @@
 	return created_entry
 
 /datum/customizer/proc/validate_entry(datum/preferences/prefs, datum/customizer_entry/entry)
-	if(entry.disabled && !allows_disabling)
+	if(entry.disabled && !get_allows_disabling(prefs))
 		entry.disabled = FALSE
 	var/datum/customizer_choice/choice = CUSTOMIZER_CHOICE(entry.customizer_choice_type)
 	choice.validate_entry(prefs, entry)
+
+/datum/customizer/proc/get_allows_disabling(datum/preferences/prefs)
+	return allows_disabling
 
 /datum/customizer/proc/is_allowed(datum/preferences/prefs)
 	return TRUE

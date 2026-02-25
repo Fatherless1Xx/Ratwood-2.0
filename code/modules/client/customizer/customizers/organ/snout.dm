@@ -17,6 +17,9 @@
 	allows_disabling = FALSE//I HATE YOU!!!
 	default_disabled = FALSE
 
+/datum/customizer/organ/snout/lizard/dracon/get_allows_disabling(datum/preferences/prefs)
+	return prefs?.selected_title == "Half-Drakian"
+
 /datum/customizer_choice/organ/snout/lizard
 	name = "Lizard Snout"
 	organ_type = /obj/item/organ/snout/lizard
