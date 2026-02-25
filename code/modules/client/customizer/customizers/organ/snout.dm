@@ -44,6 +44,9 @@
 /datum/customizer/organ/snout/vulpkanin
 	customizer_choices = list(/datum/customizer_choice/organ/snout/vulpkanin)
 
+/datum/customizer/organ/snout/vulpkanin/get_allows_disabling(datum/preferences/prefs)
+	return prefs?.selected_title == "Half-Venardine"
+
 /datum/customizer_choice/organ/snout/vulpkanin
 	name = "Vulpkian Snout"
 	organ_type = /obj/item/organ/snout/vulpkanin
@@ -98,6 +101,9 @@
 
 /datum/customizer/organ/snout/lupian
 	customizer_choices = list(/datum/customizer_choice/organ/snout/lupian)
+
+/datum/customizer/organ/snout/lupian/get_allows_disabling(datum/preferences/prefs)
+	return prefs?.selected_title == "Half-Lupian"
 
 /datum/customizer_choice/organ/snout/lupian
 	name = "Lupian Snout"
@@ -394,6 +400,9 @@
 /datum/customizer/organ/snout/akula
 	customizer_choices = list(/datum/customizer_choice/organ/snout/akula)
 
+/datum/customizer/organ/snout/akula/get_allows_disabling(datum/preferences/prefs)
+	return prefs?.selected_title == "Half-Axian"
+
 /datum/customizer_choice/organ/snout/akula
 	name = "Axian Snout"
 	organ_type = /obj/item/organ/snout/akula
@@ -438,6 +447,9 @@
 
 /datum/customizer/organ/snout/tabaxi
 	customizer_choices = list(/datum/customizer_choice/organ/snout/tabaxi)
+
+/datum/customizer/organ/snout/tabaxi/get_allows_disabling(datum/preferences/prefs)
+	return prefs?.selected_title == "Half-Tabaxi"
 
 /datum/customizer_choice/organ/snout/tabaxi
 	name = "Tabaxian Snout"

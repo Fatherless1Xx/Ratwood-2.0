@@ -4,6 +4,8 @@
 /datum/species/lizardfolk
 	name = "Sissean"
 	id = "lizardfolk"
+	use_titles = TRUE
+	race_titles = list("Half-Sissean")
 	desc = "<b>Sissean</b><br>\
 	Sissean are hardy, reptilian people that share a unique bond among their kind due to being the target \
 	of oppression and enslavement by other races, particularly by Humans and Drakians. They take pride in \

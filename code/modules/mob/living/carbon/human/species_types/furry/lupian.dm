@@ -4,6 +4,8 @@
 /datum/species/lupian
 	name = "Lupian"
 	id = "lupian"
+	use_titles = TRUE
+	race_titles = list("Half-Lupian")
 	desc = "<b>Lupian</b><br>\
 	Lupians are the sons and daughters of Noc. They are a volf-like people hailing from the Northern Regions of the world. \
 	They are resilient, cunning and fight ready creachures capable of surviving the north thanks to their rugged pelts, \

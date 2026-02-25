@@ -4,6 +4,8 @@
 /datum/species/tabaxi
 	name = "Tabaxi"
 	id = "tabaxi"
+	use_titles = TRUE
+	race_titles = list("Half-Tabaxi")
 
 	changesource_flags = MIRROR_BADMIN | WABBAJACK | MIRROR_PRIDE | MIRROR_MAGIC | RACE_SWAP | SLIME_EXTRACT
 
